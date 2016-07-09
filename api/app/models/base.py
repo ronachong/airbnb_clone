@@ -6,7 +6,7 @@ base.py defines the database variable that Peewee will use to access the clone's
 base.py also defines a basemodel for all the classes that will be used by Peewee to create and access the database tables.
 '''
 
-database = MySQLDatabase( DATABASE['database'],
+database = peewee.MySQLDatabase( DATABASE['database'],
                           user=DATABASE['user'],
                           charset=DATABASE['charset'],
                           host=DATABASE['host'],
