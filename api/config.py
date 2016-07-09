@@ -11,7 +11,7 @@ if env == 'development':
     DATABASE = { 'host': '158.69.79.94',
                  'user': 'airbnb_user_dev',
                  'database': 'airbnb_dev',
-                 'port': '3306',
+                 'port': 3306,
                  'charset': 'utf8',
                  'password': os.environ.get('AIRBNB_DATABASE_PWD_DEV') }
 
@@ -24,6 +24,6 @@ elif env == 'production':
     DATABASE = { 'host': '158.69.79.94',
                  'user': 'airbnb_user_prod',
                  'database': 'airbnb_prod',
-                 'port': '3306',
+                 'port': 3306,
                  'charset': 'utf8',
                  'password': os.environ.get('AIRBNB_DATABASE_PWD_PROD') }
