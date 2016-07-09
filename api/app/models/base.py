@@ -1,5 +1,5 @@
 import peewee
-from config import DATABASE
+from config import *
 
 '''
 base.py defines the database variable that Peewee will use to access the clone's MySQL database.
