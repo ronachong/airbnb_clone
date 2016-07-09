@@ -1,5 +1,11 @@
 from base import database
-from user, state, city, place, place_book, amenity, place_amenity import *
+from user import User
+from state import State
+from city import City
+from place import Place
+from place_book import PlaceBook
+from amenity import Amenity
+from place_amenity import PlaceAmenities
 
 # connect to database specified in base
 database.connect()
