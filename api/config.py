@@ -4,7 +4,7 @@ env = os.environ.get('AIRBNB_ENV')
 
 if env == 'development':
     # assign specs for dev env
-    os.environ['AIRBNB_DATABASE_PWD_DEV'] = 'wrdev' 
+    # os.environ['AIRBNB_DATABASE_PWD_DEV'] = 'wrdev' | this only sets env var in current shell; currently setting var permanently for own user via ~/.bash_profile
     DEBUG = True
     HOST = 'localhost'
     PORT = 3333
@@ -17,9 +17,9 @@ if env == 'development':
 
 elif env == 'production':
     # assign specs for prod env
-    os.environ['AIRBNB_DATABASE_PWD_PROD'] = 'wrprod' 
+    # os.environ['AIRBNB_DATABASE_PWD_PROD'] = 'wrprod' | this only sets env var in current shell; currently setting var permanently for admin user via ~/.bash_profile
     DEBUG = False
-    HOST = 0.0.0.0
+    HOST = '0.0.0.0'
     PORT = 3000
     DATABASE = { 'host': '158.69.79.94',
                  'user': 'airbnb_user_prod',
