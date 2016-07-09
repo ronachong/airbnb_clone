@@ -10,7 +10,7 @@ database = peewee.MySQLDatabase( DATABASE['database'],
                           user=DATABASE['user'],
                           charset=DATABASE['charset'],
                           host=DATABASE['host'],
-                          port=DATABASE['3306'],
+                          port=DATABASE['port'],
                           passwd=DATABASE['password'] )
 
 class BaseModel(peewee.Model):
