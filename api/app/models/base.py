@@ -1,5 +1,6 @@
 import peewee
 from config import *
+from datetime import datetime
 
 '''
 base.py defines the database variable that Peewee will use to access the clone's MySQL database.
@@ -15,8 +16,8 @@ database = peewee.MySQLDatabase( DATABASE['database'],
 
 class BaseModel(peewee.Model):
     id = peewee.PrimaryKeyField(unique=True)
-    created_at = peewee.DateTimeField(default=datetime.datetime.now, formats='%Y/%m/%d %H:%M:%S') # peewee docs have datetime.datetime.now in exp; might have to check if format comes out right
-    updated_at = peewee.DateTimeField(default=datetime.datetime.now, formats='%Y/%m/%d %H:%M:%S')
+    created_at = peewee.DateTimeField(default=datetime.now, formats='%Y/%m/%d %H:%M:%S') # peewee docs have datetime.datetime.now in exp; might have to check if format comes out right
+    updated_at = peewee.DateTimeField(default=datetime.now, formats='%Y/%m/%d %H:%M:%S')
 
 
     
