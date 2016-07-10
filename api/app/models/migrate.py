@@ -12,3 +12,7 @@ database.connect()
 
 # populate databases with tables
 database.create_tables([User, State, City, Place, PlaceBook, Amenity, PlaceAmenities], safe=True)
+
+# create a test entry
+test_record=User(email='foo', password='foo', first_name='foo',last_name='foo')
+test_record.save()

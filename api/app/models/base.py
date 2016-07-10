@@ -22,8 +22,8 @@ class BaseModel(peewee.Model):
 
     
     def save(self, *args, **kwargs):
-        self.updated_at = datetime.datetime.now
-        peewee.Model.save() # not sure if this goes before or after self.updated_at assignment    
+        self.updated_at = datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+        peewee.Model.save(self) # not sure if this goes before or after self.updated_at assignment    
 
     class Meta:
         database = database
