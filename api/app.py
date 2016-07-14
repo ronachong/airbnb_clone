@@ -1,5 +1,6 @@
 from app import app
 from app.views import *
+from app.views import user, state, city, place
 from config import HOST, PORT, DEBUG
 
 # run app, but only if this file is being run directly (and not via another file)

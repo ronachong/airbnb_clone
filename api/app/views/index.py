@@ -14,7 +14,7 @@ def index():
 @app.errorhandler(404)
 def not_found(e):
     ''' not_found serves a json hash with code 404 and msg "not found" for any requests with status 404 '''
-    return json_response(add_status_=False, code=404, msg="not found")
+    return json_response(add_status_=False, status_=404, code=404, msg="not found")
 
 def utc_to_local(utc_dt):
     ''' utc_to_local converts a utc date time to the specified local timezone local_tz '''

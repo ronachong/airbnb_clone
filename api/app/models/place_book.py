@@ -8,3 +8,15 @@ class PlaceBook(BaseModel):
     is_validated = peewee.BooleanField(default=False)
     date_start = peewee.DateTimeField(null=False)
     number_nights = peewee.IntegerField(default=1)
+
+    def to_hash(self):
+        hash = {}
+        hash["id"] = self.id
+        hash["created_at"] = self.created_at.strftime('%d/%m/%Y %H:%M:%S')
+        hash["updated_at"] = self.updated_at.strftime('%d/%m/%Y %H:%M:%S')
+        hash["place_id"] = self.place
+        hash["user_id"] = self.user
+        hash["is_validated"] = self.is_validated
+        hash["date_start"] = self.date_start
+        hash["number_nights"] = self.number_nights
+        return hash
