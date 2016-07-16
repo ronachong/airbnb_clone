@@ -38,15 +38,15 @@ def places():
         record.save()
         return jsonify(record.to_hash())
 
-# @app.route('/states/<state_id>/cities/<city_id>', methods=['GET','DELETE'])
-# def city_id(state_id, city_id):
-#     ''' '''
-#     record = City.get(City.id == city_id)
-#
-#     if request.method == 'GET':
-#         return jsonify(record.to_hash())
-#
-#     elif request.method == "DELETE":
-#         record.delete_instance()
-#         record.save()
-#         return 'deleted city\n'
+@app.route('/places/<place_id>', methods=['GET', 'PUT', 'DELETE'])
+def place_id(place_id):
+    '''  '''
+    record = Place.get(Place.id == place_id)
+
+    if request.method == 'GET':
+        return jsonify(record.to_hash())
+
+    elif request.method == "DELETE":
+        record.delete_instance()
+        record.save()
+        return 'deleted city\n'
