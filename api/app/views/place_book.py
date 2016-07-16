@@ -24,37 +24,32 @@ def books(place_id):
 
         record.save()
         return jsonify(record.to_hash())
-#
-# @app.route('/places/<place_id>', methods=['GET', 'PUT', 'DELETE'])
-# def place_id(place_id):
-#     '''  '''
-#     record = Place.get(Place.id == place_id)
-#
-#     if request.method == 'GET':
-#         return jsonify(record.to_hash())
-#
-#     elif request.method == 'PUT':
-#         record = Place.get(Place.id == place_id)
-#         # code below can be optimized in future using list comprehensions
-#         for key in request.values.keys():
-#             if key == "name":
-#                 record.name = request.values[key]
-#             elif key == "description":
-#                 record.description = request.values[key]
-#             elif key == "number_rooms":
-#                 record.number_rooms = request.values[key]
-#             elif key == "max_guest":
-#                 record.max_guest = request.values[key]
-#             elif key == "price_by_night":
-#                 record.price_by_night = request.values[key]
-#             elif key == "latitude":
-#                 record.latitude = request.values[key]
-#             elif key == "longitude":
-#                 record.longitude = request.values[key]
-#             record.save()
-#         return jsonify(record.to_hash())
-#
-#     elif request.method == "DELETE":
-#         record.delete_instance()
-#         record.save()
-#         return 'deleted city\n'
+
+@app.route('/places/<place_id>/books/<book_id>', methods=['GET', 'PUT', 'DELETE'])
+def book_id(place_id, book_id):
+    '''  '''
+    record = PlaceBook.get(PlaceBook.id == book_id)
+
+    if request.method == 'GET':
+        return jsonify(record.to_hash())
+
+    elif request.method == 'PUT':
+        # code below can be optimized in future using list comprehensions
+        for key in request.values.keys():
+            if key == "place":
+                record.place = request.values[key]
+            elif key == "user":
+                record.user = request.values[key]
+            elif key == "is_validated":
+                record.is_validated = request.values[key]
+            elif key == "date_start":
+                record.date_start = request.values[key]
+            elif key == "number_nights":
+                record.number_nights = request.values[key]
+            record.save()
+        return jsonify(record.to_hash())
+
+    elif request.method == "DELETE":
+        record.delete_instance()
+        record.save()
+        return 'deleted booking\n'
