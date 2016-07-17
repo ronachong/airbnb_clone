@@ -35,17 +35,18 @@ def user_id(user_id):
         return jsonify(record.to_hash())
 
     elif request.method == 'PUT':
-        key = request.values.keys()[0]
         record = User.get(User.id == user_id)
-        if key == "last_name":
-            record.last_name = request.values[key]
-        if key == "first_name":
-            record.first_name = request.values[key]
-        if key == "password":
-            record.password = request.values[key]
-        if key == "is_admin":
-            record.is_admin = request.values[key]
-        record.save()
+        # code below can be optimized in future using list comprehensions
+        for key in request.values.keys():
+            if key == "last_name":
+                record.last_name = request.values[key]
+            elif key == "first_name":
+                record.first_name = request.values[key]
+            elif key == "password":
+                record.password = request.values[key]
+            elif key == "is_admin":
+                record.is_admin = request.values[key]
+            record.save()
         return jsonify(record.to_hash())
 
     elif request.method == "DELETE":

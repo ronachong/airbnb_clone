@@ -14,8 +14,8 @@ class PlaceBook(BaseModel):
         hash["id"] = self.id
         hash["created_at"] = self.created_at.strftime('%d/%m/%Y %H:%M:%S')
         hash["updated_at"] = self.updated_at.strftime('%d/%m/%Y %H:%M:%S')
-        hash["place_id"] = self.place
-        hash["user_id"] = self.user
+        hash["place_id"] = self.place.id
+        hash["user_id"] = self.user.id
         hash["is_validated"] = self.is_validated
         hash["date_start"] = self.date_start
         hash["number_nights"] = self.number_nights

@@ -13,7 +13,7 @@ from flask import jsonify
 database.connect()
 
 # populate databases with tables
-#User.drop_table(cascade=True)
+Amenity.drop_table(cascade=True)
 database.create_tables([User, State, City, Place, PlaceBook, Amenity, PlaceAmenities], safe=True)
 
 # create a test entry
@@ -37,5 +37,20 @@ database.create_tables([User, State, City, Place, PlaceBook, Amenity, PlaceAmeni
 # city_record.save()
 # print jsonify(city_record.to_hash())
 
-for city in State.get(State.id == 3).cities:
-    print city.name
+# for city in State.get(State.id == 3).cities:
+#     print city.name
+
+# record = Place( owner='foo',
+#                 city=3,
+#                 name=place_name,
+#                 description=place_desc,
+#                 number_rooms=nb_rooms,
+#                 max_guest=place_mguests,
+#                 price_by_night=place_pbn,
+#                 latitude=place_lat,
+#                 longitude=place_long )
+# record.save()
+
+record = Amenity( name = 'name' )
+record.save()
+print record.to_hash()
