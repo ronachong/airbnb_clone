@@ -1,0 +1,13 @@
+/* unit_test.sql creates one user and one database for unit testing of the airbnb clone. */
+
+CREATE USER 'airbnb_user_test'@'%'
+       IDENTIFIED BY 'PLACEHOLDERTEXT';
+
+CREATE DATABASE airbnb_test
+       DEFAULT CHARACTER SET utf8
+       DEFAULT COLLATE utf8_general_ci;
+
+GRANT ALL PRIVILEGES
+      ON airbnb_test.*
+      TO 'airbnb_user_dev'@'%'
+      IDENTIFIED BY 'PLACEHOLDERTEXT';
