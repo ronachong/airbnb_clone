@@ -27,3 +27,16 @@ elif env == 'production':
                  'port': 3306,
                  'charset': 'utf8',
                  'password': os.environ.get('AIRBNB_DATABASE_PWD_PROD') }
+
+elif env == 'test':
+   # assign specs for test env
+   # os.environ['AIRBNB_DATABASE_TEST'] = 'testpw' | this only sets env var in current shell; currently setting var permanently for admin user via ~/.bash_profile
+   DEBUG = False
+   HOST = 'localhost'
+   PORT = 5555
+   DATABASE = { 'host': '158.69.79.94',
+                'user': 'airbnb_user_test',
+                'database': 'airbnb_test',
+                'port': 3306,
+                'charset': 'utf8',
+                'password': os.environ.get('AIRBNB_DATABASE_TEST') }
