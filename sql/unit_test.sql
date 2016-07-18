@@ -9,5 +9,5 @@ CREATE DATABASE airbnb_test
 
 GRANT ALL PRIVILEGES
       ON airbnb_test.*
-      TO 'airbnb_user_dev'@'%'
+      TO 'airbnb_user_test'@'%'
       IDENTIFIED BY 'PLACEHOLDERTEXT';
