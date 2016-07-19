@@ -13,7 +13,6 @@ from flask import jsonify
 database.connect()
 
 # populate databases with tables
-Amenity.drop_table(cascade=True)
 database.create_tables([User, State, City, Place, PlaceBook, Amenity, PlaceAmenities], safe=True)
 
 # create a test entry
