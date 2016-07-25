@@ -20,8 +20,8 @@ class userTestCase(unittest.TestCase):
         logging.disable(logging.CRITICAL) # disable logs
 
         # connect to airbnb_test database and create User table
-        db.connect()
-        db.create_tables([User], safe=True)
+        database.connect()
+        database.create_tables([User], safe=True)
 
     def tearDown(self):
         '''
@@ -141,7 +141,7 @@ class userTestCase(unittest.TestCase):
         '''
         # delete and recreate User table for test
         User.drop_table()
-        db.create_tables([User], safe=True)
+        database.create_tables([User], safe=True)
 
         GET_request1 = self.app.get('/users')
         self.assertEqual(len(json.loads(GET_request1.data)), 0)
@@ -158,7 +158,7 @@ class userTestCase(unittest.TestCase):
         '''
         # delete and recreate User table for test
         User.drop_table()
-        db.create_tables([User], safe=True)
+        database.create_tables([User], safe=True)
 
         # test response of GET request for user by user id
         self.createUserViaPeewee()
@@ -185,7 +185,7 @@ class userTestCase(unittest.TestCase):
         '''
         # delete and recreate User table for test
         User.drop_table()
-        db.create_tables([User], safe=True)
+        database.create_tables([User], safe=True)
 
         # test response of DELETE request for user by user id
         self.createUserViaPeewee()
@@ -212,7 +212,7 @@ class userTestCase(unittest.TestCase):
         '''
         # delete and recreate User table for test
         User.drop_table()
-        db.create_tables([User], safe=True)
+        database.create_tables([User], safe=True)
 
         self.createUserViaPeewee()
 

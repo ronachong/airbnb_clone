@@ -24,8 +24,8 @@ class placebookTestCase(unittest.TestCase):
         logging.disable(logging.CRITICAL) # disable logs
 
         # connect to airbnb_test database and create PlaceBook table
-        db.connect()
-        db.create_tables([User, State, City, Place, PlaceBook], safe=True)
+        database.connect()
+        database.create_tables([User, State, City, Place, PlaceBook], safe=True)
         user_record = User( email='anystring',
                             password='anystring1',
                             first_name='anystring2',
@@ -177,7 +177,7 @@ class placebookTestCase(unittest.TestCase):
         '''
         # delete and recreate PlaceBook table for test
         PlaceBook.drop_table()
-        db.create_tables([PlaceBook], safe=True)
+        database.create_tables([PlaceBook], safe=True)
 
         GET_request1 = self.app.get('/places/1/books')
         self.assertEqual(len(json.loads(GET_request1.data)), 0)
@@ -197,7 +197,7 @@ class placebookTestCase(unittest.TestCase):
         '''
         # delete and recreate PlaceBook table for test
         PlaceBook.drop_table()
-        db.create_tables([PlaceBook], safe=True)
+        database.create_tables([PlaceBook], safe=True)
 
         # test response of GET request for placebook by placebook id
         self.createPlaceBookViaPeewee()
@@ -224,7 +224,7 @@ class placebookTestCase(unittest.TestCase):
         '''
         # delete and recreate PlaceBook table for test
         PlaceBook.drop_table()
-        db.create_tables([PlaceBook], safe=True)
+        database.create_tables([PlaceBook], safe=True)
 
         # test response of DELETE request for place_book by place_book id
         self.createPlaceBookViaPeewee()
@@ -251,7 +251,7 @@ class placebookTestCase(unittest.TestCase):
         '''
         # delete and recreate PlaceBook table for test
         PlaceBook.drop_table()
-        db.create_tables([PlaceBook], safe=True)
+        database.create_tables([PlaceBook], safe=True)
 
         self.createPlaceBookViaPeewee()
 

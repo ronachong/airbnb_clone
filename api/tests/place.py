@@ -23,8 +23,8 @@ class placeTestCase(unittest.TestCase):
         logging.disable(logging.CRITICAL) # disable logs
 
         # connect to airbnb_test database and create Place table
-        db.connect()
-        db.create_tables([User, State, City, Place], safe=True)
+        database.connect()
+        database.create_tables([User, State, City, Place], safe=True)
         state_record = State(name='foo-state')
         state_record.save()
         city_record = City(name='foo-city', state=1)
@@ -276,7 +276,7 @@ class placeTestCase(unittest.TestCase):
         '''
         # delete and recreate Place table for test
         Place.drop_table()
-        db.create_tables([Place], safe=True)
+        database.create_tables([Place], safe=True)
 
         GET_request1 = self.app.get('/places')
         self.assertEqual(len(json.loads(GET_request1.data)), 0)
@@ -293,7 +293,7 @@ class placeTestCase(unittest.TestCase):
         '''
         # delete and recreate Place table for test
         Place.drop_table()
-        db.create_tables([Place], safe=True)
+        database.create_tables([Place], safe=True)
 
         # test response of GET request for place by place id
         self.createPlaceViaPeewee()
@@ -325,7 +325,7 @@ class placeTestCase(unittest.TestCase):
         '''
         # delete and recreate Place table for test
         Place.drop_table()
-        db.create_tables([Place], safe=True)
+        database.create_tables([Place], safe=True)
 
         # test response of DELETE request for place by place id
         self.createPlaceViaPeewee()
@@ -352,7 +352,7 @@ class placeTestCase(unittest.TestCase):
         '''
         # delete and recreate Place table for test
         Place.drop_table()
-        db.create_tables([Place], safe=True)
+        database.create_tables([Place], safe=True)
 
         self.createPlaceViaPeewee()
 
@@ -388,7 +388,7 @@ class placeTestCase(unittest.TestCase):
         '''
         # delete and recreate Place table for test
         Place.drop_table()
-        db.create_tables([Place], safe=True)
+        database.create_tables([Place], safe=True)
 
         POST_request = self.app.post('/states/1/cities/1/places', data=dict(
             owner = 1,
@@ -411,7 +411,7 @@ class placeTestCase(unittest.TestCase):
         '''
         # delete and recreate Place table for test
         Place.drop_table()
-        db.create_tables([Place], safe=True)
+        database.create_tables([Place], safe=True)
 
         GET_request1 = self.app.get('/states/1/cities/1/places')
         self.assertEqual(len(json.loads(GET_request1.data)), 0)

@@ -16,8 +16,8 @@ class stateTestCase(unittest.TestCase):
         #self.app.testing = True
         logging.disable(logging.CRITICAL) # disable logs
 
-        db.connect()
-        db.create_tables([State], safe=True)
+        database.connect()
+        database.create_tables([State], safe=True)
 
     def tearDown(self):
         '''remove State from airbnb_test database upon completion of test case'''
@@ -28,7 +28,7 @@ class stateTestCase(unittest.TestCase):
         # test creation of state with all parameters provided in POST request
 
         State.drop_table()
-        db.create_tables([State], safe=True)
+        database.create_tables([State], safe=True)
 
         POST_request1 = self.app.post('/states', data=dict(
             name='namestring'
@@ -61,7 +61,7 @@ class stateTestCase(unittest.TestCase):
         '''test proper representation of all state records upon GET requests to API'''
         # delete and recreate State table for test
         State.drop_table()
-        db.create_tables([State], safe=True)
+        database.create_tables([State], safe=True)
 
         GET_request1 = self.app.get('/states')
         self.assertEqual(len(json.loads(GET_request1.data)), 0)
@@ -77,7 +77,7 @@ class stateTestCase(unittest.TestCase):
         '''test proper representation of a state record upon GET requests via state ID to API'''
         # delete and recreate State table for test
         State.drop_table()
-        db.create_tables([State], safe=True)
+        database.create_tables([State], safe=True)
 
         # test response of GET request for state by state id
         POST_request1 = self.app.post('/states', data=dict(
@@ -100,7 +100,7 @@ class stateTestCase(unittest.TestCase):
         '''test deletion of state records upon DELETE requests to API'''
         # delete and recreate State table for test
         State.drop_table()
-        db.create_tables([State], safe=True)
+        database.create_tables([State], safe=True)
 
         # test response of DELETE request for state by state id
         POST_request1 = self.app.post('/states', data=dict(
@@ -127,7 +127,7 @@ class stateTestCase(unittest.TestCase):
         '''test update of state records upon PUT requests to API'''
         # delete and recreate State table for test
         State.drop_table()
-        db.create_tables([State], safe=True)
+        database.create_tables([State], safe=True)
 
         POST_request1 = self.app.post('/states', data=dict(
             name='namestring'

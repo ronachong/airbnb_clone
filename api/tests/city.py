@@ -18,8 +18,8 @@ class cityTestCase(unittest.TestCase):
         #self.app.testing = True
         logging.disable(logging.CRITICAL) # disable logs
 
-        db.connect()
-        db.create_tables([City, State], safe=True)
+        database.connect()
+        database.create_tables([City, State], safe=True)
         State(name='namestring')
 
 
@@ -64,7 +64,7 @@ class cityTestCase(unittest.TestCase):
         '''test proper representation of all city records upon GET requests to API'''
         # delete and recreate City table for test
         City.drop_table()
-        db.create_tables([City], safe=True)
+        database.create_tables([City], safe=True)
 
         GET_request1 = self.app.get('/states/1/cities')
         self.assertEqual(len(json.loads(GET_request1.data)), 0)
@@ -80,7 +80,7 @@ class cityTestCase(unittest.TestCase):
         '''test proper representation of a city record upon GET requests via city ID to API'''
         # delete and recreate City table for test
         City.drop_table()
-        db.create_tables([City], safe=True)
+        database.create_tables([City], safe=True)
 
         # test response of GET request for state by state id
         POST_request1 = self.app.post('/states/1/cities', data=dict(
@@ -104,7 +104,7 @@ class cityTestCase(unittest.TestCase):
         '''test deletion of city records upon DELETE requests to API'''
         # delete and recreate City table for test
         City.drop_table()
-        db.create_tables([City], safe=True)
+        database.create_tables([City], safe=True)
 
         # test response of DELETE request for city by city id
         POST_request1 = self.app.post('/states/1/cities', data=dict(

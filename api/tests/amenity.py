@@ -20,8 +20,8 @@ class placebookTestCase(unittest.TestCase):
         logging.disable(logging.CRITICAL) # disable logs
 
         # connect to airbnb_test database and create Amenity table
-        db.connect()
-        db.create_tables([Amenity], safe=True)
+        database.connect()
+        database.create_tables([Amenity], safe=True)
 
     def tearDown(self):
         '''
@@ -96,7 +96,7 @@ class placebookTestCase(unittest.TestCase):
         '''
         # delete and recreate Amenity table for test
         Amenity.drop_table()
-        db.create_tables([Amenity], safe=True)
+        database.create_tables([Amenity], safe=True)
 
         GET_request1 = self.app.get('/amenities')
         self.assertEqual(len(json.loads(GET_request1.data)), 0)
@@ -116,7 +116,7 @@ class placebookTestCase(unittest.TestCase):
         '''
         # delete and recreate Amenity table for test
         Amenity.drop_table()
-        db.create_tables([Amenity], safe=True)
+        database.create_tables([Amenity], safe=True)
 
         # test response of GET request for placebook by placebook id
         self.createAmenityViaPeewee()
@@ -139,7 +139,7 @@ class placebookTestCase(unittest.TestCase):
         '''
         # delete and recreate Amenity table for test
         Amenity.drop_table()
-        db.create_tables([Amenity], safe=True)
+        database.create_tables([Amenity], safe=True)
 
         # test response of DELETE request for amenity by amenity id
         self.createAmenityViaPeewee()
