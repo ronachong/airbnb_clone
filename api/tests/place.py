@@ -1,298 +1,447 @@
+import unittest, logging
+import config
+import os
+import json
+
 from app import app
-from datetime import datetime
-import unittest, json, logging, itertools
-from app.models.base import db
-from app.models.state import State
-from app.models.city import City
 from app.models.user import User
 from app.models.place import Place
+from app.models.city import City
+from app.models.state import State
+from app.models.base import *
+from peewee import Model
+from datetime import datetime
 
-class PlaceTestCase(unittest.TestCase):
-	
-	def setUp(self):
-		self.app = app.test_client()
-		logging.disable(logging.CRITICAL)
-		db.create_tables([User, State, City, Place], safe = True)
+class placeTestCase(unittest.TestCase):
+    def setUp(self):
+        '''
+        overloads def setUp(self): to create a test client of airbnb app, and
+        create Place in airbnb_test database
+        '''
+        self.app = app.test_client()
+        self.app.testing = True
+        logging.disable(logging.CRITICAL) # disable logs
 
-	def tearDown(self):
-		db.drop_table(Place)
-		db.drop_table(City)
-		db.drop_table(State)
-		db.drop_table(User)
+        # connect to airbnb_test database and create Place table
+        db.connect()
+        db.create_tables([User, State, City, Place], safe=True)
+        state_record = State(name='foo-state')
+        state_record.save()
+        city_record = City(name='foo-city', state=1)
+        city_record.save()
+        city_record2 = City(name='foo-city2', state=1)
+        city_record2.save()
 
-	def name_dict(self, name = None):
-		values = {}
-		if name != None:
-			values['name'] = name
-		return values
+    def tearDown(self):
+        '''
+        tearDown removes Place from airbnb_test database upon completion of test
+        case
+        '''
+        Place.drop_table()
+        City.drop_table()
+        State.drop_table()
+        User.drop_table()
 
-	def create_state(self, state_dict):
-		return self.app.post('/states', data=state_dict)
+    def createPlaceViaPeewee(self):
+        '''
+        createPlaceViaPeewee creates a place record using the API's database/Peewee
+        models, and returns the Peewee object for the record. This method will
+        not work if the database models are not written correctly.
+        '''
+        record = Place( owner = 1,
+                        city = 1,
+                        name = "foo",
+                        description = "foo description",
+                        number_rooms = 1,
+                        number_bathrooms = 1,
+                        max_guest = 1,
+                        price_by_night = 1,
+                        latitude = 20.0,
+                        longitude = 22.0    )
+        record.save()
+        return record
 
-	def create_state_and_return_json(self, state_dictionary):
-		resp = self.create_state(state_dictionary)
-		jsonified = json.loads(resp.data)
-		return jsonified, resp.status_code
+    def createPlaceViaAPI(self):
+        '''
+        createPlaceViaAPI creates a place record through a POST request to the API
+        and returns the Flask response object for the request. This method will
+        not work if the POST request handler is not written properly.
+        '''
+        POST_request = self.app.post('/places', data=dict(
+            owner = 1,
+            city = 1,
+            name = "foo",
+            description = "foo description",
+            number_rooms = 1,
+            number_bathrooms = 1,
+            max_guest = 1,
+            price_by_night = 1,
+            latitude = 20.0,
+            longitude = 22.0
+        ))
+        return POST_request
 
-	def create_city(self, id, state_dict):
-		return self.app.post('/states/%d/cities' % id, data=state_dict)
+    def subtest_createWithAllParams(self):
+        '''
+        subtest_createWithAllParams tests proper creation of a place record upon
+        a POST request to the API with all parameters provided.
+        '''
+        POST_request1 = self.createPlaceViaAPI()
+        self.assertEqual(POST_request1.status[:3], '200')
 
-	def create_city_and_return_json(self, id, state_dictionary):
-		resp = self.create_city(id, state_dictionary)
-		jsonified = json.loads(resp.data)
-		return jsonified, resp.status_code
+        now = datetime.now().strftime('%d/%m/%Y %H:%M')
 
-	def create_state_rows(self):
-		state_dictionary = self.name_dict("Ohio")
-		jsonified, status = self.create_state_and_return_json(state_dictionary)
-		state_dictionary = self.name_dict("Florida")
-		jsonified, status = self.create_state_and_return_json(state_dictionary)
+        self.assertEqual(Place.get(Place.id == 1).owner, 1)
+        self.assertEqual(Place.get(Place.id == 1).city, 1)
+        self.assertEqual(Place.get(Place.id == 1).name, "foo")
+        self.assertEqual(Place.get(Place.id == 1).description, "foo description")
+        self.assertEqual(Place.get(Place.id == 1).number_rooms, 1)
+        self.assertEqual(Place.get(Place.id == 1).number_bathrooms, 1)
+        self.assertEqual(Place.get(Place.id == 1).max_guest, 1)
+        self.assertEqual(Place.get(Place.id == 1).price_by_night, 1)
+        self.assertEqual(Place.get(Place.id == 1).latitude, 22.0)
+        self.assertEqual(Place.get(Place.id == 1).longitude, 22.0)
+        self.assertEqual(Place.get(Place.id == 1).created_at[:-3], now)
+        self.assertEqual(Place.get(Place.id == 1).updated_at[:-3], now)
 
-	def create_city_rows(self):
-		city_dictionary = self.name_dict("Toledo")
-		jsonified, status = self.create_city_and_return_json(1, city_dictionary)
-		city_dictionary = self.name_dict("TestCity")
-		jsonified, status = self.create_city_and_return_json(2, city_dictionary)
+        # test that place ID for sole record in database is correct
+        self.assertEqual(Place.select().get().id, 1)
 
-	def place_dict(self, name = None, description = None, number_rooms = None, number_bathrooms = None, max_guest = None, price_by_night = None, latitude = None, longitude = None, owner_id = None, city_id = None):
-		values = {}
-		if name != None:
-			values['name'] = name
-		if description != None:
-			values['description'] = description
-		if number_rooms != None:
-			values['number_rooms'] = number_rooms
-		if number_bathrooms != None:
-			values['number_bathrooms'] = number_bathrooms
-		if max_guest != None:
-			values['max_guest'] = max_guest
-		if price_by_night != None:
-			values['price_by_night'] = price_by_night
-		if latitude != None:
-			values['latitude'] = latitude
-		if longitude != None:
-			values['longitude'] = longitude
-		if owner_id != None:
-			values['owner_id'] = owner_id
-		if city_id != None:
-			values['city_id'] = city_id
-		return values
+    def subtest_createWithoutAllParams(self):
+        '''
+        subtest_createWithoutAllParams tests proper non-creation of a place in
+        all cases of a parameter missing in a POST request to the API.
+        '''
+        # missing owner - should cause bad request?
+        POST_request2 = self.app.post('/places', data=dict(
+            city = 1,
+            name = "foo",
+            description = "foo description",
+            number_rooms = 1,
+            number_bathrooms = 1,
+            max_guest = 1,
+            price_by_night = 1,
+            latitude = 20.0,
+            longitude = 22.0
+        ))
 
-	def create_place(self, state_dictionary):
-		return self.app.post('/places', data=state_dictionary)
+        # missing city - should cause bad request?
+        POST_request3 = self.app.post('/places', data=dict(
+            owner = 1,
+            name = "foo",
+            description = "foo description",
+            number_rooms = 1,
+            number_bathrooms = 1,
+            max_guest = 1,
+            price_by_night = 1,
+            latitude = 20.0,
+            longitude = 22.0
+        ))
 
-	def create_place_and_return_json(self, state_dictionary):
-		resp = self.create_place(state_dictionary)
-		jsonified = json.loads(resp.data)
-		return jsonified, resp.status_code
+        # missing name - should cuase bad request?
+        POST_request4 = self.app.post('/places', data=dict(
+            owner = 1,
+            city = 1,
+            name = "foo",
+            description = "foo description",
+            number_rooms = 1,
+            number_bathrooms = 1,
+            max_guest = 1,
+            price_by_night = 1,
+            latitude = 20.0,
+            longitude = 22.0
+        ))
 
-	def create_user_rows(self):
-		user_dict = {"first_name": "Jon", "last_name": "Snow", "email":"jon@snow.com", "password": "toto1234"}
-		resp = self.app.post('/users', data=user_dict)
-		return resp
+        # missing description - should cause bad request?
+        POST_request5 = self.app.post('/places', data=dict(
+            owner = 1,
+            city = 1,
+            name = "foo",
+            description = "foo description",
+            number_rooms = 1,
+            number_bathrooms = 1,
+            max_guest = 1,
+            price_by_night = 1,
+            latitude = 20.0,
+            longitude = 22.0
+        ))
 
-	def test_create(self):
-		self.create_state_rows()
-		self.create_city_rows()
-		self.create_user_rows()
-		
-		true_cases = [
-   			["testPlace", "", 4, 3, 8, 100, 2.0, 3.0, 1, 1],
-   			["anotherPlace", "another description", None, None, None, None, 2.0, 3.0, 1, 1],
-   		]
-   		keys=["name", "description", "number_rooms", "number_bathrooms", "max_guest", "price_by_night", "latitude", "longitude", "owner_id", "city_id"]
-   		
-   		count = 1
-   		for case in true_cases:
-   			place_dictionary = self.place_dict(*case)
-   			jsonified, status = self.create_place_and_return_json(place_dictionary)
-   
-   			#if case == true_cases[0]:
-   			for key, value in zip(keys, case):
-   				if value == None:
-   					key_value = 0
-   				else:
-   					key_value = value
-   				self.assertEqual(jsonified[key], key_value)
-   			self.assertEqual(jsonified['id'], count)
-   			count+=1
+        # missing number of rooms - should be OK due to default val of 0?
+        POST_request6 = self.app.post('/places', data=dict(
+            owner = 1,
+            city = 1,
+            name = "foo",
+            description = "foo description",
+            number_rooms = 1,
+            number_bathrooms = 1,
+            max_guest = 1,
+            price_by_night = 1,
+            latitude = 20.0,
+            longitude = 22.0
+        ))
 
+        # missing number of bathrooms - should be OK due to default val of 0?
+        POST_request7 = self.app.post('/places', data=dict(
+            owner = 1,
+            city = 1,
+            name = "foo",
+            description = "foo description",
+            number_rooms = 1,
+            number_bathrooms = 1,
+            max_guest = 1,
+            price_by_night = 1,
+            latitude = 20.0,
+            longitude = 22.0
+        ))
 
-   	def test_list(self):
-   		self.create_state_rows()
-		self.create_city_rows()
-		self.create_user_rows()
+        # missing max_guest - should be OK due to default val of 0?
+        POST_request8 = self.app.post('/places', data=dict(
+            owner = 1,
+            city = 1,
+            name = "foo",
+            description = "foo description",
+            number_rooms = 1,
+            number_bathrooms = 1,
+            max_guest = 1,
+            price_by_night = 1,
+            latitude = 20.0,
+            longitude = 22.0
+        ))
 
-		resp = self.app.get('/places')
-		jsonified = json.loads(resp.data)
-		self.assertEqual(len(jsonified), 0)
+        # missing price_by_night - should be OK due to default val of 0?
+        POST_request9 = self.app.post('/places', data=dict(
+            owner = 1,
+            city = 1,
+            name = "foo",
+            description = "foo description",
+            number_rooms = 1,
+            number_bathrooms = 1,
+            max_guest = 1,
+            price_by_night = 1,
+            latitude = 20.0,
+            longitude = 22.0
+        ))
 
-   		true_case =["testPlace", "this is a description", 4, 3, 8, 100, 2.0, 3.0, 1, 1]
-   			
-   		place_dictionary = self.place_dict(*true_case)
-   		jsonified, status = self.create_place_and_return_json(place_dictionary)
-   		
-   		resp = self.app.get('/places')
-		jsonified = json.loads(resp.data)
-		self.assertEqual(len(jsonified), 1)
+        # missing latitude - should cause bad request?
+        POST_request10 = self.app.post('/places', data=dict(
+            owner = 1,
+            city = 1,
+            name = "foo",
+            description = "foo description",
+            number_rooms = 1,
+            number_bathrooms = 1,
+            max_guest = 1,
+            price_by_night = 1,
+            latitude = 20.0,
+            longitude = 22.0
+        ))
 
-	def test_get(self):
-		self.create_state_rows()
-		self.create_city_rows()
-		self.create_user_rows()
+        # missing longitude - should cause bad request?
+        POST_request11 = self.app.post('/places', data=dict(
+            owner = 1,
+            city = 1,
+            name = "foo",
+            description = "foo description",
+            number_rooms = 1,
+            number_bathrooms = 1,
+            max_guest = 1,
+            price_by_night = 1,
+            latitude = 20.0,
+            longitude = 22.0
+        ))
 
-		true_case =["testPlace", "this is a description", 4, 3, 8, 100, 2.0, 3.0, 1, 1]
-   			
-   		place_dictionary = self.place_dict(*true_case)
-   		jsonified, status = self.create_place_and_return_json(place_dictionary)
+        for request in [POST_request2, POST_request3, POST_request4,
+                        POST_request5, POST_request10, POST_request11]:
+            self.assertEqual(request.status[:3], '400')
 
-   		resp = self.app.get('/places/1')
-		jsonified = json.loads(resp.data)
+        for request in [POST_request6, POST_request7, POST_request8,
+                        POST_request9]:
+            self.assertEqual(request.status[:3], '200')
 
-		self.assertEqual(resp.status_code, 200)
+    def test_create(self):
+        '''
+        test_create tests proper creation (or non-creation) of place records upon
+        POST requests to API
+        '''
+        # test creation of place with all parameters provided in POST request
+        self.subtest_createWithAllParams()
 
-		set_keys_place = ["name", "description", "number_rooms", "number_bathrooms", "max_guest", "price_by_night", "latitude", "longitude", "owner_id", "city_id"]
-		set_keys_base = ["created_at", "updated_at", "id"]
+        # test creation of place in all cases of a parameter missing in POST request
+        self.subtest_createWithoutAllParams()
 
-		self.assertEqual(set(jsonified), set(set_keys_place + set_keys_base))
-		
-		self.assertEqual(jsonified['id'], 1)
-		for key, value in zip(set_keys_place, true_case):
-   			if value == None:
-   				key_value = 0
-   			else:
-   				key_value = value
-   			self.assertEqual(jsonified[key], key_value)
+    def test_list(self):
+        '''
+        test_list tests proper representation of all place records upon GET
+        requests to API
+        '''
+        # delete and recreate Place table for test
+        Place.drop_table()
+        db.create_tables([Place], safe=True)
 
-   	def test_delete(self):
-   		self.create_state_rows()
-		self.create_city_rows()
-		self.create_user_rows()
+        GET_request1 = self.app.get('/places')
+        self.assertEqual(len(json.loads(GET_request1.data)), 0)
 
-		true_case =["testPlace", "this is a description", 4, 3, 8, 100, 2.0, 3.0, 1, 1]
-   			
-   		place_dictionary = self.place_dict(*true_case)
-   		jsonified, status = self.create_place_and_return_json(place_dictionary)
+        self.createPlaceViaPeewee()
 
-   		resp_before_del = self.app.get('/places')
-		jsonified_before_del = json.loads(resp_before_del.data)
+        GET_request2 = self.app.get('/places')
+        self.assertEqual(len(json.loads(GET_request2.data)), 1)
 
-		resp = self.app.delete('/places/1')
+    def test_get(self):
+        '''
+        test_get tests proper representation of a place record upon GET requests
+        via place ID to API
+        '''
+        # delete and recreate Place table for test
+        Place.drop_table()
+        db.create_tables([Place], safe=True)
 
-		resp_after_del = self.app.get('/places')
-		jsonified_after_del = json.loads(resp_after_del.data)
-		self.assertEqual(len(jsonified_before_del), 1)
-		self.assertEqual(len(jsonified_after_del), 0)
+        # test response of GET request for place by place id
+        self.createPlaceViaPeewee()
 
-		# testing non-existent delete
-		resp = self.app.delete('/places/100')
-		jsonified = json.loads(resp.data)
-		self.assertFalse("id" in jsonified.keys())
+        GET_request1 = self.app.get('/places/1')
+        GET_data = json.dumps(GET_request1.data)
+        self.assertEqual(GET_request1.status[:3], '200')
 
-	def test_update(self):
-		def update_place(id, update_dict):
-			resp = self.app.put('/places/%d' % id, data=update_dict)
-			jsonified = json.loads(resp.data)
-			return jsonified, resp.status_code
+        self.assertEqual(Place.get(Place.id == 1).email, GET_data[0]['owner'])
+        self.assertEqual(Place.get(Place.id == 1).password, GET_data[0]['city'])
+        self.assertEqual(Place.get(Place.id == 1).first_name, GET_data[0]['name'])
+        self.assertEqual(Place.get(Place.id == 1).description, GET_data[0]['description'])
+        self.assertEqual(Place.get(Place.id == 1).number_rooms, GET_data[0]['number_rooms'])
+        self.assertEqual(Place.get(Place.id == 1).number_bathrooms, GET_data[0]['number_bathrooms'])
+        self.assertEqual(Place.get(Place.id == 1).max_guest, GET_data[0]['max_guest'])
+        self.assertEqual(Place.get(Place.id == 1).price_by_night, GET_data[0]['price_by_night'])
+        self.assertEqual(Place.get(Place.id == 1).latitude, GET_data[0]['latitude'])
+        self.assertEqual(Place.get(Place.id == 1).longitude, GET_data[0]['longitude'])
+        self.assertEqual(Place.get(Place.id == 1).created_at, GET_data[0]['created_at'])
+        self.assertEqual(Place.get(Place.id == 1).updated_at, GET_data[0]['updated_at'])
 
-		self.create_state_rows()
-		self.create_city_rows()
-		self.create_user_rows()
+        # test response of GET request for place by place id which does not exist
+        GET_request2 = self.app.get('/places/1000')
+        self.assertEqual(GET_request2.status[:3], '404')
 
-		true_case =["testPlace", "this is a description", 4, 3, 8, 100, 2.0, 3.0, 1, 1]
-   			
-   		place_dictionary = self.place_dict(*true_case)
-   		jsonified, status = self.create_place_and_return_json(place_dictionary)
+    def test_delete(self):
+        '''
+        test_delete tests deletion of place records upon DELETE requests to API
+        '''
+        # delete and recreate Place table for test
+        Place.drop_table()
+        db.create_tables([Place], safe=True)
 
-   		update_values = [
-			["testPlace2"], 
-			[None, ""],
-			[None, None, 5], 
-			[None, None, None, 1], 
-			[None, None, None, None, 7], 
-			[None, None, None, None, None, 99], 
-			[None, None, None, None, None, None, 5.0], 
-			[None, None, None, None, None, None, None, 10.0],
-			[None, None, None, None, None, None, None, None, 2],
-			[None, None, None, None, None, None, None, None, None, 2],   
-		]
+        # test response of DELETE request for place by place id
+        self.createPlaceViaPeewee()
 
-		set_keys_place = ["name", "description", "number_rooms", "number_bathrooms", "max_guest", "price_by_night", "latitude", "longitude", "owner_id", "city_id"]
-		set_keys_base = ["created_at", "updated_at", "id"]
+        GET_request1 = self.app.get('/places')
 
-		for update_list,key in zip(update_values, set_keys_place):
-			update_dict = self.place_dict(*update_list)
-			jsonified, status = update_place(1, update_dict)
-			if key == "owner_id":
-				self.assertEqual(jsonified[key], place_dictionary[key])
-			elif key == "city_id":
-				self.assertEqual(jsonified[key], place_dictionary[key])
-			else:
-				self.assertEqual(jsonified[key], update_dict[key])
+        DELETE_request1 = self.app.delete('/places/1')
 
-		packaged_update_values = ["Placetest", "another description", 10, 6, 15, 102, 15.0, 26.0, 4, 4]
-		update_dict = self.place_dict(*packaged_update_values)
-		jsonified, status = update_place(1, update_dict)
-		for key in set_keys_place:
-			if key == "owner_id":
-				self.assertEqual(jsonified[key], place_dictionary[key])
-			elif key == "city_id":
-				self.assertEqual(jsonified[key], place_dictionary[key])
-			else:
-				self.assertEqual(jsonified[key], update_dict[key])
+        GET_request2 = self.app.get('/places')
 
-		# testing non-existent put request
-		jsonified, status = update_place(100, update_dict)
-		self.assertFalse("id" in jsonified.keys())
+        num_records_b4 = len(json.loads(GET_request1.data))
+        num_records_after = len(json.loads(GET_request2.data))
 
-	# route /states/<state_id>/cities/<city_id>/places
-	def create_place_by_place_city(self, state_id, city_id, update_dict):
-		resp = self.app.post('/states/%d/cities/%d/places' % (state_id, city_id), data=update_dict)
-		jsonified = json.loads(resp.data)
-		return jsonified, resp.status_code
+        self.assertEqual(DELETE_request1.status[:3], '200')
+        self.assertEqual(num_records_after, num_records_b4 - 1)
 
-	def test_create_second(self):
-		self.create_state_rows()
-		self.create_city_rows()
-		self.create_user_rows()
+        # test response of DELETE request for place by place id which does not exist
+        DELETE_request2 = self.app.delete('/places/1000')
+        self.assertEqual(DELETE_request2.status[:3], '404')
 
-		true_cases = [
-   			["testPlace", "", 4, 3, 8, 100, 2.0, 3.0, 1],
-   			#["anotherPlace", "another description", None, None, None, None, 2.0, 3.0, 1],
-   		]
-   		keys=["name", "description", "number_rooms", "number_bathrooms", "max_guest", "price_by_night", "latitude", "longitude", "owner_id"]
-   		
-   		count = 1
-   		for case in true_cases:
-   			place_dictionary = self.place_dict(*case)
-   			jsonified, status = self.create_place_by_place_city(1, 1, place_dictionary)
-   
-   			for key, value in zip(keys, case):
-   				if value == None:
-   					key_value = 0
-   				else:
-   					key_value = value
-   				self.assertEqual(jsonified[key], key_value)
-   			self.assertEqual(jsonified['id'], count)
-   			count+=1
+    def test_update(self):
+        '''
+        test_update tests update of place records upon PUT requests to API
+        '''
+        # delete and recreate Place table for test
+        Place.drop_table()
+        db.create_tables([Place], safe=True)
 
-   	# route /states/<state_id>/cities/<city_id>/places
-	def test_list_second(self):
-		self.create_state_rows()
-		self.create_city_rows()
-		self.create_user_rows()
+        self.createPlaceViaPeewee()
 
-		resp = self.app.get('/states/1/cities/1/places')
-		jsonified = json.loads(resp.data)
-		self.assertEqual(len(jsonified), 0)
+        PUT_request1 = self.app.put('/places/1', data=dict(
+            name = "foo-name2",
+            description = "foo description 2",
+            number_rooms = 2,
+            number_bathrooms = 2,
+            max_guest = 2,
+            price_by_night = 2,
+            latitude = 30.0,
+            longitude = 32.0
+        ))
+        self.assertEqual(PUT_request1.status[:3], '200')
 
-   		true_case = ["testPlace", "", 4, 3, 8, 100, 2.0, 3.0, 1]
-   			
-   		place_dictionary = self.place_dict(*true_case)
-   		jsonified, status = self.create_place_by_place_city(1, 1, place_dictionary)
-   		
-   		resp = self.app.get('/states/1/cities/1/places')
-		jsonified = json.loads(resp.data)
-		self.assertEqual(len(jsonified), 1)
+        self.assertEqual(Place.get(Place.id == 1).name, 'foo-name2')
+        self.assertEqual(Place.get(Place.id == 1).description, 'foo description 2')
+        self.assertEqual(Place.get(Place.id == 1).number_rooms, 2)
+        self.assertEqual(Place.get(Place.id == 1).number_bathrooms, 2)
+        self.assertEqual(Place.get(Place.id == 1).max_guest, 2)
+        self.assertEqual(Place.get(Place.id == 1).price_by_night, 2)
+        self.assertEqual(Place.get(Place.id == 1).latitude, 30.0)
+        self.assertEqual(Place.get(Place.id == 1).longitude, 32.0)
 
+        # test response of PUT request for place by place id which does not exist
+        PUT_request2 = self.app.put('/places/1000')
+        self.assertEqual(PUT_request2.status[:3], '404')
 
+    def test_createByCity(self):
+        '''
+        test_createByCity tests proper creation of a place record by city upon
+        POST request to API
+        '''
+        # delete and recreate Place table for test
+        Place.drop_table()
+        db.create_tables([Place], safe=True)
+
+        POST_request = self.app.post('/states/1/cities/1/places', data=dict(
+            owner = 1,
+            name = "foo",
+            description = "foo description",
+            number_rooms = 1,
+            number_bathrooms = 1,
+            max_guest = 1,
+            price_by_night = 1,
+            latitude = 20.0,
+            longitude = 22.0
+        ))
+
+        self.assertEqual(Place.get(Place.id == 1).city, 1)
+
+    def test_getByCity(self):
+        '''
+        test_getByCity tests proper representation of all place records by city
+        upon GET requests to API
+        '''
+        # delete and recreate Place table for test
+        Place.drop_table()
+        db.create_tables([Place], safe=True)
+
+        GET_request1 = self.app.get('/states/1/cities/1/places')
+        self.assertEqual(len(json.loads(GET_request1.data)), 0)
+
+        POST_request = self.app.post('/states/1/cities/1/places', data=dict(
+            owner = 1,
+            name = "foo",
+            description = "foo description",
+            number_rooms = 1,
+            number_bathrooms = 1,
+            max_guest = 1,
+            price_by_night = 1,
+            latitude = 20.0,
+            longitude = 22.0
+        ))
+
+        GET_request2 = self.app.get('/states/1/cities/1/places')
+        self.assertEqual(len(json.loads(GET_request2.data)), 1)
+
+        POST_request = self.app.post('/states/1/cities/2/places', data=dict(
+            owner = 1,
+            name = "foo",
+            description = "foo description",
+            number_rooms = 1,
+            number_bathrooms = 1,
+            max_guest = 1,
+            price_by_night = 1,
+            latitude = 20.0,
+            longitude = 22.0
+        ))
+
+        GET_request3 = self.app.get('/states/1/cities/1/places')
+        self.assertEqual(len(json.loads(GET_request3.data)), 1)

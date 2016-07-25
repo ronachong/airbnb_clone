@@ -1,209 +1,161 @@
+import unittest, logging
+import config
+import os
+import json
+
 from app import app
-from datetime import datetime
-import unittest, json, logging, itertools
-from app.models.base import db
 from app.models.amenity import Amenity
-from app.models.place_amenity import PlaceAmenities
-from app.models.place import Place
-from app.models.state import State
-from app.models.city import City
-from app.models.user import User
+from app.models.base import *
+from peewee import Model
+from datetime import datetime
 
-class AmenitiesTestCase(unittest.TestCase):
-	
-	def setUp(self):
-		self.app = app.test_client()
-		logging.disable(logging.CRITICAL)
-		db.create_tables([User, State, City, Place, Amenity, PlaceAmenities], safe = True)
+class placebookTestCase(unittest.TestCase):
+    def setUp(self):
+        '''
+        overloads def setUp(self): to create a test client of airbnb app, and
+        create Amenity in airbnb_test database
+        '''
+        self.app = app.test_client()
+        self.app.testing = True
+        logging.disable(logging.CRITICAL) # disable logs
 
-	def tearDown(self):
-		db.drop_table(PlaceAmenities)
-		db.drop_table(Place)
-		db.drop_table(City)
-		db.drop_table(State)
-		db.drop_table(User)
-		db.drop_table(Amenity)
-		
+        # connect to airbnb_test database and create Amenity table
+        db.connect()
+        db.create_tables([Amenity], safe=True)
 
-	def name_dict(self, name = None, place_id = None, amenity_id = None):
-		values = {}
-		if name != None:
-			values['name'] = name
-		if place_id != None:
-			values['place_id'] = place_id
-		if amenity_id != None:
-			values['amenity_id'] = amenity_id
-		return values
+    def tearDown(self):
+        '''
+        tearDown removes Amenity from airbnb_test database upon completion of test
+        case
+        '''
+        Amenity.drop_table()
 
-	def create_state(self, state_dict):
-		return self.app.post('/states', data=state_dict)
+    def createAmenityViaPeewee(self):
+        '''
+        createAmenityViaPeewee creates an amenity record using the API's database/Peewee
+        models, and returns the Peewee object for the record. This method will
+        not work if the database models are not written correctly.
+        '''
+        record = Amenity(name= 'amenity_name')
+        record.save()
+        return record
 
-	def create_state_and_return_json(self, state_dictionary):
-		resp = self.create_state(state_dictionary)
-		jsonified = json.loads(resp.data)
-		return jsonified, resp.status_code
+    def createAmenityViaAPI(self):
+        '''
+        createAmenityViaAPI creates a user record through a POST request to the API
+        and returns the Flask response object for the request. This method will
+        not work if the POST request handler is not written properly.
+        '''
+        POST_request = self.app.post('/places/1/books', data=dict(
+            name= 'amenity_name'
+        ))
+        return POST_request
 
-	def create_city(self, id, state_dict):
-		return self.app.post('/states/%d/cities' % id, data=state_dict)
+    def subtest_createWithAllParams(self):
+        '''
+        subtest_createWithAllParams tests proper creation of a user record upon
+        a POST request to the API with all parameters provided.
+        '''
+        POST_request1 = self.createAmenityViaAPI()
+        self.assertEqual(POST_request1.status[:3], '200')
 
-	def create_city_and_return_json(self, id, state_dictionary):
-		resp = self.create_city(id, state_dictionary)
-		jsonified = json.loads(resp.data)
-		return jsonified, resp.status_code
+        now = datetime.now().strftime('%d/%m/%Y %H:%M')
 
-	def create_state_rows(self):
-		state_dictionary = self.name_dict("Ohio")
-		jsonified, status = self.create_state_and_return_json(state_dictionary)
-		state_dictionary = self.name_dict("Florida")
-		jsonified, status = self.create_state_and_return_json(state_dictionary)
+        self.assertEqual(Amenity.get(Amenity.id == 1).name, 'amenity_name')
+        self.assertEqual(Amenity.get(Amenity.id == 1).created_at[:-3], now)
+        self.assertEqual(Amenity.get(Amenity.id == 1).updated_at[:-3], now)
 
-	def create_city_rows(self):
-		city_dictionary = self.name_dict("Toledo")
-		jsonified, status = self.create_city_and_return_json(1, city_dictionary)
-		city_dictionary = self.name_dict("TestCity")
-		jsonified, status = self.create_city_and_return_json(2, city_dictionary)
+        # test that placebook ID for sole record in database is correct
+        self.assertEqual(Amenity.select().get().id, 1)
 
-	def place_dict(self, name = None, description = None, number_rooms = None, number_bathrooms = None, max_guest = None, price_by_night = None, latitude = None, longitude = None, owner_id = None, city_id = None):
-		values = {}
-		if name != None:
-			values['name'] = name
-		if description != None:
-			values['description'] = description
-		if number_rooms != None:
-			values['number_rooms'] = number_rooms
-		if number_bathrooms != None:
-			values['number_bathrooms'] = number_bathrooms
-		if max_guest != None:
-			values['max_guest'] = max_guest
-		if price_by_night != None:
-			values['price_by_night'] = price_by_night
-		if latitude != None:
-			values['latitude'] = latitude
-		if longitude != None:
-			values['longitude'] = longitude
-		if owner_id != None:
-			values['owner_id'] = owner_id
-		if city_id != None:
-			values['city_id'] = city_id
-		return values
+    def subtest_createWithoutAllParams(self):
+        '''
+        subtest_createWithoutAllParams tests proper non-creation of a amenity in
+        all cases of a parameter missing in a POST request to the API.
+        '''
+        # name missing - request should fail due to no default value
+        POST_request2 = self.app.post('/amenities', data=dict())
 
-	def create_place(self, state_dictionary):
-		return self.app.post('/places', data=state_dictionary)
+        self.assertEqual(POST_request2.status[:3], '400')
 
-	def create_place_and_return_json(self, state_dictionary):
-		resp = self.create_place(state_dictionary)
-		jsonified = json.loads(resp.data)
-		return jsonified, resp.status_code
+    def test_create(self):
+        '''
+        test_create tests proper creation (or non-creation) of amenity records upon
+        POST requests to API
+        '''
+        # test creation of amenity with all parameters provided in POST request
+        self.subtest_createWithAllParams()
 
-	def create_user_rows(self):
-		user_dict = {"first_name": "Jon", "last_name": "Snow", "email":"jon@snow.com", "password": "toto1234"}
-		resp = self.app.post('/users', data=user_dict)
-		return resp
+        # test creation of amenity in all cases of a parameter missing in POST request
+        self.subtest_createWithoutAllParams()
 
-	def create_amenity(self, state_dict):
-		return self.app.post('/amenities', data=state_dict)
+    def test_list(self):
+        '''
+        test_list tests proper representation of all amenity records upon GET
+        requests to API
+        '''
+        # delete and recreate Amenity table for test
+        Amenity.drop_table()
+        db.create_tables([Amenity], safe=True)
 
-	def create_amenity_and_return_json(self, amenity_dictionary):
-		resp = self.create_amenity(amenity_dictionary)
-		jsonified = json.loads(resp.data)
-		return jsonified, resp.status_code
+        GET_request1 = self.app.get('/amenities')
+        self.assertEqual(len(json.loads(GET_request1.data)), 0)
 
-	def create_place_rows(self):
-		true_case =["testPlace", "this is a description", 4, 3, 8, 100, 2.0, 3.0, 1, 1]		
-   		place_dictionary = self.place_dict(*true_case)
-   		jsonified, status = self.create_place_and_return_json(place_dictionary)
-   		return jsonified, status
+        self.createAmenityViaPeewee()
 
-	def test_create(self):
-		self.create_state_rows()
-		self.create_city_rows()
-		self.create_user_rows()
-		self.create_place_rows()
-		cases = ["Feature", "Feature", None]
-		count = 1
-		for case in cases:
-			amenity_dictionary = self.name_dict(case)
-			jsonified, status = self.create_amenity_and_return_json(amenity_dictionary)
-			
-			if count == 2:
-				self.assertEqual(jsonified['code'], 10003)
-			elif case == cases[0]:
-				self.assertEqual(jsonified['name'], case)
-				self.assertEqual(jsonified['id'], count)
-			else:
-				self.assertFalse("id" in jsonified.keys())
-			count+=1
+        GET_request2 = self.app.get('/amenities')
+        self.assertEqual(len(json.loads(GET_request2.data)), 1)
 
-		# cases = [None, 1, 1]
+        # could also test to make sure records returned only belong to respect-
+        # ive place
 
-		# PlaceAmenities_dict = {
-		# 	"place_id": 1,
-		# 	"amenity_id": 1,
-		# }
+    def test_get(self):
+        '''
+        test_get tests proper representation of a amenity record upon GET requests
+        via book ID to API
+        '''
+        # delete and recreate Amenity table for test
+        Amenity.drop_table()
+        db.create_tables([Amenity], safe=True)
 
-		# amenity_dictionary = self.name_dict(*cases)
-		
-		# jsonified, status = self.create_amenity_and_return_json(amenity_dictionary)
+        # test response of GET request for placebook by placebook id
+        self.createAmenityViaPeewee()
 
-		# resp = self.app.get('/places/1/amenities')
-		# print resp.data
+        GET_request1 = self.app.get('/amenities/1')
+        GET_data = json.dumps(GET_request1.data)
+        self.assertEqual(GET_request1.status[:3], '200')
 
-	def test_list(self):
-		def get_amenities():
-			return self.app.get('/amenities')
+        self.assertEqual(Amenity.get(Amenity.id == 1).amenity, GET_data[0]['amenity_name'])
+        self.assertEqual(Amenity.get(Amenity.id == 1).created_at, GET_data[0]['created_at'])
+        self.assertEqual(Amenity.get(Amenity.id == 1).updated_at, GET_data[0]['updated_at'])
 
-		resp = get_amenities()
-		jsonified = json.loads(resp.data)
-		self.assertEqual(len(jsonified), 0)
-		amenity_dictionary = self.name_dict("testing")
-		jsonified, status = self.create_amenity_and_return_json(amenity_dictionary)
-		resp = get_amenities()
-		jsonified = json.loads(resp.data)
-		self.assertEqual(len(jsonified), 1)		
+        # test response of GET request for booking by booking id which does not exist
+        GET_request2 = self.app.get('/amenities/1000')
+        self.assertEqual(GET_request2.status[:3], '404')
 
-	def test_delete(self):
-		def get_amenities():
-			return self.app.get('/amenities')
+    def test_delete(self):
+        '''
+        test_delete tests deletion of amenity records upon DELETE requests to API
+        '''
+        # delete and recreate Amenity table for test
+        Amenity.drop_table()
+        db.create_tables([Amenity], safe=True)
 
-		amenity_dictionary = self.name_dict("testing")
-		jsonified, status = self.create_amenity_and_return_json(amenity_dictionary)
-		resp_before_del = get_amenities()
-		jsonified_before_del = json.loads(resp_before_del.data)
-		resp = self.app.delete('/amenities/1')
-		self.assertEqual(resp.status_code, 200)
-		resp_after_del = get_amenities()
-		jsonified_after_del = json.loads(resp_after_del.data)
-		self.assertEqual(len(jsonified_before_del), 1)
-		self.assertEqual(len(jsonified_after_del), 0)
+        # test response of DELETE request for amenity by amenity id
+        self.createAmenityViaPeewee()
 
-		# testing non-existent delete
-		resp = self.app.delete('/amenities/100')
-		jsonified = json.loads(resp.data)
-		self.assertFalse("id" in jsonified.keys())
+        GET_request1 = self.app.get('/amenities')
 
-	def test_get_second(self):
-		def get_amenities(place_id):
-			return self.app.get('/places/%d/amenities' % place_id)
+        DELETE_request1 = self.app.delete('/menities')
 
-		self.create_state_rows()
-		self.create_city_rows()
-		self.create_user_rows()
-		self.create_place_rows()
-		amenity_dictionary = self.name_dict("testing")
-		jsonified, status = self.create_amenity_and_return_json(amenity_dictionary)
+        GET_request2 = self.app.get('/amenities')
 
-		resp = get_amenities(1)
-		jsonified = json.loads(resp.data)
-		self.assertEqual(len(jsonified), 0)
-		
-		cases = [None, 1, 1]
-		amenity_dictionary = self.name_dict(*cases)
-		jsonified, status = self.create_amenity_and_return_json(amenity_dictionary)
+        num_records_b4 = len(json.loads(GET_request1.data))
+        num_records_after = len(json.loads(GET_request2.data))
 
-		resp = get_amenities(1)
-		jsonified = json.loads(resp.data)
-		self.assertEqual(len(jsonified), 1)	
+        self.assertEqual(DELETE_request1.status[:3], '200')
+        self.assertEqual(num_records_after, num_records_b4 - 1)
 
-
-
-
+        # test response of DELETE request for amenity by amenity id which does not exist
+        DELETE_request2 = self.app.delete('/amenities/1000')
+        self.assertEqual(DELETE_request2.status[:3], '404')

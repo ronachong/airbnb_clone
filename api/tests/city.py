@@ -1,121 +1,128 @@
+import unittest, logging
+import config
+import os
+import json
+
 from app import app
-from datetime import datetime
-import unittest, json, logging, itertools
-from app.models.base import db
-from app.models.state import State
 from app.models.city import City
+from app.models.state import State
+from app.models.base import *
+from peewee import Model
+from datetime import datetime
 
-class CityTestCase(unittest.TestCase):
-	
-	def setUp(self):
-		self.app = app.test_client()
-		logging.disable(logging.CRITICAL)
-		db.create_tables([State, City], safe = True)
+class cityTestCase(unittest.TestCase):
+    def setUp(self):
+        '''overload def setUp(self): to create a test client of airbnb app, and create City
+        in airbnb_test database'''
+        self.app = app.test_client()
+        #self.app.testing = True
+        logging.disable(logging.CRITICAL) # disable logs
 
-	def tearDown(self):
-		db.drop_table(City)
-		db.drop_table(State)
+        db.connect()
+        db.create_tables([City, State], safe=True)
+        State(name='namestring')
 
-	def name_dict(self, name = None):
-		values = {}
-		if name != None:
-			values['name'] = name
-		return values
 
-	def create_state(self, state_dict):
-		return self.app.post('/states', data=state_dict)
+    def tearDown(self):
+        '''remove City from airbnb_test database upon completion of test case'''
+        City.drop_table()
+        State.drop_table()
 
-	def create_state_and_return_json(self, state_dictionary):
-		resp = self.create_state(state_dictionary)
-		jsonified = json.loads(resp.data)
-		return jsonified, resp.status_code
+    def test_create(self):
+        '''test proper creation (or non-creation) of city records upon POST requests to API'''
+        # test creation of city with all parameters provided in POST request
+        POST_request1 = self.app.post('/states/1/cities', data=dict(
+            name='namestring'
+        ))
 
-	def create_city(self, id, state_dict):
-		return self.app.post('/states/%d/cities' % id, data=state_dict)
+        print POST_request1.status
+        print POST_request1.data
 
-	def create_city_and_return_json(self, id, state_dictionary):
-		resp = self.create_city(id, state_dictionary)
-		jsonified = json.loads(resp.data)
-		return jsonified, resp.status_code
+        now = datetime.now().strftime('%d/%m/%Y %H:%M')
 
-	def create_state_rows(self):
-		state_dictionary = self.name_dict("Ohio")
-		jsonified, status = self.create_state_and_return_json(state_dictionary)
-		state_dictionary = self.name_dict("Florida")
-		jsonified, status = self.create_state_and_return_json(state_dictionary)
+        self.assertEqual(City.get(City.id == 1).name, 'namestring')
+        self.assertEqual(City.get(City.id == 1).state, 1)
+        self.assertEqual(City.get(City.id == 1).created_at[:-3], now)
+        self.assertEqual(City.get(City.id == 1).updated_at[:-3], now)
 
-	def test_create(self):
-		self.create_state_rows()
-		cases = ["Toledo", "Toledo", None]
-		count = 1
-		for case in cases:
-			city_dictionary = self.name_dict(case)
-			jsonified, status = self.create_city_and_return_json(1, city_dictionary)
-			
-			if count == 2:
-				self.assertEqual(jsonified['code'], 10002)
-			elif case == cases[0]:
-				self.assertEqual(jsonified['name'], case)
-				self.assertEqual(jsonified['id'], count)
-			else:
-				self.assertFalse("id" in jsonified.keys())
-			count+=1
+        # test creation of city in all cases of a parameter missing in POST request
+        POST_request2 = self.app.post('/states/1/cities', data=dict())
+        self.assertEqual(POST_request2.status[:3], '400')
 
-	def test_list(self):
-		self.create_state_rows()
+        # test that city ID for sole record in database is correct
+        self.assertEqual(City.select().get().id, 1)
 
-		resp = self.app.get('/states/1/cities')
-		jsonified = json.loads(resp.data)
-		self.assertEqual(len(jsonified), 0)
-		city_dictionary = self.name_dict("Toledo")
-		jsonified, status = self.create_city_and_return_json(1, city_dictionary)
-		resp = self.app.get('/states/1/cities')
-		jsonified = json.loads(resp.data)
-		self.assertEqual(len(jsonified), 1)
+        # test that a post request with a duplicate name value is rejected
+        POST_request3 = self.app.post('/states/1/cities', data=dict(
+            name='namestring'
+        ))
 
-		resp = self.app.get('/states/2/cities')
-		jsonified = json.loads(resp.data)
-		self.assertEqual(len(jsonified), 0)
-		city_dictionary = self.name_dict("TestCity")
-		jsonified, status = self.create_city_and_return_json(2, city_dictionary)
-		resp = self.app.get('/states/2/cities')
-		jsonified = json.loads(resp.data)
-		self.assertEqual(len(jsonified), 1)
+        self.assertEqual(POST_request6.status[:3], '409')
+        self.assertEqual(POST_request6.data, json.dumps({'code': 10002, 'msg': 'City already exists in this state'}))
 
-	def test_get(self):
-		self.create_state_rows()
-		name = "Toledo"
-		city_dictionary = self.name_dict(name)
-		jsonified, status = self.create_city_and_return_json(1, city_dictionary)
-		resp = self.app.get('/states/1/cities/1')
-		jsonified = json.loads(resp.data)
-		self.assertEqual(resp.status_code, 200)
-		set_keys_state = ["name", "state_id"]
-		set_keys_base = ["created_at", "updated_at", "id"]
-		self.assertEqual(set(jsonified), set(set_keys_state + set_keys_base))
-		self.assertEqual(jsonified['name'], name)
+    def test_list(self):
+        '''test proper representation of all city records upon GET requests to API'''
+        # delete and recreate City table for test
+        City.drop_table()
+        db.create_tables([City], safe=True)
 
-		# check for non-existing city
-		resp = self.app.get('/states/1/cities/100')
-		jsonified = json.loads(resp.data)
-		self.assertFalse("id" in jsonified.keys())
+        GET_request1 = self.app.get('/states/1/cities')
+        self.assertEqual(len(json.loads(GET_request1.data)), 0)
 
-	def test_delete(self):
-		self.create_state_rows()
+        POST_request1 = self.app.post('/states/1/cities', data=dict(
+            name='namestring'
+        ))
 
-		name = "Toledo"
-		city_dictionary = self.name_dict(name)
-		jsonified, status = self.create_city_and_return_json(1, city_dictionary)
-		resp_before_del = self.app.get('/states/1/cities')
-		jsonified_before_del = json.loads(resp_before_del.data)
-		resp = self.app.delete('/states/1/cities/1')
-		self.assertEqual(resp.status_code, 200)
-		resp_after_del = self.app.get('/states/1/cities')
-		jsonified_after_del = json.loads(resp_after_del.data)
-		self.assertEqual(len(jsonified_before_del), 1)
-		self.assertEqual(len(jsonified_after_del), 0)
+        GET_request2 = self.app.get('/states/1/cities')
+        self.assertEqual(len(json.loads(GET_request2.data)), 1)
 
-		# testing non-existent delete
-		resp = self.app.delete('/states/1/cities/100')
-		jsonified = json.loads(resp.data)
-		self.assertFalse("id" in jsonified.keys())
+    def test_get(self):
+        '''test proper representation of a city record upon GET requests via city ID to API'''
+        # delete and recreate City table for test
+        City.drop_table()
+        db.create_tables([City], safe=True)
+
+        # test response of GET request for state by state id
+        POST_request1 = self.app.post('/states/1/cities', data=dict(
+            name='namestring'
+        ))
+
+        GET_request1 = self.app.get('/states/1/cities/1')
+        GET_data = json.dumps(GET_request1.data)
+        self.assertEqual(GET_request.status[:3], '200')
+
+        self.assertEqual(City.get(City.id == 1).name, GET_data[0]['name'])
+        self.assertEqual(City.get(City.id == 1).state, GET_data[0]['state'])
+        self.assertEqual(City.get(City.id == 1).created_at[:-3], now)
+        self.assertEqual(City.get(City.id == 1).updated_at[:-3], now)
+
+        # test response of GET request for city by city id which does not exist
+        GET_request2 = self.app.get('/states/1/cities/1000')
+        self.assertEqual(GET_request2.status[:3], '404')
+
+    def test_delete(self):
+        '''test deletion of city records upon DELETE requests to API'''
+        # delete and recreate City table for test
+        City.drop_table()
+        db.create_tables([City], safe=True)
+
+        # test response of DELETE request for city by city id
+        POST_request1 = self.app.post('/states/1/cities', data=dict(
+            name='namestring'
+        ))
+
+        GET_request1 = self.app.get('/states/1/cities')
+
+        DELETE_request1 = self.app.delete('/states/1/cities/1')
+
+        GET_request2 = self.app.get('/states/1/cities')
+
+        num_records_b4 = len(json.loads(GET_request1.data))
+        num_records_after = len(json.loads(GET_request2.data))
+
+        self.assertEqual(DELETE_request1.status[:3], '200')
+        self.assertEqual(num_records_after, num_records_b4 - 1)
+
+        # test response of DELETE request for city by city id which does not exist
+        DELETE_request2 = self.app.delete('/states/1/cities/1000')
+        self.assertEqual(DELETE_request2.status[:3], '404')

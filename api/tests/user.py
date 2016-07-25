@@ -1,165 +1,234 @@
+import unittest, logging
+import config
+import os
+import json
+
 from app import app
-from datetime import datetime
-import unittest, json, logging, itertools
-from app.models.base import db
 from app.models.user import User
+from app.models.base import *
+from peewee import Model
+from datetime import datetime
 
-class UserTestCase(unittest.TestCase):
-	def setUp(self):
-		self.app = app.test_client()
-		logging.disable(logging.CRITICAL)
-		db.create_tables([User], safe = True)
+class userTestCase(unittest.TestCase):
+    def setUp(self):
+        '''
+        overloads def setUp(self): to create a test client of airbnb app, and
+        create User in airbnb_test database
+        '''
+        self.app = app.test_client()
+        self.app.testing = True
+        logging.disable(logging.CRITICAL) # disable logs
 
-	def tearDown(self):
-		db.drop_table(User)
+        # connect to airbnb_test database and create User table
+        db.connect()
+        db.create_tables([User], safe=True)
 
-	def user_dict(self, first_name = None, last_name = None, email = None, password = None, is_admin = None):
-		values = {}
-		if first_name != None:
-			values['first_name'] = first_name
-		if last_name != None:
-			values['last_name'] = last_name
-		if email != None:
-			values['email'] = email
-		if is_admin != None:
-			values['is_admin'] = is_admin
-		if password != None:
-			values['password'] = password
-		return values
+    def tearDown(self):
+        '''
+        tearDown removes User from airbnb_test database upon completion of test
+        case
+        '''
+        User.drop_table()
 
-	def create_user(self, user_dict):
-		return self.app.post('/users', data=user_dict)
+    def createUserViaPeewee(self):
+        '''
+        createUserViaPeewee creates a user record using the API's database/Peewee
+        models, and returns the Peewee object for the record. This method will
+        not work if the database models are not written correctly.
+        '''
+        record = User(  email='anystring',
+                        password='anystring1',
+                        first_name='anystring2',
+                        last_name='anystring3'  )
+        record.save()
+        return record
 
-	def test_create(self):
-   		true_cases = [
-   			["Jon", "Snow", "jon@snow.com", "toto1234", True],
-   			["Arya", "Stark", "arya@stark.com", "1122334a"]
-   		]
+    def createUserViaAPI(self):
+        '''
+        createUserViaAPI creates a user record through a POST request to the API
+        and returns the Flask response object for the request. This method will
+        not work if the POST request handler is not written properly.
+        '''
+        POST_request = self.app.post('/users', data=dict(
+            email='anystring',
+            password='anystring1',
+            first_name='anystring2',
+            last_name='anystring3'
+        ))
+        return POST_request
 
-   		false_cases = [
-   			[['Jon',], ['Snow',], ['jon@snow.com',], ['toto1234',], [True,]],
-			[['Jon', 'Snow'], ['Jon', 'jon@snow.com'], ['Jon', 'toto1234'], ['Jon', True], ['Snow', 'jon@snow.com'], ['Snow', 'toto1234'], ['Snow', True], ['jon@snow.com', 'toto1234'], ['jon@snow.com', True], ['toto1234', True]],
-			[['Jon', 'Snow', 'jon@snow.com'], ['Jon', 'Snow', 'toto1234'], ['Jon', 'Snow', True], ['Jon', 'jon@snow.com', 'toto1234'], ['Jon', 'jon@snow.com', True], ['Jon', 'toto1234', True], ['Snow', 'jon@snow.com', 'toto1234'], ['Snow', 'jon@snow.com', True], ['Snow', 'toto1234', True], ['jon@snow.com', 'toto1234', True]],
-			[['Jon', 'Snow', 'jon@snow.com', True], ['Jon', 'Snow', 'toto1234', True], ['Jon', 'jon@snow.com', 'toto1234', True], ['Snow', 'jon@snow.com', 'toto1234', True]],
-		]
+    def subtest_createWithAllParams(self):
+        '''
+        subtest_createWithAllParams tests proper creation of a user record upon
+        a POST request to the API with all parameters provided.
+        '''
+        POST_request1 = self.createUserViaAPI()
+        self.assertEqual(POST_request1.status[:3], '200')
 
-		duplicate_email_case = ["Jon", "Snow", "jon@snow.com", "toto1234", True]
-		id_count = 1
-		for data_set in true_cases:
-			user_dictionary = self.user_dict(*data_set)
-			resp = self.create_user(user_dictionary)
-			jsonified = json.loads(resp.data)
-			self.assertEqual(jsonified['id'], id_count)
-			if len(data_set) == 4:
-				self.assertEqual(jsonified['is_admin'], False)
-			id_count+=1
+        now = datetime.now().strftime('%d/%m/%Y %H:%M')
 
-		user_dictionary = self.user_dict(*duplicate_email_case)
-		resp = self.create_user(user_dictionary)
-		jsonified = json.loads(resp.data)
-		self.assertEqual(jsonified['code'], 10000)
-		# might need to check error status
-		'''for data_set in false_cases:
-			key = False
-			user_dictionary = self.user_dict(*data_set)
-			resp = self.create_user(user_dictionary)
-			jsonified = json.loads(resp.data)
-			self.assertEqual(jsonified['id'], id_count)
-			id_count+=1'''
+        self.assertEqual(User.get(User.id == 1).email, 'anystring')
+        self.assertEqual(User.get(User.id == 1).password, 'anystring1')
+        self.assertEqual(User.get(User.id == 1).first_name, 'anystring2')
+        self.assertEqual(User.get(User.id == 1).last_name, 'anystring3')
+        self.assertEqual(User.get(User.id == 1).created_at[:-3], now)
+        self.assertEqual(User.get(User.id == 1).updated_at[:-3], now)
+        self.assertEqual(User.get(User.id == 1).is_admin, False)
 
-	def test_list(self):
-		resp = self.app.get('/users')
-		jsonified = json.loads(resp.data)
-		self.assertEqual(len(jsonified), 0)
-			
-		true_case = ["Jon", "Snow", "jon@snow.com", "toto1234", True]
-		user_dictionary = self.user_dict(*true_case)
-		resp = self.create_user(user_dictionary)
-		#jsonified = json.loads(resp.data)
-		#self.assertEqual(len(jsonified), 7)
-		
-		resp = self.app.get('/users')
-		jsonified = json.loads(resp.data)
-		self.assertEqual(len(jsonified), 1)
+    def subtest_createWithoutAllParams(self):
+        '''
+        subtest_createWithoutAllParams tests proper non-creation of a user in
+        all cases of a parameter missing in a POST request to the API.
+        '''
+        POST_request2 = self.app.post('/users', data=dict(
+            password='anystring1',
+            first_name='anystring2',
+            last_name='anystring3'
+        ))
 
-	def test_get(self):
-		true_case = ["Jon", "Snow", "jon@snow.com", "toto1234", True]
-		set_keys_user = ["first_name", "last_name", "email", "is_admin"]
-		set_keys_base = ["created_at", "updated_at", "id"]
-		user_dictionary = self.user_dict(*true_case)
-		self.create_user(user_dictionary)
-		resp = self.app.get('/users/1')
-		self.assertEqual(resp.status_code, 200)
-		jsonified = json.loads(resp.data)
-		self.assertEqual(set(jsonified), set(set_keys_user + set_keys_base))
-		true_case.remove("toto1234")
-		for key, value in zip(set_keys_user, true_case):
-			self.assertEqual(jsonified[key], value)
+        POST_request3 = self.app.post('/users', data=dict(
+            email='anystring10',
+            first_name='anystring2',
+            last_name='anystring3'
+        ))
 
-		# check for non-existing user
-		resp = self.app.get('/users/100')
-		jsonified = json.loads(resp.data)
-		self.assertFalse("id" in jsonified.keys())
+        POST_request4 = self.app.post('/users', data=dict(
+            email='anystring100',
+            password='anystring2',
+            last_name='anystring3'
+        ))
 
-	def test_delete(self):
-		true_case = ["Jon", "Snow", "jon@snow.com", "toto1234", True]
-		user_dictionary = self.user_dict(*true_case)
-		self.create_user(user_dictionary)
-		resp_before_del = self.app.get('/users')
-		jsonified_before_del = json.loads(resp_before_del.data)
-		resp = self.app.delete('/users/1')
-		self.assertEqual(resp.status_code, 200)
-		resp_after_del = self.app.get('/users')
-		jsonified_after_del = json.loads(resp_after_del.data)
-		self.assertEqual(len(jsonified_before_del), 1)
-		self.assertEqual(len(jsonified_after_del), 0)
+        POST_request5 = self.app.post('/users', data=dict(
+            email='anystring1000',
+            password='anystring2',
+            first_name='anystring3'
+        ))
 
-		# testing non-existent delete
-		resp = self.app.delete('/users/100')
-		jsonified = json.loads(resp.data)
-		self.assertFalse("id" in jsonified.keys())
+        for request in [POST_request2, POST_request3, POST_request4, POST_request5]:
+            self.assertEqual(request.status[:3], '400')
 
-	def test_update(self):
-		#def update_user(id, update_dict):
-		#	return self.app.put('/users/%d' % id, data=update_dict)
+    def test_create(self):
+        '''
+        test_create tests proper creation (or non-creation) of user records upon
+        POST requests to API
+        '''
+        # test creation of user with all parameters provided in POST request
+        self.subtest_createWithAllParams()
 
-		def update_user(id, update_dict):
-			resp = self.app.put('/users/%d' % id, data=update_dict)
-			jsonified = json.loads(resp.data)
-			return jsonified, resp.status_code
-		
-		true_case = ["Jon", "Snow", "jon@snow.com", "toto1234", True]
-		user_dictionary = self.user_dict(*true_case)
-		self.create_user(user_dictionary)
-		update_values = [
-			["Arya"], [None, "Stark"], [None, None, "arya@stark.com"], [None, None, None, "newpassword"], [None, None, None, None, False],
-			#["Cercei", "Lynnister"],
-			#["Sansa", "S.", "sansa@stark.com"],
-			#["Neo", "Anderson", "neo@matrix.com", "onepassword"],
-			#["James", "Cole", "james@cole.com", "12password", True],
-		]
-		set_keys_user = ["first_name", "last_name", "email", "password", "is_admin"]
-		for update_list,key in zip(update_values, set_keys_user):
-			update_dict = self.user_dict(*update_list)
-			jsonified, status = update_user(1, update_dict)
-			if key == "email":
-				self.assertEqual(jsonified[key], user_dictionary[key])
-			elif key == "password":
-				self.assertEqual(status, 200)
-			else:
-				self.assertEqual(jsonified[key], update_dict[key])
+        # test creation of user in all cases of a parameter missing in POST request
+        self.subtest_createWithoutAllParams()
 
-		packaged_update_values = ["James", "Cole", "james@cole.com", "12password", True]
-		update_dict = self.user_dict(*packaged_update_values)
-		jsonified, status = update_user(1, update_dict)
-		for key in set_keys_user:
-			if key == "email":
-				self.assertEqual(jsonified[key], user_dictionary[key])
-			elif key == "password":
-				self.assertEqual(status, 200)
-			else:
-				self.assertEqual(jsonified[key], update_dict[key])
+        # test that user ID for sole record in database is correct
+        self.assertEqual(User.select().get().id, 1)
 
-		# testing non-existent put request
-		jsonified, status = update_user(100, update_dict)
-		self.assertFalse("id" in jsonified.keys())
+        # test that a post request with a duplicate email value is rejected
+        POST_request6 = self.app.post('/users', data=dict(
+            email='anystring1',
+            password='anystring1',
+            first_name='anystring2',
+            last_name='anystring3'
+        ))
+
+        self.assertEqual(POST_request6.status[:3], '409')
+        self.assertEqual(POST_request6.data, json.dumps(
+            {'code': 10000, 'msg': 'Email already exists'}
+        ))
+
+    def test_list(self):
+        '''
+        test_list tests proper representation of all user records upon GET
+        requests to API
+        '''
+        # delete and recreate User table for test
+        User.drop_table()
+        db.create_tables([User], safe=True)
+
+        GET_request1 = self.app.get('/users')
+        self.assertEqual(len(json.loads(GET_request1.data)), 0)
+
+        self.createUserViaPeewee()
+
+        GET_request2 = self.app.get('/users')
+        self.assertEqual(len(json.loads(GET_request2.data)), 1)
+
+    def test_get(self):
+        '''
+        test_get tests proper representation of a user record upon GET requests
+        via user ID to API
+        '''
+        # delete and recreate User table for test
+        User.drop_table()
+        db.create_tables([User], safe=True)
+
+        # test response of GET request for user by user id
+        self.createUserViaPeewee()
+
+        GET_request1 = self.app.get('/users/1')
+        GET_data = json.dumps(GET_request1.data)
+        self.assertEqual(GET_request1.status[:3], '200')
+
+        self.assertEqual(User.get(User.id == 1).email, GET_data[0]['email'])
+        self.assertEqual(User.get(User.id == 1).password, GET_data[0]['password'])
+        self.assertEqual(User.get(User.id == 1).first_name, GET_data[0]['first_name'])
+        self.assertEqual(User.get(User.id == 1).last_name, GET_data[0]['last_name'])
+        self.assertEqual(User.get(User.id == 1).created_at, GET_data[0]['created_at'])
+        self.assertEqual(User.get(User.id == 1).updated_at, GET_data[0]['updated_at'])
+        self.assertEqual(User.get(User.id == 1).is_admin, GET_data[0]['is_admin'])
+
+        # test response of GET request for user by user id which does not exist
+        GET_request2 = self.app.get('/users/1000')
+        self.assertEqual(GET_request2.status[:3], '404')
+
+    def test_delete(self):
+        '''
+        test_delete tests deletion of user records upon DELETE requests to API
+        '''
+        # delete and recreate User table for test
+        User.drop_table()
+        db.create_tables([User], safe=True)
+
+        # test response of DELETE request for user by user id
+        self.createUserViaPeewee()
+
+        GET_request1 = self.app.get('/users')
+
+        DELETE_request1 = self.app.delete('/users/1')
+
+        GET_request2 = self.app.get('/users')
+
+        num_records_b4 = len(json.loads(GET_request1.data))
+        num_records_after = len(json.loads(GET_request2.data))
+
+        self.assertEqual(DELETE_request1.status[:3], '200')
+        self.assertEqual(num_records_after, num_records_b4 - 1)
+
+        # test response of DELETE request for user by user id which does not exist
+        DELETE_request2 = self.app.delete('/users/1000')
+        self.assertEqual(DELETE_request2.status[:3], '404')
+
+    def test_update(self):
+        '''
+        test_update tests update of user records upon PUT requests to API
+        '''
+        # delete and recreate User table for test
+        User.drop_table()
+        db.create_tables([User], safe=True)
+
+        self.createUserViaPeewee()
+
+        PUT_request1 = self.app.put('/users/1', data=dict(
+            email='anystring2',
+            password='anystring3',
+            first_name='anystring4',
+            last_name='anystring5'
+        ))
+        self.assertEqual(PUT_request1.status[:3], '200')
+
+        self.assertEqual(User.get(User.id == 1).email, 'anystring2')
+        self.assertEqual(User.get(User.id == 1).password, 'anystring3')
+        self.assertEqual(User.get(User.id == 1).first_name, 'anystring4')
+        self.assertEqual(User.get(User.id == 1).last_name, 'anystring5')
+
+        # test response of PUT request for user by user id which does not exist
+        PUT_request2 = self.app.put('/users/1000')
+        self.assertEqual(PUT_request2.status[:3], '404')
