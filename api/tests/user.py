@@ -4,6 +4,7 @@ import os
 import json
 
 from app import app
+from app.views import *
 from app.models.user import User
 from app.models.base import *
 from peewee import Model
