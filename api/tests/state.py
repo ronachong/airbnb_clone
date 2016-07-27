@@ -57,7 +57,7 @@ class stateTestCase(unittest.TestCase):
         ))
 
         self.assertEqual(POST_request6.status[:3], '409')
-        self.assertEqual(POST_request6.data, json.dumps({'code': 10001, 'msg': 'State already exists'}))
+        self.assertEqual(json.loads(POST_request6.data), {'code': 10001, 'msg': 'State already exists'})
 
     def test_list(self):
         '''test proper representation of all state records upon GET requests to API'''

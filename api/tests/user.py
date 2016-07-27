@@ -8,6 +8,7 @@ from app.views.index import *
 from app.views.user import *
 from app.models.user import User
 from app.models.base import *
+
 from peewee import Model
 from datetime import datetime
 
@@ -133,9 +134,10 @@ class userTestCase(unittest.TestCase):
         ))
 
         self.assertEqual(POST_request6.status[:3], '409')
-        self.assertEqual(POST_request6.data, json.dumps(
-            {'code': 10000, 'msg': 'Email already exists'}
-        ))
+        self.assertEqual(json.loads(POST_request6.data), {
+            'code': 10000, 'msg': 'Email already exists'
+            }
+        )
     #
     # def test_list(self):
     #     '''

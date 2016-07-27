@@ -58,7 +58,7 @@ class cityTestCase(unittest.TestCase):
         ))
 
         self.assertEqual(POST_request6.status[:3], '409')
-        self.assertEqual(POST_request6.data, json.dumps({'code': 10002, 'msg': 'City already exists in this state'}))
+        self.assertEqual(json.loads(POST_request6.data), {'code': 10002, 'msg': 'City already exists in this state'})
 
     def test_list(self):
         '''test proper representation of all city records upon GET requests to API'''
