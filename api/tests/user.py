@@ -30,7 +30,7 @@ class userTestCase(unittest.TestCase):
         tearDown removes User from airbnb_test database upon completion of test
         case
         '''
-        User.drop_table(cascade=True)
+        User.drop_table()
 
     def createUserViaPeewee(self):
         '''
@@ -123,19 +123,19 @@ class userTestCase(unittest.TestCase):
 
         # test that user ID for sole record in database is correct
         self.assertEqual(User.select().get().id, 1)
-    #
-    #     # test that a post request with a duplicate email value is rejected
-    #     POST_request6 = self.app.post('/users', data=dict(
-    #         email='anystring1',
-    #         password='anystring1',
-    #         first_name='anystring2',
-    #         last_name='anystring3'
-    #     ))
-    #
-    #     self.assertEqual(POST_request6.status[:3], '409')
-    #     self.assertEqual(POST_request6.data, json.dumps(
-    #         {'code': 10000, 'msg': 'Email already exists'}
-    #     ))
+
+        # test that a post request with a duplicate email value is rejected
+        POST_request6 = self.app.post('/users', data=dict(
+            email='anystring',
+            password='anystring1',
+            first_name='anystring2',
+            last_name='anystring3'
+        ))
+
+        self.assertEqual(POST_request6.status[:3], '409')
+        self.assertEqual(POST_request6.data, json.dumps(
+            {'code': 10000, 'msg': 'Email already exists'}
+        ))
     #
     # def test_list(self):
     #     '''
