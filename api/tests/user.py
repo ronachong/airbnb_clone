@@ -161,80 +161,90 @@ class userTestCase(unittest.TestCase):
         test_get tests proper representation of a user record upon GET requests
         via user ID to API
         '''
+        # set-up for tests
+        # ----------------------------------------------------------------------
+        # delete and recreate user table for test
+        User.drop_table()
+        database.create_tables([User], safe=True)
+
+        # create user record in user table; should have ID 1
+        user_record = self.createUserViaPeewee()
+
+        # test for handling of GET request for user record by user id which
+        # exists
+        # ----------------------------------------------------------------------
+        # make GET request for record in table
+        GET_request1 = self.app.get('/users/1')
+        GET_data = json.loads(GET_request1.data)
+
+        # test that status of response is 200
+        self.assertEqual(GET_request1.status[:3], '200')
+
+        # test that values of response correctly reflect record in database
+        self.assertEqual(user_record.id, GET_data['id'])
+        self.assertEqual(user_record.created_at.strftime('%d/%m/%Y %H:%M'), GET_data['created_at'][:-3])
+        self.assertEqual(user_record.updated_at.strftime('%d/%m/%Y %H:%M'), GET_data['updated_at'][:-3])
+        self.assertEqual(user_record.email, GET_data['email'])
+        self.assertEqual(user_record.first_name, GET_data['first_name'])
+        self.assertEqual(user_record.last_name, GET_data['last_name'])
+        self.assertEqual(user_record.is_admin, GET_data['is_admin'])
+
+        # test for handling of GET request for user record by user id which does
+        # not exist
+        # ----------------------------------------------------------------------
+        GET_request2 = self.app.get('/users/1000')
+        self.assertEqual(GET_request2.status[:3], '404')
+
+    def test_delete(self):
+        '''
+        test_delete tests deletion of user records upon DELETE requests to API
+        '''
         # delete and recreate User table for test
         User.drop_table()
         database.create_tables([User], safe=True)
 
-        # test response of GET request for user by user id
+        # test response of DELETE request for user by user id
         self.createUserViaPeewee()
 
-        GET_request1 = self.app.get('/users/1')
-        GET_data = json.loads(GET_request1.data)
-        print GET_data
-        self.assertEqual(GET_request1.status[:3], '200')
+        GET_request1 = self.app.get('/users')
 
-        self.assertEqual(User.get(User.id == 1).email, GET_data['email'])
-        self.assertEqual(User.get(User.id == 1).password, GET_data['password'])
-        self.assertEqual(User.get(User.id == 1).first_name, GET_data['first_name'])
-        self.assertEqual(User.get(User.id == 1).last_name, GET_data['last_name'])
-        self.assertEqual(User.get(User.id == 1).created_at, GET_data['created_at'])
-        self.assertEqual(User.get(User.id == 1).updated_at, GET_data['updated_at'])
-        self.assertEqual(User.get(User.id == 1).is_admin, GET_data['is_admin'])
+        DELETE_request1 = self.app.delete('/users/1')
 
-        # test response of GET request for user by user id which does not exist
-        GET_request2 = self.app.get('/users/1000')
-        self.assertEqual(GET_request2.status[:3], '404')
+        GET_request2 = self.app.get('/users')
 
-    # def test_delete(self):
-    #     '''
-    #     test_delete tests deletion of user records upon DELETE requests to API
-    #     '''
-    #     # delete and recreate User table for test
-    #     User.drop_table()
-    #     database.create_tables([User], safe=True)
-    #
-    #     # test response of DELETE request for user by user id
-    #     self.createUserViaPeewee()
-    #
-    #     GET_request1 = self.app.get('/users')
-    #
-    #     DELETE_request1 = self.app.delete('/users/1')
-    #
-    #     GET_request2 = self.app.get('/users')
-    #
-    #     num_records_b4 = len(json.loads(GET_request1.data))
-    #     num_records_after = len(json.loads(GET_request2.data))
-    #
-    #     self.assertEqual(DELETE_request1.status[:3], '200')
-    #     self.assertEqual(num_records_after, num_records_b4 - 1)
-    #
-    #     # test response of DELETE request for user by user id which does not exist
-    #     DELETE_request2 = self.app.delete('/users/1000')
-    #     self.assertEqual(DELETE_request2.status[:3], '404')
-    #
-    # def test_update(self):
-    #     '''
-    #     test_update tests update of user records upon PUT requests to API
-    #     '''
-    #     # delete and recreate User table for test
-    #     User.drop_table()
-    #     database.create_tables([User], safe=True)
-    #
-    #     self.createUserViaPeewee()
-    #
-    #     PUT_request1 = self.app.put('/users/1', data=dict(
-    #         email='anystring2',
-    #         password='anystring3',
-    #         first_name='anystring4',
-    #         last_name='anystring5'
-    #     ))
-    #     self.assertEqual(PUT_request1.status[:3], '200')
-    #
-    #     self.assertEqual(User.get(User.id == 1).email, 'anystring2')
-    #     self.assertEqual(User.get(User.id == 1).password, 'anystring3')
-    #     self.assertEqual(User.get(User.id == 1).first_name, 'anystring4')
-    #     self.assertEqual(User.get(User.id == 1).last_name, 'anystring5')
-    #
-    #     # test response of PUT request for user by user id which does not exist
-    #     PUT_request2 = self.app.put('/users/1000')
-    #     self.assertEqual(PUT_request2.status[:3], '404')
+        num_records_b4 = len(json.loads(GET_request1.data))
+        num_records_after = len(json.loads(GET_request2.data))
+
+        self.assertEqual(DELETE_request1.status[:3], '200')
+        self.assertEqual(num_records_after, num_records_b4 - 1)
+
+        # test response of DELETE request for user by user id which does not exist
+        DELETE_request2 = self.app.delete('/users/1000')
+        self.assertEqual(DELETE_request2.status[:3], '404')
+
+    def test_update(self):
+        '''
+        test_update tests update of user records upon PUT requests to API
+        '''
+        # delete and recreate User table for test
+        User.drop_table()
+        database.create_tables([User], safe=True)
+
+        self.createUserViaPeewee()
+
+        PUT_request1 = self.app.put('/users/1', data=dict(
+            email='anystring2',
+            password='anystring3',
+            first_name='anystring4',
+            last_name='anystring5'
+        ))
+        self.assertEqual(PUT_request1.status[:3], '200')
+
+        self.assertEqual(User.get(User.id == 1).email, 'anystring2')
+        self.assertEqual(User.get(User.id == 1).password, 'anystring3')
+        self.assertEqual(User.get(User.id == 1).first_name, 'anystring4')
+        self.assertEqual(User.get(User.id == 1).last_name, 'anystring5')
+
+        # test response of PUT request for user by user id which does not exist
+        PUT_request2 = self.app.put('/users/1000')
+        self.assertEqual(PUT_request2.status[:3], '404')
