@@ -87,10 +87,10 @@ class stateTestCase(unittest.TestCase):
         ))
 
         GET_request1 = self.app.get('/states/1')
-        GET_data = json.dumps(GET_request1.data)
+        GET_data = json.loads(GET_request1.data)
         self.assertEqual(GET_request1.status[:3], '200')
 
-        self.assertEqual(State.get(State.id == 1).name, GET_data[0]['name'])
+        self.assertEqual(State.get(State.id == 1).name, GET_data['name'])
         self.assertEqual(State.get(State.id == 1).created_at.strftime('%d/%m/%Y %H:%M'), now)
         self.assertEqual(State.get(State.id == 1).updated_at.strftime('%d/%m/%Y %H:%M'), now)
 

@@ -88,11 +88,11 @@ class cityTestCase(unittest.TestCase):
         ))
 
         GET_request1 = self.app.get('/states/1/cities/1')
-        GET_data = json.dumps(GET_request1.data)
+        GET_data = json.loads(GET_request1.data)
         self.assertEqual(GET_request.status[:3], '200')
 
-        self.assertEqual(City.get(City.id == 1).name, GET_data[0]['name'])
-        self.assertEqual(City.get(City.id == 1).state, GET_data[0]['state'])
+        self.assertEqual(City.get(City.id == 1).name, GET_data['name'])
+        self.assertEqual(City.get(City.id == 1).state, GET_data['state'])
         self.assertEqual(City.get(City.id == 1).created_at.strftime('%d/%m/%Y %H:%M'), now)
         self.assertEqual(City.get(City.id == 1).updated_at.strftime('%d/%m/%Y %H:%M'), now)
 

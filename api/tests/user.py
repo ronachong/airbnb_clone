@@ -138,52 +138,53 @@ class userTestCase(unittest.TestCase):
             'code': 10000, 'msg': 'Email already exists'
             }
         )
-    #
-    # def test_list(self):
-    #     '''
-    #     test_list tests proper representation of all user records upon GET
-    #     requests to API
-    #     '''
-    #     # delete and recreate User table for test
-    #     User.drop_table()
-    #     database.create_tables([User], safe=True)
-    #
-    #     GET_request1 = self.app.get('/users')
-    #     self.assertEqual(len(json.loads(GET_request1.data)), 0)
-    #
-    #     self.createUserViaPeewee()
-    #
-    #     GET_request2 = self.app.get('/users')
-    #     self.assertEqual(len(json.loads(GET_request2.data)), 1)
-    #
-    # def test_get(self):
-    #     '''
-    #     test_get tests proper representation of a user record upon GET requests
-    #     via user ID to API
-    #     '''
-    #     # delete and recreate User table for test
-    #     User.drop_table()
-    #     database.create_tables([User], safe=True)
-    #
-    #     # test response of GET request for user by user id
-    #     self.createUserViaPeewee()
-    #
-    #     GET_request1 = self.app.get('/users/1')
-    #     GET_data = json.dumps(GET_request1.data)
-    #     self.assertEqual(GET_request1.status[:3], '200')
-    #
-    #     self.assertEqual(User.get(User.id == 1).email, GET_data[0]['email'])
-    #     self.assertEqual(User.get(User.id == 1).password, GET_data[0]['password'])
-    #     self.assertEqual(User.get(User.id == 1).first_name, GET_data[0]['first_name'])
-    #     self.assertEqual(User.get(User.id == 1).last_name, GET_data[0]['last_name'])
-    #     self.assertEqual(User.get(User.id == 1).created_at, GET_data[0]['created_at'])
-    #     self.assertEqual(User.get(User.id == 1).updated_at, GET_data[0]['updated_at'])
-    #     self.assertEqual(User.get(User.id == 1).is_admin, GET_data[0]['is_admin'])
-    #
-    #     # test response of GET request for user by user id which does not exist
-    #     GET_request2 = self.app.get('/users/1000')
-    #     self.assertEqual(GET_request2.status[:3], '404')
-    #
+
+    def test_list(self):
+        '''
+        test_list tests proper representation of all user records upon GET
+        requests to API
+        '''
+        # delete and recreate User table for test
+        User.drop_table()
+        database.create_tables([User], safe=True)
+
+        GET_request1 = self.app.get('/users')
+        self.assertEqual(len(json.loads(GET_request1.data)), 0)
+
+        self.createUserViaPeewee()
+
+        GET_request2 = self.app.get('/users')
+        self.assertEqual(len(json.loads(GET_request2.data)), 1)
+
+    def test_get(self):
+        '''
+        test_get tests proper representation of a user record upon GET requests
+        via user ID to API
+        '''
+        # delete and recreate User table for test
+        User.drop_table()
+        database.create_tables([User], safe=True)
+
+        # test response of GET request for user by user id
+        self.createUserViaPeewee()
+
+        GET_request1 = self.app.get('/users/1')
+        GET_data = json.loads(GET_request1.data)
+        print GET_data
+        self.assertEqual(GET_request1.status[:3], '200')
+
+        self.assertEqual(User.get(User.id == 1).email, GET_data['email'])
+        self.assertEqual(User.get(User.id == 1).password, GET_data['password'])
+        self.assertEqual(User.get(User.id == 1).first_name, GET_data['first_name'])
+        self.assertEqual(User.get(User.id == 1).last_name, GET_data['last_name'])
+        self.assertEqual(User.get(User.id == 1).created_at, GET_data['created_at'])
+        self.assertEqual(User.get(User.id == 1).updated_at, GET_data['updated_at'])
+        self.assertEqual(User.get(User.id == 1).is_admin, GET_data['is_admin'])
+
+        # test response of GET request for user by user id which does not exist
+        GET_request2 = self.app.get('/users/1000')
+        self.assertEqual(GET_request2.status[:3], '404')
+
     # def test_delete(self):
     #     '''
     #     test_delete tests deletion of user records upon DELETE requests to API

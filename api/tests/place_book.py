@@ -204,16 +204,16 @@ class placebookTestCase(unittest.TestCase):
         self.createPlaceBookViaPeewee()
 
         GET_request1 = self.app.get('/places/1/books/1')
-        GET_data = json.dumps(GET_request1.data)
+        GET_data = json.loads(GET_request1.data)
         self.assertEqual(GET_request1.status[:3], '200')
 
-        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).place_id, GET_data[0]['place_id'])
-        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).user_id, GET_data[0]['user_id'])
-        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).is_validated, GET_data[0]['is_validated'])
-        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).date_start, GET_data[0]['date_start'])
-        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).number_nights, GET_data[0][1])
-        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).created_at, GET_data[0]['created_at'])
-        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).updated_at, GET_data[0]['updated_at'])
+        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).place_id, GET_data['place_id'])
+        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).user_id, GET_data['user_id'])
+        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).is_validated, GET_data['is_validated'])
+        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).date_start, GET_data['date_start'])
+        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).number_nights, GET_data[1])
+        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).created_at, GET_data['created_at'])
+        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).updated_at, GET_data['updated_at'])
 
         # test response of GET request for booking by booking id which does not exist
         GET_request2 = self.app.get('places/1/books/1000')
