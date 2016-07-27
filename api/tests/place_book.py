@@ -4,7 +4,11 @@ import os
 import json
 
 from app import app
-from app.views import *
+from app.views.user import *
+from app.views.state import *
+from app.views.city import *
+from app.views.place import *
+from app.views.place_book import *
 from app.models.user import User
 from app.models.state import State
 from app.models.city import City
