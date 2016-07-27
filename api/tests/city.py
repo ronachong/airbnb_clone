@@ -22,7 +22,8 @@ class cityTestCase(unittest.TestCase):
 
         database.connect()
         database.create_tables([State, City], safe=True)
-        State(name='namestring')
+        state_record = State(name='namestring')
+        state_record.save()
 
 
     def tearDown(self):
@@ -33,15 +34,10 @@ class cityTestCase(unittest.TestCase):
     def test_create(self):
         '''test proper creation (or non-creation) of city records upon POST requests to API'''
         # test creation of city with all parameters provided in POST request
-        for x in City.select():
-            print x.id
 
         POST_request1 = self.app.post('/states/1/cities', data=dict(
             name='namestring'
         ))
-
-        print POST_request1
-        print POST_request1.data
 
         now = datetime.now().strftime('%d/%m/%Y %H:%M')
 
