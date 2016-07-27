@@ -31,6 +31,16 @@ class cityTestCase(unittest.TestCase):
         City.drop_table()
         State.drop_table()
 
+    def createCityViaPeewee(self):
+        '''
+        createCityViaPeewee creates a city record using the API's database/Peewee
+        models, and returns the Peewee object for the record. This method will
+        not work if the database models are not written correctly.
+        '''
+        record = City(name='namestring', state=1)
+        record.save()
+        return record
+
     def test_create(self):
         '''test proper creation (or non-creation) of city records upon POST requests to API'''
         # test creation of city with all parameters provided in POST request
@@ -78,26 +88,39 @@ class cityTestCase(unittest.TestCase):
         self.assertEqual(len(json.loads(GET_request2.data)), 1)
 
     def test_get(self):
-        '''test proper representation of a city record upon GET requests via city ID to API'''
-        # delete and recreate City table for test
+        '''
+        Test proper representation of a city record upon GET requests via city
+        ID to API
+        '''
+        # set-up for tests
+        # ----------------------------------------------------------------------
+        # delete and recreate city table for test
         City.drop_table()
         database.create_tables([City], safe=True)
 
-        # test response of GET request for state by state id
-        POST_request1 = self.app.post('/states/1/cities', data=dict(
-            name='namestring'
-        ))
+        # create city record in city table; should have ID 1
+        city_record = self.createCityViaPeewee()
 
+        # test for handling of GET request for user record by user id which
+        # exists
+        # ----------------------------------------------------------------------
+        # make GET request for record in table
         GET_request1 = self.app.get('/states/1/cities/1')
         GET_data = json.loads(GET_request1.data)
-        self.assertEqual(GET_request.status[:3], '200')
 
+        # test that status of response is 200
+        self.assertEqual(GET_request1.status[:3], '200')
+
+        # test that values of response correctly reflect record in database
+        self.assertEqual(city_record.id, GET_data['id'])
+        self.assertEqual(city_record.created_at.strftime('%d/%m/%Y %H:%M'), GET_data['created_at'][:-3])
+        self.assertEqual(city_record.updated_at.strftime('%d/%m/%Y %H:%M'), GET_data['updated_at'][:-3])
         self.assertEqual(City.get(City.id == 1).name, GET_data['name'])
-        self.assertEqual(City.get(City.id == 1).state, GET_data['state'])
-        self.assertEqual(City.get(City.id == 1).created_at.strftime('%d/%m/%Y %H:%M'), now)
-        self.assertEqual(City.get(City.id == 1).updated_at.strftime('%d/%m/%Y %H:%M'), now)
+        self.assertEqual(City.get(City.id == 1).state.id, GET_data['state_id'])
 
-        # test response of GET request for city by city id which does not exist
+        # test for handling of GET request for city record by city id which
+        # does not exist
+        # ----------------------------------------------------------------------
         GET_request2 = self.app.get('/states/1/cities/1000')
         self.assertEqual(GET_request2.status[:3], '404')
 
