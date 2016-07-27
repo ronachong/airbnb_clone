@@ -279,10 +279,6 @@ class placeTestCase(unittest.TestCase):
         Test proper representation of all place records upon GET requests to
         API.
         """
-        # delete and recreate Place table for test
-        Place.drop_table()
-        database.create_tables([Place], safe=True)
-
         GET_request1 = self.app.get('/places')
         self.assertEqual(len(json.loads(GET_request1.data)), 0)
 
@@ -296,10 +292,6 @@ class placeTestCase(unittest.TestCase):
         Test proper representation of a place record upon GET requests
         via amenity ID to API.
         """
-        # delete and recreate Place table for test
-        Place.drop_table()
-        database.create_tables([Place], safe=True)
-
         # test response of GET request for place by place id
         self.createPlaceViaPeewee()
 
@@ -328,10 +320,6 @@ class placeTestCase(unittest.TestCase):
         """
         Test deletion of place records upon DELETE requests to API.
         """
-        # delete and recreate Place table for test
-        Place.drop_table()
-        database.create_tables([Place], safe=True)
-
         # test response of DELETE request for place by place id
         self.createPlaceViaPeewee()
 
@@ -355,10 +343,6 @@ class placeTestCase(unittest.TestCase):
         """
         test_update tests update of place records upon PUT requests to API
         """
-        # delete and recreate Place table for test
-        Place.drop_table()
-        database.create_tables([Place], safe=True)
-
         self.createPlaceViaPeewee()
 
         PUT_request1 = self.app.put('/places/1', data=dict(
@@ -391,10 +375,6 @@ class placeTestCase(unittest.TestCase):
         test_createByCity tests proper creation of a place record by city upon
         POST request to API
         """
-        # delete and recreate Place table for test
-        Place.drop_table()
-        database.create_tables([Place], safe=True)
-
         POST_request = self.app.post('/states/1/cities/1/places', data=dict(
             owner = 1,
             name = "foo",
@@ -414,10 +394,6 @@ class placeTestCase(unittest.TestCase):
         test_getByCity tests proper representation of all place records by city
         upon GET requests to API
         """
-        # delete and recreate Place table for test
-        Place.drop_table()
-        database.create_tables([Place], safe=True)
-
         GET_request1 = self.app.get('/states/1/cities/1/places')
         self.assertEqual(len(json.loads(GET_request1.data)), 0)
 

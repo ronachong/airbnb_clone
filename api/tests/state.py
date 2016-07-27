@@ -73,10 +73,6 @@ class stateTestCase(unittest.TestCase):
         Test proper representation of all state records upon GET requests to
         API.
         """
-        # delete and recreate State table for test
-        State.drop_table()
-        database.create_tables([State], safe=True)
-
         GET_request1 = self.app.get('/states')
         self.assertEqual(len(json.loads(GET_request1.data)), 0)
 
@@ -92,10 +88,6 @@ class stateTestCase(unittest.TestCase):
         Test proper representation of a state record upon GET requests
         via amenity ID to API.
         """
-        # delete and recreate State table for test
-        State.drop_table()
-        database.create_tables([State], safe=True)
-
         # test response of GET request for state by state id
         POST_request1 = self.app.post('/states', data=dict(
             name='namestring'
@@ -117,10 +109,6 @@ class stateTestCase(unittest.TestCase):
         """
         Test deletion of state records upon DELETE requests to API.
         """
-        # delete and recreate State table for test
-        State.drop_table()
-        database.create_tables([State], safe=True)
-
         # test response of DELETE request for state by state id
         POST_request1 = self.app.post('/states', data=dict(
             name='namestring'
@@ -146,10 +134,6 @@ class stateTestCase(unittest.TestCase):
         """
         Test update of state records upon PUT requests to API.
         """
-        # delete and recreate State table for test
-        State.drop_table()
-        database.create_tables([State], safe=True)
-
         POST_request1 = self.app.post('/states', data=dict(
             name='namestring'
         ))

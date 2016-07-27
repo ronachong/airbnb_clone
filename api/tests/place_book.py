@@ -4,9 +4,6 @@ import os
 import json
 
 from app import app
-from app.views.user import *
-from app.views.state import *
-from app.views.city import *
 from app.views.place import *
 from app.views.place_book import *
 from app.models.user import User
@@ -184,10 +181,6 @@ class placebookTestCase(unittest.TestCase):
         Test proper representation of all placebook records upon GET requests
         to API.
         """
-        # delete and recreate PlaceBook table for test
-        PlaceBook.drop_table()
-        database.create_tables([PlaceBook], safe=True)
-
         GET_request1 = self.app.get('/places/1/books')
         self.assertEqual(len(json.loads(GET_request1.data)), 0)
 
@@ -204,10 +197,6 @@ class placebookTestCase(unittest.TestCase):
         Test proper representation of a placebook record upon GET requests
         via amenity ID to API.
         """
-        # delete and recreate PlaceBook table for test
-        PlaceBook.drop_table()
-        database.create_tables([PlaceBook], safe=True)
-
         # test response of GET request for placebook by placebook id
         self.createPlaceBookViaPeewee()
 
@@ -231,10 +220,6 @@ class placebookTestCase(unittest.TestCase):
         """
         Test deletion of placebook records upon DELETE requests to API.
         """
-        # delete and recreate PlaceBook table for test
-        PlaceBook.drop_table()
-        database.create_tables([PlaceBook], safe=True)
-
         # test response of DELETE request for place_book by place_book id
         self.createPlaceBookViaPeewee()
 
@@ -258,10 +243,6 @@ class placebookTestCase(unittest.TestCase):
         """
         Test update of place_book records upon PUT requests to API.
         """
-        # delete and recreate PlaceBook table for test
-        PlaceBook.drop_table()
-        database.create_tables([PlaceBook], safe=True)
-
         self.createPlaceBookViaPeewee()
 
         PUT_request1 = self.app.put('places/1/books/1', data=dict(

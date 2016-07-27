@@ -85,10 +85,6 @@ class cityTestCase(unittest.TestCase):
         Test proper representation of all city records upon GET requests to
         API.
         """
-        # delete and recreate City table for test
-        City.drop_table()
-        database.create_tables([City], safe=True)
-
         GET_request1 = self.app.get('/states/1/cities')
         self.assertEqual(len(json.loads(GET_request1.data)), 0)
 
@@ -106,10 +102,6 @@ class cityTestCase(unittest.TestCase):
         """
         # set-up for tests
         # ----------------------------------------------------------------------
-        # delete and recreate city table for test
-        City.drop_table()
-        database.create_tables([City], safe=True)
-
         # create city record in city table; should have ID 1
         city_record = self.createCityViaPeewee()
 
@@ -140,10 +132,6 @@ class cityTestCase(unittest.TestCase):
         """
         Test deletion of city records upon DELETE requests to API.
         """
-        # delete and recreate City table for test
-        City.drop_table()
-        database.create_tables([City], safe=True)
-
         # test response of DELETE request for city by city id
         POST_request1 = self.app.post('/states/1/cities', data=dict(
             name='namestring'

@@ -148,10 +148,6 @@ class userTestCase(unittest.TestCase):
         Test proper representation of all amenity records upon GET requests to
         API.
         """
-        # delete and recreate User table for test
-        User.drop_table()
-        database.create_tables([User], safe=True)
-
         GET_request1 = self.app.get('/users')
         self.assertEqual(len(json.loads(GET_request1.data)), 0)
 
@@ -167,10 +163,6 @@ class userTestCase(unittest.TestCase):
         """
         # set-up for tests
         # ----------------------------------------------------------------------
-        # delete and recreate user table for test
-        User.drop_table()
-        database.create_tables([User], safe=True)
-
         # create user record in user table; should have ID 1
         user_record = self.createUserViaPeewee()
 
@@ -203,10 +195,6 @@ class userTestCase(unittest.TestCase):
         """
         Test deletion of amenity records upon DELETE requests to API.
         """
-        # delete and recreate User table for test
-        User.drop_table()
-        database.create_tables([User], safe=True)
-
         # test response of DELETE request for user by user id
         self.createUserViaPeewee()
 
@@ -230,10 +218,6 @@ class userTestCase(unittest.TestCase):
         """
         Test update of user records upon PUT requests to API.
         """
-        # delete and recreate User table for test
-        User.drop_table()
-        database.create_tables([User], safe=True)
-
         self.createUserViaPeewee()
 
         PUT_request1 = self.app.put('/users/1', data=dict(
