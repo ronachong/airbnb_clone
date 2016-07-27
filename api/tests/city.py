@@ -4,6 +4,8 @@ import os
 import json
 
 from app import app
+from app.views.state import *
+from app.views.city import *
 from app.models.city import City
 from app.models.state import State
 from app.models.base import *
@@ -19,7 +21,7 @@ class cityTestCase(unittest.TestCase):
         logging.disable(logging.CRITICAL) # disable logs
 
         database.connect()
-        database.create_tables([City, State], safe=True)
+        database.create_tables([State, City], safe=True)
         State(name='namestring')
 
 
@@ -31,11 +33,14 @@ class cityTestCase(unittest.TestCase):
     def test_create(self):
         '''test proper creation (or non-creation) of city records upon POST requests to API'''
         # test creation of city with all parameters provided in POST request
+        for x in City.select():
+            print x.id
+
         POST_request1 = self.app.post('/states/1/cities', data=dict(
             name='namestring'
         ))
 
-        print POST_request1.status
+        print POST_request1
         print POST_request1.data
 
         now = datetime.now().strftime('%d/%m/%Y %H:%M')
