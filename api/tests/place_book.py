@@ -65,11 +65,11 @@ class placebookTestCase(unittest.TestCase):
         Remove placebook table from airbnb_test database upon completion of
         test case.
         """
-        User.drop_table()
         PlaceBook.drop_table()
         Place.drop_table()
         City.drop_table()
         State.drop_table()
+        User.drop_table()
 
     def createPlaceBookViaPeewee(self):
         """
