@@ -42,8 +42,8 @@ class cityTestCase(unittest.TestCase):
 
         self.assertEqual(City.get(City.id == 1).name, 'namestring')
         self.assertEqual(City.get(City.id == 1).state, 1)
-        self.assertEqual(City.get(City.id == 1).created_at[:-3], now)
-        self.assertEqual(City.get(City.id == 1).updated_at[:-3], now)
+        self.assertEqual(City.get(City.id == 1).created_at.strftime('%d/%m/%Y %H:%M'), now)
+        self.assertEqual(City.get(City.id == 1).updated_at.strftime('%d/%m/%Y %H:%M'), now)
 
         # test creation of city in all cases of a parameter missing in POST request
         POST_request2 = self.app.post('/states/1/cities', data=dict())
@@ -93,8 +93,8 @@ class cityTestCase(unittest.TestCase):
 
         self.assertEqual(City.get(City.id == 1).name, GET_data[0]['name'])
         self.assertEqual(City.get(City.id == 1).state, GET_data[0]['state'])
-        self.assertEqual(City.get(City.id == 1).created_at[:-3], now)
-        self.assertEqual(City.get(City.id == 1).updated_at[:-3], now)
+        self.assertEqual(City.get(City.id == 1).created_at.strftime('%d/%m/%Y %H:%M'), now)
+        self.assertEqual(City.get(City.id == 1).updated_at.strftime('%d/%m/%Y %H:%M'), now)
 
         # test response of GET request for city by city id which does not exist
         GET_request2 = self.app.get('/states/1/cities/1000')

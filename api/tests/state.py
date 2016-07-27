@@ -41,8 +41,8 @@ class stateTestCase(unittest.TestCase):
         now = datetime.now().strftime('%d/%m/%Y %H:%M')
 
         self.assertEqual(State.get(State.id == 1).name, 'namestring')
-        self.assertEqual(State.get(State.id == 1).created_at[:-3], now)
-        self.assertEqual(State.get(State.id == 1).updated_at[:-3], now)
+        self.assertEqual(State.get(State.id == 1).created_at.strftime('%d/%m/%Y %H:%M'), now)
+        self.assertEqual(State.get(State.id == 1).updated_at.strftime('%d/%m/%Y %H:%M'), now)
 
         # test creation of state in all cases of a parameter missing in POST request
         POST_request2 = self.app.post('/states', data=dict())
@@ -91,8 +91,8 @@ class stateTestCase(unittest.TestCase):
         self.assertEqual(GET_request1.status[:3], '200')
 
         self.assertEqual(State.get(State.id == 1).name, GET_data[0]['name'])
-        self.assertEqual(State.get(State.id == 1).created_at[:-3], now)
-        self.assertEqual(State.get(State.id == 1).updated_at[:-3], now)
+        self.assertEqual(State.get(State.id == 1).created_at.strftime('%d/%m/%Y %H:%M'), now)
+        self.assertEqual(State.get(State.id == 1).updated_at.strftime('%d/%m/%Y %H:%M'), now)
 
         # test response of GET request for state by state id which does not exist
         GET_request2 = self.app.get('/states/1000')

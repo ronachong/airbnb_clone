@@ -63,8 +63,8 @@ class placebookTestCase(unittest.TestCase):
         now = datetime.now().strftime('%d/%m/%Y %H:%M')
 
         self.assertEqual(Amenity.get(Amenity.id == 1).name, 'amenity_name')
-        self.assertEqual(Amenity.get(Amenity.id == 1).created_at[:-3], now)
-        self.assertEqual(Amenity.get(Amenity.id == 1).updated_at[:-3], now)
+        self.assertEqual(Amenity.get(Amenity.id == 1).created_at.strftime('%d/%m/%Y %H:%M'), now)
+        self.assertEqual(Amenity.get(Amenity.id == 1).updated_at.strftime('%d/%m/%Y %H:%M'), now)
 
         # test that placebook ID for sole record in database is correct
         self.assertEqual(Amenity.select().get().id, 1)

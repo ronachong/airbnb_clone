@@ -112,8 +112,8 @@ class placebookTestCase(unittest.TestCase):
         self.assertEqual(PlaceBook.get(PlaceBook.id == 1).is_validated, False)
         self.assertEqual(PlaceBook.get(PlaceBook.id == 1).date_start, datetime.now().strftime('%d/%m/%Y %H:%M'))
         self.assertEqual(PlaceBook.get(PlaceBook.id == 1).number_nights, 1)
-        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).created_at[:-3], now)
-        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).updated_at[:-3], now)
+        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).created_at.strftime('%d/%m/%Y %H:%M'), now)
+        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).updated_at.strftime('%d/%m/%Y %H:%M'), now)
 
         # test that placebook ID for sole record in database is correct
         self.assertEqual(PlaceBook.select().get().id, 1)

@@ -102,8 +102,8 @@ class placeTestCase(unittest.TestCase):
         self.assertEqual(Place.get(Place.id == 1).price_by_night, 1)
         self.assertEqual(Place.get(Place.id == 1).latitude, 22.0)
         self.assertEqual(Place.get(Place.id == 1).longitude, 22.0)
-        self.assertEqual(Place.get(Place.id == 1).created_at[:-3], now)
-        self.assertEqual(Place.get(Place.id == 1).updated_at[:-3], now)
+        self.assertEqual(Place.get(Place.id == 1).created_at.strftime('%d/%m/%Y %H:%M'), now)
+        self.assertEqual(Place.get(Place.id == 1).updated_at.strftime('%d/%m/%Y %H:%M'), now)
 
         # test that place ID for sole record in database is correct
         self.assertEqual(Place.select().get().id, 1)
