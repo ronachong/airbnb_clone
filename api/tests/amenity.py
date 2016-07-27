@@ -10,12 +10,13 @@ from app.models.base import *
 from peewee import Model
 from datetime import datetime
 
+
 class placebookTestCase(unittest.TestCase):
     def setUp(self):
-        '''
-        overloads def setUp(self): to create a test client of airbnb app, and
-        create Amenity in airbnb_test database
-        '''
+        """
+        Overload def setUp(self): to create a test client of airbnb app, and
+        create amenity table in airbnb_test database.
+        """
         self.app = app.test_client()
         self.app.testing = True
         logging.disable(logging.CRITICAL) # disable logs
@@ -25,38 +26,41 @@ class placebookTestCase(unittest.TestCase):
         database.create_tables([Amenity], safe=True)
 
     def tearDown(self):
-        '''
-        tearDown removes Amenity from airbnb_test database upon completion of test
-        case
-        '''
+        """
+        Remove amenity table from airbnb_test database upon completion of test
+        case.
+        """
         Amenity.drop_table()
 
     def createAmenityViaPeewee(self):
-        '''
-        createAmenityViaPeewee creates an amenity record using the API's database/Peewee
-        models, and returns the Peewee object for the record. This method will
-        not work if the database models are not written correctly.
-        '''
+        """
+        Create an amenity record using the API's database/Peewee models.
+
+        createAmenityViaPeewee returns the Peewee object for the record. This
+        method will not work if the database models are not written correctly.
+        """
         record = Amenity(name= 'amenity_name')
         record.save()
         return record
 
     def createAmenityViaAPI(self):
-        '''
-        createAmenityViaAPI creates a user record through a POST request to the API
-        and returns the Flask response object for the request. This method will
-        not work if the POST request handler is not written properly.
-        '''
+        """
+        Create an amenity record through a POST request to the API.
+
+        createAmenityViaAPI returns the Flask response object for the request.
+        This method will not work if the POST request handler is not written
+        properly.
+        """
         POST_request = self.app.post('/places/1/books', data=dict(
             name= 'amenity_name'
         ))
         return POST_request
 
     def subtest_createWithAllParams(self):
-        '''
-        subtest_createWithAllParams tests proper creation of a user record upon
-        a POST request to the API with all parameters provided.
-        '''
+        """
+        Test proper creation of a user record upon POST request to the API with
+        all parameters provided.
+        """
         POST_request1 = self.createAmenityViaAPI()
         self.assertEqual(POST_request1.status[:3], '200')
 
@@ -70,20 +74,20 @@ class placebookTestCase(unittest.TestCase):
         self.assertEqual(Amenity.select().get().id, 1)
 
     def subtest_createWithoutAllParams(self):
-        '''
-        subtest_createWithoutAllParams tests proper non-creation of a amenity in
-        all cases of a parameter missing in a POST request to the API.
-        '''
+        """
+        Test proper non-creation of an amenity in all cases of a parameter
+        missing in POST request to the API.
+        """
         # name missing - request should fail due to no default value
         POST_request2 = self.app.post('/amenities', data=dict())
 
         self.assertEqual(POST_request2.status[:3], '400')
 
     def test_create(self):
-        '''
-        test_create tests proper creation (or non-creation) of amenity records upon
-        POST requests to API
-        '''
+        """
+        Test proper creation (or non-creation) of amenity records upon POST
+        requests to API.
+        """
         # test creation of amenity with all parameters provided in POST request
         self.subtest_createWithAllParams()
 
@@ -91,10 +95,10 @@ class placebookTestCase(unittest.TestCase):
         self.subtest_createWithoutAllParams()
 
     def test_list(self):
-        '''
-        test_list tests proper representation of all amenity records upon GET
-        requests to API
-        '''
+        """
+        Test proper representation of all amenity records upon GET requests to
+        API.
+        """
         # delete and recreate Amenity table for test
         Amenity.drop_table()
         database.create_tables([Amenity], safe=True)
@@ -111,10 +115,10 @@ class placebookTestCase(unittest.TestCase):
         # ive place
 
     def test_get(self):
-        '''
-        test_get tests proper representation of a amenity record upon GET requests
-        via book ID to API
-        '''
+        """
+        Test proper representation of an amenity record upon GET requests
+        via amenity ID to API.
+        """
         # delete and recreate Amenity table for test
         Amenity.drop_table()
         database.create_tables([Amenity], safe=True)
@@ -135,9 +139,9 @@ class placebookTestCase(unittest.TestCase):
         self.assertEqual(GET_request2.status[:3], '404')
 
     def test_delete(self):
-        '''
-        test_delete tests deletion of amenity records upon DELETE requests to API
-        '''
+        """
+        Test deletion of amenity records upon DELETE requests to API.
+        """
         # delete and recreate Amenity table for test
         Amenity.drop_table()
         database.create_tables([Amenity], safe=True)

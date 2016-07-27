@@ -14,12 +14,13 @@ from app.models.base import *
 from peewee import Model
 from datetime import datetime
 
+
 class placebookTestCase(unittest.TestCase):
     def setUp(self):
-        '''
-        overloads def setUp(self): to create a test client of airbnb app, and
-        create PlaceBook in airbnb_test database
-        '''
+        """
+        Overload def setUp(self): to create a test client of airbnb app, and
+        create placebook table in airbnb_test database.
+        """
         self.app = app.test_client()
         self.app.testing = True
         logging.disable(logging.CRITICAL) # disable logs
@@ -60,10 +61,10 @@ class placebookTestCase(unittest.TestCase):
         place_record2.save()
 
     def tearDown(self):
-        '''
-        tearDown removes PlaceBook from airbnb_test database upon completion of test
-        case
-        '''
+        """
+        Remove placebook table from airbnb_test database upon completion of
+        test case.
+        """
         User.drop_table()
         PlaceBook.drop_table()
         Place.drop_table()
@@ -71,11 +72,12 @@ class placebookTestCase(unittest.TestCase):
         State.drop_table()
 
     def createPlaceBookViaPeewee(self):
-        '''
-        createPlaceBookViaPeewee creates a placebook record using the API's database/Peewee
-        models, and returns the Peewee object for the record. This method will
-        not work if the database models are not written correctly.
-        '''
+        """
+        Create a placebook record using the API's database/Peewee models.
+
+        createPlaceBookViaPeewee returns the Peewee object for the record. This
+        method will not work if the database models are not written correctly.
+        """
         record = PlaceBook(     user_id=1,
                                 is_validated=False,
                                 date_start=datetime.now().strftime('%d/%m/%Y %H:%M'),
@@ -84,11 +86,13 @@ class placebookTestCase(unittest.TestCase):
         return record
 
     def createPlaceBookViaAPI(self):
-        '''
-        createPlaceBookViaAPI creates a user record through a POST request to the API
-        and returns the Flask response object for the request. This method will
-        not work if the POST request handler is not written properly.
-        '''
+        """
+        Create a placebook record through a POST request to the API.
+
+        createPlaceBookViaAPI returns the Flask response object for the
+        request. This method will not work if the POST request handler is not
+        written properly.
+        """
         POST_request = self.app.post('/places/1/books', data=dict(
             user_id=1,
             is_validated=False,
@@ -98,10 +102,10 @@ class placebookTestCase(unittest.TestCase):
         return POST_request
 
     def subtest_createWithAllParams(self):
-        '''
-        subtest_createWithAllParams tests proper creation of a user record upon
-        a POST request to the API with all parameters provided.
-        '''
+        """
+        Test proper creation of a placebook record upon POST request to the API
+        with all parameters provided.
+        """
         POST_request1 = self.createPlaceBookViaAPI()
         self.assertEqual(POST_request1.status[:3], '200')
 
@@ -119,10 +123,10 @@ class placebookTestCase(unittest.TestCase):
         self.assertEqual(PlaceBook.select().get().id, 1)
 
     def subtest_createWithoutAllParams(self):
-        '''
-        subtest_createWithoutAllParams tests proper non-creation of a place_book in
-        all cases of a parameter missing in a POST request to the API.
-        '''
+        """
+        Test proper non-creation of a placebook in all cases of a parameter
+        missing in POST request to the API.
+        """
         # user_id missing - request should fail due to no default value
         POST_request2 = self.app.post('/places/1/books', data=dict(
             is_validated=1,
@@ -161,10 +165,10 @@ class placebookTestCase(unittest.TestCase):
         # proper default values
 
     def test_create(self):
-        '''
-        test_create tests proper creation (or non-creation) of place_book records upon
-        POST requests to API
-        '''
+        """
+        Test proper creation (or non-creation) of placebook records upon POST
+        requests to API.
+        """
         # test creation of place_book with all parameters provided in POST request
         self.subtest_createWithAllParams()
 
@@ -172,10 +176,10 @@ class placebookTestCase(unittest.TestCase):
         self.subtest_createWithoutAllParams()
 
     def test_list(self):
-        '''
-        test_list tests proper representation of all place_book records upon GET
-        requests to API
-        '''
+        """
+        Test proper representation of all placebook records upon GET requests
+        to API.
+        """
         # delete and recreate PlaceBook table for test
         PlaceBook.drop_table()
         database.create_tables([PlaceBook], safe=True)
@@ -192,10 +196,10 @@ class placebookTestCase(unittest.TestCase):
         # ive place
 
     def test_get(self):
-        '''
-        test_get tests proper representation of a place_book record upon GET requests
-        via book ID to API
-        '''
+        """
+        Test proper representation of a placebook record upon GET requests
+        via amenity ID to API.
+        """
         # delete and recreate PlaceBook table for test
         PlaceBook.drop_table()
         database.create_tables([PlaceBook], safe=True)
@@ -220,9 +224,9 @@ class placebookTestCase(unittest.TestCase):
         self.assertEqual(GET_request2.status[:3], '404')
 
     def test_delete(self):
-        '''
-        test_delete tests deletion of place_book records upon DELETE requests to API
-        '''
+        """
+        Test deletion of placebook records upon DELETE requests to API.
+        """
         # delete and recreate PlaceBook table for test
         PlaceBook.drop_table()
         database.create_tables([PlaceBook], safe=True)
@@ -247,9 +251,9 @@ class placebookTestCase(unittest.TestCase):
         self.assertEqual(DELETE_request2.status[:3], '404')
 
     def test_update(self):
-        '''
-        test_update tests update of place_book records upon PUT requests to API
-        '''
+        """
+        Test update of place_book records upon PUT requests to API.
+        """
         # delete and recreate PlaceBook table for test
         PlaceBook.drop_table()
         database.create_tables([PlaceBook], safe=True)

@@ -12,10 +12,13 @@ from app.models.base import *
 from peewee import Model
 from datetime import datetime
 
+
 class cityTestCase(unittest.TestCase):
     def setUp(self):
-        '''overload def setUp(self): to create a test client of airbnb app, and create City
-        in airbnb_test database'''
+        """
+        Overload def setUp(self): to create a test client of airbnb app, and
+        create city table in airbnb_test database.
+        """
         self.app = app.test_client()
         #self.app.testing = True
         logging.disable(logging.CRITICAL) # disable logs
@@ -25,24 +28,30 @@ class cityTestCase(unittest.TestCase):
         state_record = State(name='namestring')
         state_record.save()
 
-
     def tearDown(self):
-        '''remove City from airbnb_test database upon completion of test case'''
+        """
+        Remove city table from airbnb_test database upon completion of test
+        case.
+        """
         City.drop_table()
         State.drop_table()
 
     def createCityViaPeewee(self):
-        '''
-        createCityViaPeewee creates a city record using the API's database/Peewee
-        models, and returns the Peewee object for the record. This method will
-        not work if the database models are not written correctly.
-        '''
+        """
+        Create a city record using the API's database/Peewee models.
+
+        createCityViaPeewee returns the Peewee object for the record. This
+        method will not work if the database models are not written correctly.
+        """
         record = City(name='namestring', state=1)
         record.save()
         return record
 
     def test_create(self):
-        '''test proper creation (or non-creation) of city records upon POST requests to API'''
+        """
+        Test proper creation (or non-creation) of city records upon POST
+        requests to API.
+        """
         # test creation of city with all parameters provided in POST request
 
         POST_request1 = self.app.post('/states/1/cities', data=dict(
@@ -72,7 +81,10 @@ class cityTestCase(unittest.TestCase):
         self.assertEqual(json.loads(POST_request6.data), {'code': 10002, 'msg': 'City already exists in this state'})
 
     def test_list(self):
-        '''test proper representation of all city records upon GET requests to API'''
+        """
+        Test proper representation of all city records upon GET requests to
+        API.
+        """
         # delete and recreate City table for test
         City.drop_table()
         database.create_tables([City], safe=True)
@@ -88,10 +100,10 @@ class cityTestCase(unittest.TestCase):
         self.assertEqual(len(json.loads(GET_request2.data)), 1)
 
     def test_get(self):
-        '''
+        """
         Test proper representation of a city record upon GET requests via city
         ID to API
-        '''
+        """
         # set-up for tests
         # ----------------------------------------------------------------------
         # delete and recreate city table for test
@@ -125,7 +137,9 @@ class cityTestCase(unittest.TestCase):
         self.assertEqual(GET_request2.status[:3], '404')
 
     def test_delete(self):
-        '''test deletion of city records upon DELETE requests to API'''
+        """
+        Test deletion of city records upon DELETE requests to API.
+        """
         # delete and recreate City table for test
         City.drop_table()
         database.create_tables([City], safe=True)

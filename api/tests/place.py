@@ -13,12 +13,13 @@ from app.models.base import *
 from peewee import Model
 from datetime import datetime
 
+
 class placeTestCase(unittest.TestCase):
     def setUp(self):
-        '''
-        overloads def setUp(self): to create a test client of airbnb app, and
-        create Place in airbnb_test database
-        '''
+        """
+        Overload def setUp(self): to create a test client of airbnb app, and
+        create place table in airbnb_test database.
+        """
         self.app = app.test_client()
         self.app.testing = True
         logging.disable(logging.CRITICAL) # disable logs
@@ -34,21 +35,22 @@ class placeTestCase(unittest.TestCase):
         city_record2.save()
 
     def tearDown(self):
-        '''
-        tearDown removes Place from airbnb_test database upon completion of test
-        case
-        '''
+        """
+        Remove place table from airbnb_test database upon completion of test
+        case.
+        """
         Place.drop_table()
         City.drop_table()
         State.drop_table()
         User.drop_table()
 
     def createPlaceViaPeewee(self):
-        '''
-        createPlaceViaPeewee creates a place record using the API's database/Peewee
-        models, and returns the Peewee object for the record. This method will
-        not work if the database models are not written correctly.
-        '''
+        """
+        Create a place record using the API's database/Peewee models.
+
+        createPlaceViaPeewee returns the Peewee object for the record. This
+        method will not work if the database models are not written correctly.
+        """
         record = Place( owner = 1,
                         city = 1,
                         name = "foo",
@@ -63,11 +65,13 @@ class placeTestCase(unittest.TestCase):
         return record
 
     def createPlaceViaAPI(self):
-        '''
-        createPlaceViaAPI creates a place record through a POST request to the API
-        and returns the Flask response object for the request. This method will
-        not work if the POST request handler is not written properly.
-        '''
+        """
+        Create a place record through a POST request to the API.
+
+        createPlaceViaAPI returns the Flask response object for the request.
+        This method will not work if the POST request handler is not written
+        properly.
+        """
         POST_request = self.app.post('/places', data=dict(
             owner = 1,
             city = 1,
@@ -83,10 +87,10 @@ class placeTestCase(unittest.TestCase):
         return POST_request
 
     def subtest_createWithAllParams(self):
-        '''
-        subtest_createWithAllParams tests proper creation of a place record upon
-        a POST request to the API with all parameters provided.
-        '''
+        """
+        Test proper creation of a place record upon POST request to the API
+        with all parameters provided.
+        """
         POST_request1 = self.createPlaceViaAPI()
         self.assertEqual(POST_request1.status[:3], '200')
 
@@ -109,10 +113,10 @@ class placeTestCase(unittest.TestCase):
         self.assertEqual(Place.select().get().id, 1)
 
     def subtest_createWithoutAllParams(self):
-        '''
-        subtest_createWithoutAllParams tests proper non-creation of a place in
-        all cases of a parameter missing in a POST request to the API.
-        '''
+        """
+        Test proper non-creation of a place record in all cases of a parameter
+        missing in POST request to the API.
+        """
         # missing owner - should cause bad request?
         POST_request2 = self.app.post('/places', data=dict(
             city = 1,
@@ -260,10 +264,10 @@ class placeTestCase(unittest.TestCase):
             self.assertEqual(request.status[:3], '200')
 
     def test_create(self):
-        '''
-        test_create tests proper creation (or non-creation) of place records upon
-        POST requests to API
-        '''
+        """
+        Test proper creation (or non-creation) of place records upon POST
+        requests to API.
+        """
         # test creation of place with all parameters provided in POST request
         self.subtest_createWithAllParams()
 
@@ -271,10 +275,10 @@ class placeTestCase(unittest.TestCase):
         self.subtest_createWithoutAllParams()
 
     def test_list(self):
-        '''
-        test_list tests proper representation of all place records upon GET
-        requests to API
-        '''
+        """
+        Test proper representation of all place records upon GET requests to
+        API.
+        """
         # delete and recreate Place table for test
         Place.drop_table()
         database.create_tables([Place], safe=True)
@@ -288,10 +292,10 @@ class placeTestCase(unittest.TestCase):
         self.assertEqual(len(json.loads(GET_request2.data)), 1)
 
     def test_get(self):
-        '''
-        test_get tests proper representation of a place record upon GET requests
-        via place ID to API
-        '''
+        """
+        Test proper representation of a place record upon GET requests
+        via amenity ID to API.
+        """
         # delete and recreate Place table for test
         Place.drop_table()
         database.create_tables([Place], safe=True)
@@ -321,9 +325,9 @@ class placeTestCase(unittest.TestCase):
         self.assertEqual(GET_request2.status[:3], '404')
 
     def test_delete(self):
-        '''
-        test_delete tests deletion of place records upon DELETE requests to API
-        '''
+        """
+        Test deletion of place records upon DELETE requests to API.
+        """
         # delete and recreate Place table for test
         Place.drop_table()
         database.create_tables([Place], safe=True)
@@ -348,9 +352,9 @@ class placeTestCase(unittest.TestCase):
         self.assertEqual(DELETE_request2.status[:3], '404')
 
     def test_update(self):
-        '''
+        """
         test_update tests update of place records upon PUT requests to API
-        '''
+        """
         # delete and recreate Place table for test
         Place.drop_table()
         database.create_tables([Place], safe=True)
@@ -383,10 +387,10 @@ class placeTestCase(unittest.TestCase):
         self.assertEqual(PUT_request2.status[:3], '404')
 
     def test_createByCity(self):
-        '''
+        """
         test_createByCity tests proper creation of a place record by city upon
         POST request to API
-        '''
+        """
         # delete and recreate Place table for test
         Place.drop_table()
         database.create_tables([Place], safe=True)
@@ -406,10 +410,10 @@ class placeTestCase(unittest.TestCase):
         self.assertEqual(Place.get(Place.id == 1).city, 1)
 
     def test_getByCity(self):
-        '''
+        """
         test_getByCity tests proper representation of all place records by city
         upon GET requests to API
-        '''
+        """
         # delete and recreate Place table for test
         Place.drop_table()
         database.create_tables([Place], safe=True)

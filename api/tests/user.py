@@ -12,12 +12,13 @@ from app.models.base import *
 from peewee import Model
 from datetime import datetime
 
+
 class userTestCase(unittest.TestCase):
     def setUp(self):
-        '''
-        overloads def setUp(self): to create a test client of airbnb app, and
-        create User in airbnb_test database
-        '''
+        """
+        Overload def setUp(self): to create a test client of airbnb app, and
+        create amenity table in airbnb_test database.
+        """
         self.app = app.test_client()
         self.app.testing = True
         logging.disable(logging.CRITICAL) # disable logs
@@ -27,18 +28,19 @@ class userTestCase(unittest.TestCase):
         database.create_tables([User], safe=True)
 
     def tearDown(self):
-        '''
-        tearDown removes User from airbnb_test database upon completion of test
-        case
-        '''
+        """
+        Remove amenity table from airbnb_test database upon completion of test
+        case.
+        """
         User.drop_table()
 
     def createUserViaPeewee(self):
-        '''
-        createUserViaPeewee creates a user record using the API's database/Peewee
-        models, and returns the Peewee object for the record. This method will
-        not work if the database models are not written correctly.
-        '''
+        """
+        Create an amenity record using the API's database/Peewee models.
+
+        createAmenityViaPeewee returns the Peewee object for the record. This
+        method will not work if the database models are not written correctly.
+        """
         record = User(  email='anystring',
                         password='anystring1',
                         first_name='anystring2',
@@ -47,11 +49,13 @@ class userTestCase(unittest.TestCase):
         return record
 
     def createUserViaAPI(self):
-        '''
-        createUserViaAPI creates a user record through a POST request to the API
-        and returns the Flask response object for the request. This method will
-        not work if the POST request handler is not written properly.
-        '''
+        """
+        Create an amenity record through a POST request to the API.
+
+        createAmenityViaAPI returns the Flask response object for the request.
+        This method will not work if the POST request handler is not written
+        properly.
+        """
         POST_request = self.app.post('/users', data=dict(
             email='anystring',
             password='anystring1',
@@ -62,10 +66,10 @@ class userTestCase(unittest.TestCase):
         return POST_request
 
     def subtest_createWithAllParams(self):
-        '''
-        subtest_createWithAllParams tests proper creation of a user record upon
-        a POST request to the API with all parameters provided.
-        '''
+        """
+        Test proper creation of an amenity record upon POST request to the API
+        with all parameters provided.
+        """
         POST_request1 = self.createUserViaAPI()
         self.assertEqual(POST_request1.status[:3], '200')
 
@@ -80,10 +84,10 @@ class userTestCase(unittest.TestCase):
         self.assertEqual(User.get(User.id == 1).is_admin, False)
 
     def subtest_createWithoutAllParams(self):
-        '''
-        subtest_createWithoutAllParams tests proper non-creation of a user in
-        all cases of a parameter missing in a POST request to the API.
-        '''
+        """
+        Test proper non-creation of an amenity in all cases of a parameter
+        missing in POST request to the API.
+        """
         POST_request2 = self.app.post('/users', data=dict(
             password='anystring1',
             first_name='anystring2',
@@ -112,10 +116,10 @@ class userTestCase(unittest.TestCase):
             self.assertEqual(request.status[:3], '400')
 
     def test_create(self):
-        '''
-        test_create tests proper creation (or non-creation) of user records upon
-        POST requests to API
-        '''
+        """
+        Test proper creation (or non-creation) of amenity records upon POST
+        requests to API.
+        """
         # test creation of user with all parameters provided in POST request
         self.subtest_createWithAllParams()
 
@@ -140,10 +144,10 @@ class userTestCase(unittest.TestCase):
         )
 
     def test_list(self):
-        '''
-        test_list tests proper representation of all user records upon GET
-        requests to API
-        '''
+        """
+        Test proper representation of all amenity records upon GET requests to
+        API.
+        """
         # delete and recreate User table for test
         User.drop_table()
         database.create_tables([User], safe=True)
@@ -157,10 +161,10 @@ class userTestCase(unittest.TestCase):
         self.assertEqual(len(json.loads(GET_request2.data)), 1)
 
     def test_get(self):
-        '''
-        test_get tests proper representation of a user record upon GET requests
-        via user ID to API
-        '''
+        """
+        Test proper representation of an amenity record upon GET requests
+        via amenity ID to API.
+        """
         # set-up for tests
         # ----------------------------------------------------------------------
         # delete and recreate user table for test
@@ -196,9 +200,9 @@ class userTestCase(unittest.TestCase):
         self.assertEqual(GET_request2.status[:3], '404')
 
     def test_delete(self):
-        '''
-        test_delete tests deletion of user records upon DELETE requests to API
-        '''
+        """
+        Test deletion of amenity records upon DELETE requests to API.
+        """
         # delete and recreate User table for test
         User.drop_table()
         database.create_tables([User], safe=True)
@@ -223,9 +227,9 @@ class userTestCase(unittest.TestCase):
         self.assertEqual(DELETE_request2.status[:3], '404')
 
     def test_update(self):
-        '''
-        test_update tests update of user records upon PUT requests to API
-        '''
+        """
+        Test update of user records upon PUT requests to API.
+        """
         # delete and recreate User table for test
         User.drop_table()
         database.create_tables([User], safe=True)

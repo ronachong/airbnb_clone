@@ -10,10 +10,13 @@ from app.models.base import *
 from peewee import Model
 from datetime import datetime
 
+
 class stateTestCase(unittest.TestCase):
     def setUp(self):
-        '''overload def setUp(self): to create a test client of airbnb app, and create State
-        in airbnb_test database'''
+        """
+        Overload def setUp(self): to create a test client of airbnb app, and
+        create state table in airbnb_test database.
+        """
         self.app = app.test_client()
         #self.app.testing = True
         logging.disable(logging.CRITICAL) # disable logs
@@ -22,11 +25,17 @@ class stateTestCase(unittest.TestCase):
         database.create_tables([State], safe=True)
 
     def tearDown(self):
-        '''remove State from airbnb_test database upon completion of test case'''
+        """
+        Remove state table from airbnb_test database upon completion of test
+        case.
+        """
         State.drop_table()
 
     def test_create(self):
-        '''test proper creation (or non-creation) of state records upon POST requests to API'''
+        """
+        Test proper creation (or non-creation) of state records upon POST
+        requests to API.
+        """
         # test creation of state with all parameters provided in POST request
 
         State.drop_table()
@@ -60,7 +69,10 @@ class stateTestCase(unittest.TestCase):
         self.assertEqual(json.loads(POST_request6.data), {'code': 10001, 'msg': 'State already exists'})
 
     def test_list(self):
-        '''test proper representation of all state records upon GET requests to API'''
+        """
+        Test proper representation of all state records upon GET requests to
+        API.
+        """
         # delete and recreate State table for test
         State.drop_table()
         database.create_tables([State], safe=True)
@@ -76,7 +88,10 @@ class stateTestCase(unittest.TestCase):
         self.assertEqual(len(json.loads(GET_request2.data)), 1)
 
     def test_get(self):
-        '''test proper representation of a state record upon GET requests via state ID to API'''
+        """
+        Test proper representation of a state record upon GET requests
+        via amenity ID to API.
+        """
         # delete and recreate State table for test
         State.drop_table()
         database.create_tables([State], safe=True)
@@ -99,7 +114,9 @@ class stateTestCase(unittest.TestCase):
         self.assertEqual(GET_request2.status[:3], '404')
 
     def test_delete(self):
-        '''test deletion of state records upon DELETE requests to API'''
+        """
+        Test deletion of state records upon DELETE requests to API.
+        """
         # delete and recreate State table for test
         State.drop_table()
         database.create_tables([State], safe=True)
@@ -126,7 +143,9 @@ class stateTestCase(unittest.TestCase):
         self.assertEqual(DELETE_request2.status[:3], '404')
 
     def test_update(self):
-        '''test update of state records upon PUT requests to API'''
+        """
+        Test update of state records upon PUT requests to API.
+        """
         # delete and recreate State table for test
         State.drop_table()
         database.create_tables([State], safe=True)
