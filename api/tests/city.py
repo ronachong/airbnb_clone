@@ -61,7 +61,7 @@ class cityTestCase(unittest.TestCase):
         now = datetime.now().strftime('%d/%m/%Y %H:%M')
 
         self.assertEqual(City.get(City.id == 1).name, 'namestring')
-        self.assertEqual(City.get(City.id == 1).state, 1)
+        self.assertEqual(City.get(City.id == 1).state.id, 1)
         self.assertEqual(City.get(City.id == 1).created_at.strftime('%d/%m/%Y %H:%M'), now)
         self.assertEqual(City.get(City.id == 1).updated_at.strftime('%d/%m/%Y %H:%M'), now)
 
@@ -77,8 +77,8 @@ class cityTestCase(unittest.TestCase):
             name='namestring'
         ))
 
-        self.assertEqual(POST_request6.status[:3], '409')
-        self.assertEqual(json.loads(POST_request6.data), {'code': 10002, 'msg': 'City already exists in this state'})
+        self.assertEqual(POST_request3.status[:3], '409')
+        self.assertEqual(json.loads(POST_request3.data), {'code': 10002, 'msg': 'City already exists in this state'})
 
     def test_list(self):
         """
