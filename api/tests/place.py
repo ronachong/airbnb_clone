@@ -298,24 +298,26 @@ class placeTestCase(unittest.TestCase):
         via amenity ID to API.
         """
         # test response of GET request for place by place id
-        self.createPlaceViaPeewee()
+        place_record = self.createPlaceViaPeewee()
 
         GET_request1 = self.app.get('/places/1')
         GET_data = json.loads(GET_request1.data)
         self.assertEqual(GET_request1.status[:3], '200')
 
-        self.assertEqual(Place.get(Place.id == 1).email, GET_data['owner'])
-        self.assertEqual(Place.get(Place.id == 1).password, GET_data['city'])
-        self.assertEqual(Place.get(Place.id == 1).first_name, GET_data['name'])
-        self.assertEqual(Place.get(Place.id == 1).description, GET_data['description'])
-        self.assertEqual(Place.get(Place.id == 1).number_rooms, GET_data['number_rooms'])
-        self.assertEqual(Place.get(Place.id == 1).number_bathrooms, GET_data['number_bathrooms'])
-        self.assertEqual(Place.get(Place.id == 1).max_guest, GET_data['max_guest'])
-        self.assertEqual(Place.get(Place.id == 1).price_by_night, GET_data['price_by_night'])
-        self.assertEqual(Place.get(Place.id == 1).latitude, GET_data['latitude'])
-        self.assertEqual(Place.get(Place.id == 1).longitude, GET_data['longitude'])
-        self.assertEqual(Place.get(Place.id == 1).created_at, GET_data['created_at'])
-        self.assertEqual(Place.get(Place.id == 1).updated_at, GET_data['updated_at'])
+        self.assertEqual(place_record.id, GET_data['id'])
+        self.assertEqual(place_record.created_at.strftime('%d/%m/%Y %H:%M'), GET_data['created_at'][:-3])
+        self.assertEqual(place_record.updated_at.strftime('%d/%m/%Y %H:%M'), GET_data['updated_at'][:-3])
+        self.assertEqual(place_record.owner, GET_data['owner_id'])
+        self.assertEqual(place_record.city, GET_data['city_id'])
+        self.assertEqual(place_record.name, GET_data['name'])
+        self.assertEqual(place_record.description, GET_data['description'])
+        self.assertEqual(place_record.number_rooms, GET_data['number_rooms'])
+        self.assertEqual(place_record.number_bathrooms, GET_data['number_bathrooms'])
+        self.assertEqual(place_record.max_guest, GET_data['max_guest'])
+        self.assertEqual(place_record.price_by_night, GET_data['price_by_night'])
+        self.assertEqual(place_record.latitude, GET_data['latitude'])
+        self.assertEqual(place_record.longitude, GET_data['longitude'])
+
 
         # test response of GET request for place by place id which does not exist
         GET_request2 = self.app.get('/places/1000')
