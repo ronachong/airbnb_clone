@@ -11,7 +11,7 @@ from peewee import Model
 from datetime import datetime
 
 
-class placebookTestCase(unittest.TestCase):
+class amenityTestCase(unittest.TestCase):
     def setUp(self):
         """
         Overload def setUp(self): to create a test client of airbnb app, and
@@ -51,7 +51,7 @@ class placebookTestCase(unittest.TestCase):
         This method will not work if the POST request handler is not written
         properly.
         """
-        POST_request = self.app.post('/places/1/books', data=dict(
+        POST_request = self.app.post('/amenities', data=dict(
             name= 'amenity_name'
         ))
         return POST_request
@@ -152,7 +152,7 @@ class placebookTestCase(unittest.TestCase):
 
         GET_request1 = self.app.get('/amenities')
 
-        DELETE_request1 = self.app.delete('/menities')
+        DELETE_request1 = self.app.delete('/amenities')
 
         GET_request2 = self.app.get('/amenities')
 
