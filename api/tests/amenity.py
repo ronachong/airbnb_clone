@@ -4,7 +4,7 @@ import os
 import json
 
 from app import app
-from app.views import *
+from app.views.amenity import *
 from app.models.amenity import Amenity
 from app.models.base import *
 from peewee import Model
@@ -58,8 +58,8 @@ class placebookTestCase(unittest.TestCase):
 
     def subtest_createWithAllParams(self):
         """
-        Test proper creation of a user record upon POST request to the API with
-        all parameters provided.
+        Test proper creation of an amenity record upon POST request to the API
+        with all parameters provided.
         """
         POST_request1 = self.createAmenityViaAPI()
         self.assertEqual(POST_request1.status[:3], '200')
