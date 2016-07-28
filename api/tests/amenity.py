@@ -124,15 +124,16 @@ class placebookTestCase(unittest.TestCase):
         database.create_tables([Amenity], safe=True)
 
         # test response of GET request for placebook by placebook id
-        self.createAmenityViaPeewee()
+        amenity_record = self.createAmenityViaPeewee()
 
         GET_request1 = self.app.get('/amenities/1')
         GET_data = json.loads(GET_request1.data)
         self.assertEqual(GET_request1.status[:3], '200')
 
-        self.assertEqual(Amenity.get(Amenity.id == 1).amenity, GET_data['amenity_name'])
-        self.assertEqual(Amenity.get(Amenity.id == 1).created_at, GET_data['created_at'])
-        self.assertEqual(Amenity.get(Amenity.id == 1).updated_at, GET_data['updated_at'])
+        self.assertEqual(amenity_record.id, GET_data['id'])
+        self.assertEqual(amenity_record.created_at.strftime('%d/%m/%Y %H:%M'), GET_data['created_at'][:-3])
+        self.assertEqual(amenity_record.updated_at.strftime('%d/%m/%Y %H:%M'), GET_data['updated_at'][:-3])
+        self.assertEqual(amenity_record.name, GET_data['name'])
 
         # test response of GET request for booking by booking id which does not exist
         GET_request2 = self.app.get('/amenities/1000')
