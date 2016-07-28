@@ -4,7 +4,7 @@ import os
 import json
 
 from app import app
-from app.views import *
+from app.views.place import *
 from app.models.user import User
 from app.models.place import Place
 from app.models.city import City
@@ -27,6 +27,11 @@ class placeTestCase(unittest.TestCase):
         # connect to airbnb_test database and create Place table
         database.connect()
         database.create_tables([User, State, City, Place], safe=True)
+        user_record = User( email='anystring',
+                            password='anystring1',
+                            first_name='anystring2',
+                            last_name='anystring3'  )
+        user_record.save()
         state_record = State(name='foo-state')
         state_record.save()
         city_record = City(name='foo-city', state=1)
