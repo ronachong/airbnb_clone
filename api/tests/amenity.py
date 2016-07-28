@@ -99,10 +99,6 @@ class amenityTestCase(unittest.TestCase):
         Test proper representation of all amenity records upon GET requests to
         API.
         """
-        # delete and recreate Amenity table for test
-        Amenity.drop_table()
-        database.create_tables([Amenity], safe=True)
-
         GET_request1 = self.app.get('/amenities')
         self.assertEqual(len(json.loads(GET_request1.data)), 0)
 
@@ -119,10 +115,6 @@ class amenityTestCase(unittest.TestCase):
         Test proper representation of an amenity record upon GET requests
         via amenity ID to API.
         """
-        # delete and recreate Amenity table for test
-        Amenity.drop_table()
-        database.create_tables([Amenity], safe=True)
-
         # test response of GET request for placebook by placebook id
         amenity_record = self.createAmenityViaPeewee()
 
@@ -143,10 +135,6 @@ class amenityTestCase(unittest.TestCase):
         """
         Test deletion of amenity records upon DELETE requests to API.
         """
-        # delete and recreate Amenity table for test
-        Amenity.drop_table()
-        database.create_tables([Amenity], safe=True)
-
         # test response of DELETE request for amenity by amenity id
         self.createAmenityViaPeewee()
 
