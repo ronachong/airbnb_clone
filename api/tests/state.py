@@ -124,11 +124,11 @@ class stateTestCase(unittest.TestCase):
             name='namestring'
         ))
 
-        GET_request1 = self.app.get('/state')
+        GET_request1 = self.app.get('/states')
 
         DELETE_request1 = self.app.delete('/states/1')
 
-        GET_request2 = self.app.get('/state')
+        GET_request2 = self.app.get('/states')
 
         num_records_b4 = len(json.loads(GET_request1.data))
         num_records_after = len(json.loads(GET_request2.data))
