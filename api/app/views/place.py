@@ -31,6 +31,7 @@ def places():
                         name=place_name,
                         description=place_desc,
                         number_rooms=nb_rooms,
+                        number_bathrooms=nb_bathrooms,
                         max_guest=place_mguests,
                         price_by_night=place_pbn,
                         latitude=place_lat,
