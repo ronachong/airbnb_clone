@@ -38,27 +38,27 @@ class placebookTestCase(unittest.TestCase):
         state_record.save()
         city_record = City(name="foo-city", state="1")
         city_record.save()
-        place_record = Place(   owner = 1,
-                                city = 1,
-                                name = "foo",
-                                description = "foo description",
-                                number_rooms = 1,
-                                number_bathrooms = 1,
-                                max_guest = 1,
-                                price_by_night = 1,
-                                latitude = 20.0,
-                                longitude = 22.0    )
+        place_record = Place(   owner_id=1,
+                                city_id=1,
+                                name="foo",
+                                description="foo description",
+                                number_rooms=1,
+                                number_bathrooms=1,
+                                max_guest=1,
+                                price_by_night=1,
+                                latitude=20.0,
+                                longitude=22.0    )
         place_record.save()
-        place_record2 = Place(  owner = 1,
-                                city = 1,
-                                name = "foo",
-                                description = "foo description",
-                                number_rooms = 1,
-                                number_bathrooms = 1,
-                                max_guest = 1,
-                                price_by_night = 1,
-                                latitude = 20.0,
-                                longitude = 22.0    )
+        place_record2 = Place(  owner_id=1,
+                                city_id=1,
+                                name="foo",
+                                description="foo description",
+                                number_rooms=1,
+                                number_bathrooms=1,
+                                max_guest=1,
+                                price_by_night=1,
+                                latitude=20.0,
+                                longitude=22.0    )
         place_record2.save()
 
     def tearDown(self):
