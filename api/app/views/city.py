@@ -17,6 +17,9 @@ def city(state_id):
     elif request.method == 'POST':
         city_name = request.form["name"]
 
+        record = City(name=city_name, state=state_id)
+        record.save()
+
         try:
             record = City(name=city_name, state=state_id)
             record.save()
