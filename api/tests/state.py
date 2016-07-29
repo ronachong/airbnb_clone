@@ -4,7 +4,7 @@ import os
 import json
 
 from app import app
-from app.views.state import *
+from app.views import state
 from app.models.state import State
 from app.models.base import *
 from peewee import Model

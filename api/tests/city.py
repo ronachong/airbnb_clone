@@ -4,8 +4,7 @@ import os
 import json
 
 from app import app
-from app.views.state import *
-from app.views.city import *
+from app.views import city, state
 from app.models.city import City
 from app.models.state import State
 from app.models.base import *

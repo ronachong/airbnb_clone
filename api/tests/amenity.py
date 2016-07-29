@@ -4,7 +4,7 @@ import os
 import json
 
 from app import app
-from app.views.amenity import *
+# from app.views import amenity
 from app.models.amenity import Amenity
 from app.models.base import *
 from peewee import Model

@@ -4,8 +4,7 @@ import os
 import json
 
 from app import app
-from app.views.index import *
-from app.views.user import *
+from app.views import user
 from app.models.user import User
 from app.models.base import *
 
