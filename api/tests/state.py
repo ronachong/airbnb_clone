@@ -139,23 +139,3 @@ class stateTestCase(unittest.TestCase):
         # test response of DELETE request for state by state id which does not exist
         DELETE_request2 = self.app.delete('/states/1000')
         self.assertEqual(DELETE_request2.status[:3], '404')
-
-    def test_update(self):
-        """
-        Test update of state records upon PUT requests to API.
-        """
-        POST_request1 = self.app.post('/states', data=dict(
-            name='namestring'
-        ))
-
-        PUT_request1 = self.app.put('/states/1', data=dict(
-            name='namestring2'
-        ))
-
-        self.assertEqual(PUT_request1.status[:3], '200')
-
-        self.assertEqual(State.get(State.id == 1).name, 'namestring2')
-
-        # test response of PUT request for state by state id which does not exist
-        PUT_request2 = self.app.put('/states/1000')
-        self.assertEqual(PUT_request2.status[:3], '404')
