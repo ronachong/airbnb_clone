@@ -198,19 +198,21 @@ class placebookTestCase(unittest.TestCase):
         via amenity ID to API.
         """
         # test response of GET request for placebook by placebook id
-        self.createPlaceBookViaPeewee()
+        placebook_record = self.createPlaceBookViaPeewee()
 
         GET_request1 = self.app.get('/places/1/books/1')
         GET_data = json.loads(GET_request1.data)
         self.assertEqual(GET_request1.status[:3], '200')
 
-        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).place_id, GET_data['place_id'])
-        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).user_id, GET_data['user_id'])
-        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).is_validated, GET_data['is_validated'])
-        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).date_start, GET_data['date_start'])
-        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).number_nights, GET_data[1])
-        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).created_at, GET_data['created_at'])
-        self.assertEqual(PlaceBook.get(PlaceBook.id == 1).updated_at, GET_data['updated_at'])
+        self.assertEqual(placebook_record.id, GET_data['id'])
+        self.assertEqual(placebook_record.created_at.strftime('%d/%m/%Y %H:%M:%S'), GET_data['created_at'][:-3])
+        self.assertEqual(placebook_record.updated_at.strftime('%d/%m/%Y %H:%M:%S'), GET_data['updated_at'][:-3])
+        self.assertEqual(placebook_record.place_id, GET_data['place_id'])
+        self.assertEqual(placebook_record.user_id, GET_data['user_id'])
+        self.assertEqual(placebook_record.is_validated, GET_data['is_validated'])
+        self.assertEqual(placebook_record.date_start, GET_data['date_start'])
+        self.assertEqual(placebook_record.number_nights, GET_data['number_nights'])
+
 
         # test response of GET request for booking by booking id which does not exist
         GET_request2 = self.app.get('places/1/books/1000')
