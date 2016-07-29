@@ -50,6 +50,6 @@ database.create_tables([User, State, City, Place, PlaceBook, Amenity, PlaceAmeni
 #                 longitude=place_long )
 # record.save()
 
-record = Amenity( name = 'name' )
-record.save()
-print record.to_hash()
+# record = Amenity( name = 'name' )
+# record.save()
+# print record.to_hash()
