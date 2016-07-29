@@ -31,6 +31,17 @@ class stateTestCase(unittest.TestCase):
         """
         State.drop_table()
 
+    def createStateViaPeewee(self):
+        """
+        Create a state record using the API's database/Peewee models.
+
+        createStateViaPeewee returns the Peewee object for the record. This
+        method will not work if the database models are not written correctly.
+        """
+        record = State(name='namestring')
+        record.save()
+        return record
+
     def test_create(self):
         """
         Test proper creation (or non-creation) of state records upon POST
@@ -89,19 +100,16 @@ class stateTestCase(unittest.TestCase):
         via amenity ID to API.
         """
         # test response of GET request for state by state id
-        POST_request1 = self.app.post('/states', data=dict(
-            name='namestring'
-        ))
+        state_record = self.createStateViaPeewee()
 
         GET_request1 = self.app.get('/states/1')
         GET_data = json.loads(GET_request1.data)
         self.assertEqual(GET_request1.status[:3], '200')
 
-        now = datetime.now().strftime('%d/%m/%Y %H:%M')
-        
-        self.assertEqual(State.get(State.id == 1).name, GET_data['name'])
-        self.assertEqual(State.get(State.id == 1).created_at.strftime('%d/%m/%Y %H:%M'), now)
-        self.assertEqual(State.get(State.id == 1).updated_at.strftime('%d/%m/%Y %H:%M'), now)
+        self.assertEqual(state_record.id, GET_data['id'])
+        self.assertEqual(state_record.created_at.strftime('%d/%m/%Y %H:%M'), GET_data['created_at'][:-3])
+        self.assertEqual(state_record.updated_at.strftime('%d/%m/%Y %H:%M'), GET_data['updated_at'][:-3])
+        self.assertEqual(state_record.name, GET_data['name'])
 
         # test response of GET request for state by state id which does not exist
         GET_request2 = self.app.get('/states/1000')
