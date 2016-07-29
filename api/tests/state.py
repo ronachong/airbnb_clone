@@ -4,7 +4,7 @@ import os
 import json
 
 from app import app
-from app.views import *
+from app.views.state import *
 from app.models.state import State
 from app.models.base import *
 from peewee import Model
@@ -65,8 +65,8 @@ class stateTestCase(unittest.TestCase):
             name='namestring'
         ))
 
-        self.assertEqual(POST_request6.status[:3], '409')
-        self.assertEqual(json.loads(POST_request6.data), {'code': 10001, 'msg': 'State already exists'})
+        self.assertEqual(POST_request3.status[:3], '409')
+        self.assertEqual(json.loads(POST_request3.data), {'code': 10001, 'msg': 'State already exists'})
 
     def test_list(self):
         """
@@ -97,6 +97,8 @@ class stateTestCase(unittest.TestCase):
         GET_data = json.loads(GET_request1.data)
         self.assertEqual(GET_request1.status[:3], '200')
 
+        now = datetime.now().strftime('%d/%m/%Y %H:%M')
+        
         self.assertEqual(State.get(State.id == 1).name, GET_data['name'])
         self.assertEqual(State.get(State.id == 1).created_at.strftime('%d/%m/%Y %H:%M'), now)
         self.assertEqual(State.get(State.id == 1).updated_at.strftime('%d/%m/%Y %H:%M'), now)
