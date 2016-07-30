@@ -1,15 +1,14 @@
-import unittest, logging
-import config
-import os
+import logging
 import json
+import unittest
+from datetime import datetime
+
+from peewee import Model
 
 from app import app
 from app.views import user
 from app.models.user import User
-from app.models.base import *
-
-from peewee import Model
-from datetime import datetime
+from app.models.base import database
 
 
 class userTestCase(unittest.TestCase):
@@ -18,17 +17,16 @@ class userTestCase(unittest.TestCase):
         Overload def setUp(self): to create a test client of airbnb app, and
         create amenity table in airbnb_test database.
         """
-        self.app = app.test_client()
-        self.app.testing = True
-        logging.disable(logging.CRITICAL) # disable logs
+        self.app = app.test_client()        # set up test client
+        self.app.testing = True             # set testing to True
+        logging.disable(logging.CRITICAL)   # disable logs
 
-        # connect to airbnb_test database and create User table
-        database.connect()
-        database.create_tables([User], safe=True)
+        database.connect()                          # connect to airbnb_test db
+        database.create_tables([User], safe=True)   # create User table
 
     def tearDown(self):
         """
-        Remove amenity table from airbnb_test database upon completion of test
+        Remove user table from airbnb_test database upon completion of test
         case.
         """
         User.drop_table()
@@ -217,7 +215,7 @@ class userTestCase(unittest.TestCase):
         """
         Test update of user records upon PUT requests to API.
         """
-        self.createUserViaPeewee()
+        test_record = self.createUserViaPeewee()
 
         PUT_request1 = self.app.put('/users/1', data=dict(
             email='anystring2',
@@ -227,10 +225,10 @@ class userTestCase(unittest.TestCase):
         ))
         self.assertEqual(PUT_request1.status[:3], '200')
 
-        self.assertEqual(User.get(User.id == 1).email, 'anystring2')
-        self.assertEqual(User.get(User.id == 1).password, 'anystring3')
-        self.assertEqual(User.get(User.id == 1).first_name, 'anystring4')
-        self.assertEqual(User.get(User.id == 1).last_name, 'anystring5')
+        self.assertEqual(test_record.email, 'anystring2')
+        self.assertEqual(test_record.password, 'anystring3')
+        self.assertEqual(test_record.first_name, 'anystring4')
+        self.assertEqual(test_record.last_name, 'anystring5')
 
         # test response of PUT request for user by user id which does not exist
         PUT_request2 = self.app.put('/users/1000')

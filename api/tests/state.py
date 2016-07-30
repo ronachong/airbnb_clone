@@ -1,14 +1,16 @@
-import unittest, logging
-import config
-import os
 import json
+import logging
+import unittest
+from datetime import datetime
+
+from peewee import Model
 
 from app import app
 from app.views import state
 from app.models.state import State
-from app.models.base import *
-from peewee import Model
-from datetime import datetime
+from app.models.base import database
+
+
 
 
 class stateTestCase(unittest.TestCase):
@@ -17,12 +19,12 @@ class stateTestCase(unittest.TestCase):
         Overload def setUp(self): to create a test client of airbnb app, and
         create state table in airbnb_test database.
         """
-        self.app = app.test_client()
-        #self.app.testing = True
-        logging.disable(logging.CRITICAL) # disable logs
+        self.app = app.test_client()        # set up test client
+        self.app.testing = True             # set testing to True
+        logging.disable(logging.CRITICAL)   # disable logs
 
-        database.connect()
-        database.create_tables([State], safe=True)
+        database.connect()                          # connect to airbnb_test db
+        database.create_tables([State], safe=True)  # create State table
 
     def tearDown(self):
         """

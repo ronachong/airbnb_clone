@@ -1,8 +1,10 @@
+import json
 import unittest
-from app import app
-from app.views import *
-from json import loads
 from datetime import datetime
+
+from app import app
+from app.views import index
+
 
 # validates GET request to index returns 200, JSON status is OK, and time codes
 
@@ -21,8 +23,8 @@ class indexTestCase(unittest.TestCase):
         Overload def setUp(self): to create a test client of airbnb app, and
         create amenity table in airbnb_test database.
         """
-        self.app = app.test_client()
-        self.app.testing = True
+        self.app = app.test_client()    # set up test client
+        self.app.testing = True         # set testing to True
 
     def test_200(self):
         """
@@ -38,7 +40,7 @@ class indexTestCase(unittest.TestCase):
         Validate if the key status of the response to a request on GET / has
         the value OK.
         """
-        GETdata = loads(self.app.get('/').data)
+        GETdata = json.loads(self.app.get('/').data)
         self.assertEqual(GETdata['status'], 'OK')
 
     def test_time(self):

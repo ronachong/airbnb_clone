@@ -1,7 +1,9 @@
-import unittest, logging
-import config
-import os
+import logging
 import json
+import unittest
+from datetime import datetime
+
+from peewee import Model
 
 from app import app
 from app.views import place_book
@@ -10,9 +12,7 @@ from app.models.state import State
 from app.models.city import City
 from app.models.place import Place
 from app.models.place_book import PlaceBook
-from app.models.base import *
-from peewee import Model
-from datetime import datetime
+from app.models.base import database
 
 
 class placebookTestCase(unittest.TestCase):

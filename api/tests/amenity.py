@@ -1,14 +1,14 @@
-import unittest, logging
-import config
-import os
+import logging
 import json
+import unittest
+from datetime import datetime
+
+from peewee import Model
 
 from app import app
-# from app.views import amenity
+from app.views import amenity
 from app.models.amenity import Amenity
-from app.models.base import *
-from peewee import Model
-from datetime import datetime
+from app.models.base import database
 
 
 class amenityTestCase(unittest.TestCase):

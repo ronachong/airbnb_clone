@@ -1,15 +1,15 @@
-import unittest, logging
-import config
-import os
+import logging
 import json
+import unittest
+from datetime import datetime
+
+from peewee import Model
 
 from app import app
 from app.views import city, state
 from app.models.city import City
 from app.models.state import State
-from app.models.base import *
-from peewee import Model
-from datetime import datetime
+from app.models.base import database
 
 
 class cityTestCase(unittest.TestCase):
