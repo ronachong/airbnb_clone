@@ -16,12 +16,13 @@ def books(place_id):
         return jsonify(list)
 
     elif request.method == 'POST':
-        record = PlaceBook (place = request.form['place'],
-                            user = request.form['user'],
-                            is_validated = request.form['is_validated'],
-                            date_start = datetime.strptime(request.form['date_start'], '%d/%m/%Y %H:%M:%S'),
-                            number_nights = request.form['number_nights'] )
-
+        record = PlaceBook(
+            place=request.form['place'],
+            user=request.form['user'],
+            is_validated=request.form['is_validated'],
+            date_start=datetime.strptime(request.form['date_start'], '%d/%m/%Y %H:%M:%S'),
+            number_nights=request.form['number_nights']
+        )
         record.save()
         return jsonify(record.to_hash())
 

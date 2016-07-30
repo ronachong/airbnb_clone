@@ -15,17 +15,18 @@ def city(state_id):
         return jsonify(list)
 
     elif request.method == 'POST':
-        city_name = request.form["name"]
-
-        record = City(name=city_name, state=state_id)
-        record.save()
-
         try:
-            record = City(name=city_name, state=state_id)
+            record = City(name=request.form["name"], state=state_id)
             record.save()
             return jsonify(record.to_hash())
+
         except:
-            return json_response(add_status_=False, status_=409, code=10002, msg="City already exists in this state")
+            return json_response(
+                add_status_=False,
+                status_=409,
+                code=10002,
+                msg="City already exists in this state"
+            )
 
 @app.route('/states/<state_id>/cities/<city_id>', methods=['GET','DELETE'])
 def city_id(state_id, city_id):

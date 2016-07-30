@@ -15,17 +15,23 @@ def users():
         return jsonify(list)
 
     elif request.method == 'POST':
-        usr_email = request.form["email"]
-        usr_password = request.form["password"]
-        usr_first_name = request.form["first_name"]
-        usr_last_name = request.form["last_name"]
-
         try:
-            record = User(email=usr_email, password=usr_password, first_name=usr_first_name, last_name=usr_last_name)
+            record = User(
+                email=request.form["email"],
+                password=request.form["password"],
+                first_name=request.form["first_name"],
+                last_name=request.form["last_name"]
+            )
             record.save()
             return jsonify(record.to_hash())
+
         except:
-            return json_response(add_status_=False, status_=409, code=10000, msg="Email already exists")
+            return json_response(
+                add_status_=False,
+                status_=409,
+                code=10000,
+                msg="Email already exists"
+            )
 
 @app.route('/users/<user_id>', methods=['GET','PUT', 'DELETE'])
 def user_id(user_id):

@@ -15,13 +15,18 @@ def states():
         return jsonify(list)
 
     elif request.method == 'POST':
-        state_name = request.form["name"]
         try:
-            record = State(name=state_name)
+            record = State(name=request.form["name"])
             record.save()
             return jsonify(record.to_hash())
+
         except:
-            return json_response(add_status_=False, status_=409, code=10001, msg="State already exists")
+            return json_response(
+                add_status_=False,
+                status_=409,
+                code=10001,
+                msg="State already exists"
+            )
 
 @app.route('/states/<state_id>', methods=['GET','DELETE'])
 def state_id(state_id):

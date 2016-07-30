@@ -18,11 +18,17 @@ def amenities():
 
     elif request.method == 'POST':
         try:
-            record = Amenity( name = request.form['name'] )
+            record = Amenity(name=request.form['name'])
             record.save()
             return jsonify(record.to_hash())
+
         except:
-            return json_response(add_status_=False, status_=409, code=10003, msg="Name already exists")
+            return json_response(
+                add_status_=False,
+                status_=409,
+                code=10003,
+                msg="Name already exists"
+            )
 
 
 @app.route('/amenities/<amenity_id>', methods=['GET', 'DELETE'])
