@@ -31,7 +31,7 @@ class stateTestCase(unittest.TestCase):
         Remove state table from airbnb_test database upon completion of test
         case.
         """
-        State.drop_table()
+        State.drop_table()  # drop state table from database
 
     def createStateViaPeewee(self):
         """

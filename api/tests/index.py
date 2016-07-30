@@ -10,14 +10,6 @@ from app.views import index
 
 
 class indexTestCase(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        pass
-
-    @classmethod
-    def tearDownClass(cls):
-        pass
-
     def setUp(self):
         """
         Overload def setUp(self): to create a test client of airbnb app, and

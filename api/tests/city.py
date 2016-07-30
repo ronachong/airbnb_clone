@@ -35,6 +35,7 @@ class cityTestCase(unittest.TestCase):
         Remove city table from airbnb_test database upon completion of test
         case.
         """
+        # drop tables from database
         City.drop_table()
         State.drop_table()
 

@@ -29,7 +29,7 @@ class amenityTestCase(unittest.TestCase):
         Remove amenity table from airbnb_test database upon completion of test
         case.
         """
-        Amenity.drop_table()
+        Amenity.drop_table()    # drop amenity table from database
 
     def createAmenityViaPeewee(self):
         """
