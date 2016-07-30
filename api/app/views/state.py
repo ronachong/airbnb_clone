@@ -26,8 +26,22 @@ def states():
 @app.route('/states/<state_id>', methods=['GET','DELETE'])
 def state_id(state_id):
     ''' '''
-    record = State.get(State.id == state_id)
+    # check whether resource exists:
+    # --------------------------------------------------------------------------
+    try:
+        record = State.get(State.id == state_id)
 
+    # return 404 not found if it does not
+    except State.DoesNotExist:
+        return json_response(
+            add_status_=False,
+            status_=404,
+            code=404,
+            msg="not found"
+        )
+
+    # if exception does not arise:
+    # --------------------------------------------------------------------------
     if request.method == 'GET':
         return jsonify(record.to_hash())
 

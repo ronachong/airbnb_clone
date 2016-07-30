@@ -28,8 +28,21 @@ def books(place_id):
 @app.route('/places/<place_id>/books/<book_id>', methods=['GET', 'PUT', 'DELETE'])
 def book_id(place_id, book_id):
     '''  '''
-    record = PlaceBook.get(PlaceBook.id == book_id)
+    # check whether resource exists:
+    # --------------------------------------------------------------------------
+    try:
+        record = PlaceBook.get(PlaceBook.id == book_id)
 
+    except PlaceBook.DoesNotExist:
+        return json_response(
+            add_status_=False,
+            status_=404,
+            code=404,
+            msg="not found"
+        )
+
+    # if exception does not arise:
+    # --------------------------------------------------------------------------
     if request.method == 'GET':
         return jsonify(record.to_hash())
 

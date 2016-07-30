@@ -30,12 +30,26 @@ def users():
 @app.route('/users/<user_id>', methods=['GET','PUT', 'DELETE'])
 def user_id(user_id):
     ''' '''
-    if request.method == 'GET':
+    # check whether resource exists:
+    # --------------------------------------------------------------------------
+    try:
         record = User.get(User.id == user_id)
+
+    # return 404 not found if it does not
+    except User.DoesNotExist:
+        return json_response(
+            add_status_=False,
+            status_=404,
+            code=404,
+            msg="not found"
+        )
+
+    # if exception does not arise:
+    # --------------------------------------------------------------------------
+    if request.method == 'GET':
         return jsonify(record.to_hash())
 
     elif request.method == 'PUT':
-        record = User.get(User.id == user_id)
         # code below can be optimized in future using list comprehensions
         for key in request.values.keys():
             if key == "last_name":
@@ -50,7 +64,6 @@ def user_id(user_id):
         return jsonify(record.to_hash())
 
     elif request.method == "DELETE":
-        record = User.get(User.id == user_id)
         record.delete_instance()
         record.save()
         return 'deleted user\n'

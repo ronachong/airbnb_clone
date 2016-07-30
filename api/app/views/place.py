@@ -6,7 +6,10 @@ from peewee import *
 
 @app.route('/places', methods=['GET','POST'])
 def places():
-    ''' places returns a list of all cities in the database in the case of a GET request, and creates a new place in the database in the case of a POST request '''
+    '''
+    places returns a list of all cities in the database in the case of a GET
+    request, and creates a new place in the database in the case of a POST request
+    '''
     if request.method == 'GET':
         list = []
         for record in Place.select():
@@ -15,35 +18,35 @@ def places():
         return jsonify(list)
 
     elif request.method == 'POST':
-        place_owner = request.form['user_id']
-        place_city = request.form['city_id']
-        place_name = request.form['name']
-        place_desc = request.form['description']
-        nb_rooms = request.form['number_rooms']
-        nb_bathrooms = request.form['number_bathrooms']
-        place_mguests = request.form['max_guest']
-        place_pbn = request.form['price_by_night']
-        place_lat = request.form['latitude']
-        place_long = request.form['longitude']
 
-        record = Place( owner=place_owner,
-                        city=place_city,
-                        name=place_name,
-                        description=place_desc,
-                        number_rooms=nb_rooms,
-                        number_bathrooms=nb_bathrooms,
-                        max_guest=place_mguests,
-                        price_by_night=place_pbn,
-                        latitude=place_lat,
-                        longitude=place_long )
+        record = Place( owner=request.form['owner_id'],
+                        city=request.form['city_id'],
+                        name=request.form['name'],
+                        description=request.form['description'],
+                        number_rooms=request.form['number_rooms'],
+                        number_bathrooms=request.form['number_bathrooms'],
+                        max_guest=request.form['max_guest'],
+                        price_by_night=request.form['price_by_night'],
+                        latitude=request.form['latitude'],
+                        longitude=request.form['longitude'] )
         record.save()
         return jsonify(record.to_hash())
 
 @app.route('/places/<place_id>', methods=['GET', 'PUT', 'DELETE'])
 def place_id(place_id):
     '''  '''
-    record = Place.get(Place.id == place_id)
+    try:
+        record = Place.get(Place.id == place_id)
 
+    except Place.DoesNotExist:
+        return json_response(
+            add_status_=False,
+            status_=404,
+            code=404,
+            msg="not found"
+        )
+
+    # if exception does not arise:
     if request.method == 'GET':
         return jsonify(record.to_hash())
 
@@ -57,6 +60,8 @@ def place_id(place_id):
                 record.description = request.values[key]
             elif key == "number_rooms":
                 record.number_rooms = request.values[key]
+            elif key == "number_bathrooms":
+                record.number_bathrooms = request.values[key]
             elif key == "max_guest":
                 record.max_guest = request.values[key]
             elif key == "price_by_night":
@@ -72,3 +77,37 @@ def place_id(place_id):
         record.delete_instance()
         record.save()
         return 'deleted city\n'
+
+@app.route('/states/<state_id>/cities/<city_id>/places', methods=['GET', 'POST'])
+def city_places(state_id, city_id):
+
+    if request.method == 'GET':
+        try:
+            list = []
+            for record in Place.select().where(Place.city == city_id):
+                hash = record.to_hash()
+                list.append(hash)
+            return jsonify(list)
+
+        # return 404 not found record does not exist
+        except Place.DoesNotExist:
+            return json_response(
+                add_status_=False,
+                status_=404,
+                code=404,
+                msg="not found"
+            )
+
+    elif request.method == 'POST':
+        record = Place( owner=request.form['owner_id'],
+                        city=city_id,
+                        name=request.form['name'],
+                        description=request.form['description'],
+                        number_rooms=request.form['number_rooms'],
+                        number_bathrooms=request.form['number_bathrooms'],
+                        max_guest=request.form['max_guest'],
+                        price_by_night=request.form['price_by_night'],
+                        latitude=request.form['latitude'],
+                        longitude=request.form['longitude'] )
+        record.save()
+        return jsonify(record.to_hash())

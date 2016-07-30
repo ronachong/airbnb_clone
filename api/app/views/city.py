@@ -30,8 +30,22 @@ def city(state_id):
 @app.route('/states/<state_id>/cities/<city_id>', methods=['GET','DELETE'])
 def city_id(state_id, city_id):
     ''' '''
-    record = City.get(City.id == city_id)
+    # check whether resource exists:
+    # --------------------------------------------------------------------------
+    try:
+        record = City.get(City.id == city_id)
 
+    # return 404 not found if it does not
+    except City.DoesNotExist:
+        return json_response(
+            add_status_=False,
+            status_=404,
+            code=404,
+            msg="not found"
+        )
+
+    # if exception does not arise:
+    # --------------------------------------------------------------------------
     if request.method == 'GET':
         return jsonify(record.to_hash())
 

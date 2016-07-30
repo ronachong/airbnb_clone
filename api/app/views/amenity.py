@@ -28,8 +28,22 @@ def amenities():
 @app.route('/amenities/<amenity_id>', methods=['GET', 'DELETE'])
 def amenity_id(amenity_id):
     '''  '''
-    record = Amenity.get(Amenity.id == amenity_id)
+    # check whether resource exists:
+    # --------------------------------------------------------------------------
+    try:
+        record = Amenity.get(Amenity.id == amenity_id)
 
+    # return 404 not found if it does not
+    except Amenity.DoesNotExist:
+        return json_response(
+            add_status_=False,
+            status_=404,
+            code=404,
+            msg="not found"
+        )
+
+    # if exception does not arise:
+    # --------------------------------------------------------------------------
     if request.method == 'GET':
         return jsonify(record.to_hash())
 
