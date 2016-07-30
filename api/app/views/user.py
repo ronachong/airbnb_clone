@@ -60,7 +60,9 @@ def user_id(user_id):
                 record.password = request.values[key]
             elif key == "is_admin":
                 record.is_admin = request.values[key]
-            record.save()
+            elif key == "email":
+                record.email = request.values[key]
+        record.save()
         return jsonify(record.to_hash())
 
     elif request.method == "DELETE":
