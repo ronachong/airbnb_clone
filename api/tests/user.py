@@ -29,7 +29,7 @@ class userTestCase(unittest.TestCase):
         Remove user table from airbnb_test database upon completion of test
         case.
         """
-        User.drop_table()
+        User.drop_table()   # drop user table from database
 
     def createUserViaPeewee(self):
         """
@@ -163,8 +163,7 @@ class userTestCase(unittest.TestCase):
         # create user record in user table; should have ID 1
         user_record = self.createUserViaPeewee()
 
-        # test for handling of GET request for user record by user id which
-        # exists
+        # test handling of GET req. for user record by id which exists
         # ----------------------------------------------------------------------
         # make GET request for record in table
         GET_request1 = self.app.get('/users/1')
@@ -182,8 +181,7 @@ class userTestCase(unittest.TestCase):
         self.assertEqual(user_record.last_name, GET_data['last_name'])
         self.assertEqual(user_record.is_admin, GET_data['is_admin'])
 
-        # test for handling of GET request for user record by user id which does
-        # not exist
+        # test handling of GET req. for user record by id which does not exist
         # ----------------------------------------------------------------------
         GET_request2 = self.app.get('/users/1000')
         self.assertEqual(GET_request2.status[:3], '404')
@@ -215,7 +213,7 @@ class userTestCase(unittest.TestCase):
         """
         Test update of user records upon PUT requests to API.
         """
-        test_record = self.createUserViaPeewee()
+        self.createUserViaPeewee()
 
         PUT_request1 = self.app.put('/users/1', data=dict(
             email='anystring2',
@@ -225,6 +223,7 @@ class userTestCase(unittest.TestCase):
         ))
         self.assertEqual(PUT_request1.status[:3], '200')
 
+        test_record = User.get(User.id == 1)
         self.assertEqual(test_record.email, 'anystring2')
         self.assertEqual(test_record.password, 'anystring3')
         self.assertEqual(test_record.first_name, 'anystring4')
