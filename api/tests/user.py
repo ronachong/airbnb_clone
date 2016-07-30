@@ -22,7 +22,7 @@ class userTestCase(unittest.TestCase):
         logging.disable(logging.CRITICAL)   # disable logs
 
         database.connect()                          # connect to airbnb_test db
-        database.create_tables([User], safe=True)   # create User table
+        database.create_tables([User], safe=True)   # create user table
 
     def tearDown(self):
         """

@@ -18,12 +18,15 @@ class cityTestCase(unittest.TestCase):
         Overload def setUp(self): to create a test client of airbnb app, and
         create city table in airbnb_test database.
         """
-        self.app = app.test_client()
-        #self.app.testing = True
-        logging.disable(logging.CRITICAL) # disable logs
+        self.app = app.test_client()        # set up test client
+        self.app.testing = True             # set testing to True
+        logging.disable(logging.CRITICAL)   # disable logs
 
+        # connect to airbnb_test db and create tables
         database.connect()
         database.create_tables([State, City], safe=True)
+
+        # create state record for route
         state_record = State(name='namestring')
         state_record.save()
 

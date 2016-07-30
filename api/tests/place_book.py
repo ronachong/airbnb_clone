@@ -21,22 +21,30 @@ class placebookTestCase(unittest.TestCase):
         Overload def setUp(self): to create a test client of airbnb app, and
         create placebook table in airbnb_test database.
         """
-        self.app = app.test_client()
-        self.app.testing = True
-        logging.disable(logging.CRITICAL) # disable logs
+        self.app = app.test_client()        # set up test client
+        self.app.testing = True             # set testing to True
+        logging.disable(logging.CRITICAL)   # disable logs
 
-        # connect to airbnb_test database and create PlaceBook table
+        # connect to airbnb_test database and create tables
         database.connect()
         database.create_tables([User, State, City, Place, PlaceBook], safe=True)
+
+        # create user record for route
         user_record = User( email='anystring',
                             password='anystring1',
                             first_name='anystring2',
                             last_name='anystring3'  )
         user_record.save()
+
+        # create state record for route
         state_record = State(name="foo-state")
         state_record.save()
+
+        # create city record for route
         city_record = City(name="foo-city", state="1")
         city_record.save()
+
+        # create place records for route
         place_record = Place(   owner=1,
                                 city=1,
                                 name="foo",
@@ -48,6 +56,7 @@ class placebookTestCase(unittest.TestCase):
                                 latitude=20.0,
                                 longitude=22.0    )
         place_record.save()
+
         place_record2 = Place(  owner=1,
                                 city=1,
                                 name="foo",

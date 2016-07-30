@@ -17,13 +17,12 @@ class amenityTestCase(unittest.TestCase):
         Overload def setUp(self): to create a test client of airbnb app, and
         create amenity table in airbnb_test database.
         """
-        self.app = app.test_client()
-        self.app.testing = True
-        logging.disable(logging.CRITICAL) # disable logs
+        self.app = app.test_client()        # set up test client
+        self.app.testing = True             # set testing to True
+        logging.disable(logging.CRITICAL)   # disable logs
 
-        # connect to airbnb_test database and create Amenity table
-        database.connect()
-        database.create_tables([Amenity], safe=True)
+        database.connect()                            # connect to airbnb_test db
+        database.create_tables([Amenity], safe=True)  # create amenity table
 
     def tearDown(self):
         """

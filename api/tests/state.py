@@ -24,7 +24,7 @@ class stateTestCase(unittest.TestCase):
         logging.disable(logging.CRITICAL)   # disable logs
 
         database.connect()                          # connect to airbnb_test db
-        database.create_tables([State], safe=True)  # create State table
+        database.create_tables([State], safe=True)  # create state table
 
     def tearDown(self):
         """
