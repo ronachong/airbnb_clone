@@ -90,7 +90,7 @@ class placebookTestCase(unittest.TestCase):
         """
         record = PlaceBook(     user_id=1,
                                 is_validated=False,
-                                date_start=datetime.now().strftime('%d/%m/%Y %H:%M'),
+                                date_start=datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
                                 number_nights=1 )
         record.save()
         return record
@@ -106,7 +106,7 @@ class placebookTestCase(unittest.TestCase):
         POST_request = self.app.post('/places/1/books', data=dict(
             user_id=1,
             is_validated=False,
-            date_start=datetime.now().strftime('%d/%m/%Y %H:%M'),
+            date_start=datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
             number_nights=1
         ))
         return POST_request
@@ -140,14 +140,14 @@ class placebookTestCase(unittest.TestCase):
         # user_id missing - request should fail due to no default value
         POST_request2 = self.app.post('/places/1/books', data=dict(
             is_validated=1,
-            date_start=datetime.now().strftime('%d/%m/%Y %H:%M'),
+            date_start=datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
             number_nights=1
         ))
 
         # is_validated missing - request shouldn't fail due to default value False
         POST_request3 = self.app.post('/places/1/books', data=dict(
             user_id=1,
-            date_start=datetime.now().strftime('%d/%m/%Y %H:%M'),
+            date_start=datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
             number_nights=1
         ))
 
@@ -162,7 +162,7 @@ class placebookTestCase(unittest.TestCase):
         POST_request5 = self.app.post('/places/1/books', data=dict(
             user_id=1,
             is_validated=False,
-            date_start=datetime.now().strftime('%d/%m/%Y %H:%M')
+            date_start=datetime.now().strftime('%d/%m/%Y %H:%M:%S')
         ))
 
         for request in [POST_request2, POST_request4]:
@@ -259,7 +259,7 @@ class placebookTestCase(unittest.TestCase):
         PUT_request1 = self.app.put('places/1/books/1', data=dict(
             place_id=2,
             is_validated=True,
-            date_start=datetime.now().strftime('%d/%m/%Y %H:%M'),
+            date_start=datetime.now().strftime('%d/%m/%Y %H:%M:%S'),
             number_nights=3
         ))
         self.assertEqual(PUT_request1.status[:3], '200')
