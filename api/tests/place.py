@@ -396,7 +396,6 @@ class placeTestCase(unittest.TestCase):
         upon GET requests to API
         """
         GET_request1 = self.app.get('/states/1/cities/1/places')
-        print GET_request1.data
         self.assertEqual(len(json.loads(GET_request1.data)), 0)
 
         POST_request = self.app.post('/states/1/cities/1/places', data=dict(
