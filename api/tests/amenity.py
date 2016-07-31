@@ -139,7 +139,7 @@ class amenityTestCase(unittest.TestCase):
 
         GET_request1 = self.app.get('/amenities')
 
-        DELETE_request1 = self.app.delete('/amenities')
+        DELETE_request1 = self.app.delete('/amenities/1')
 
         GET_request2 = self.app.get('/amenities')
 
