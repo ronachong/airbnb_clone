@@ -9,7 +9,11 @@ local_tz = timezone('America/Los_Angeles')
 @app.route('/', methods=['GET'])
 def index():
     ''' index serves a hash with the status ok and local and utc times for any requests with status 200 '''
-    return json_response(status="OK", utc_time=datetime.utcnow().strftime('%m/%d/%Y %H:%M:%S'), time=utc_to_local(datetime.utcnow()).strftime('%m/%d/%Y %H:%M:%S')) #format 2nd arg into UTC
+    return json_response(
+        status="OK",
+        utc_time=datetime.utcnow().strftime('%d/%m/%Y %H:%M:%S'),
+        time=utc_to_local(datetime.utcnow()).strftime('%d/%m/%Y %H:%M:%S')
+    )
 
 @app.errorhandler(404)
 def not_found(e):
