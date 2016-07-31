@@ -41,7 +41,7 @@ class indexTestCase(unittest.TestCase):
         equal to time "now" via datetime.now (checking only: year, month, day,
         hour and minute.
         """
-        GETdata = loads(self.app.get('/').data)
+        GETdata =json.loads(self.app.get('/').data)
         now = datetime.now().strftime('%d/%m/%Y %H:%M')
         self.assertEqual(GETdata['time'][:-3], now)
 
@@ -51,6 +51,6 @@ class indexTestCase(unittest.TestCase):
         is equal to time "now" via datetime.now (checking only: year, month,
         day, hour and minute).
         """
-        GETdata = loads(self.app.get('/').data)
+        GETdata =json.loads(self.app.get('/').data)
         now = datetime.utcnow().strftime('%d/%m/%Y %H:%M')
         self.assertEqual(GETdata['utc_time'][:-3], now)
