@@ -25,7 +25,8 @@ def users():
             record.save()
             return jsonify(record.to_hash())
 
-        except:
+        # return 409 if user with given email already exists
+        except IntegrityError:
             return json_response(
                 add_status_=False,
                 status_=409,

@@ -22,13 +22,14 @@ def amenities():
             record.save()
             return jsonify(record.to_hash())
 
-        except:
-            return json_response(
-                add_status_=False,
-                status_=409,
-                code=10003,
-                msg="Name already exists"
-            )
+        # return 409 if amenity with given name already exists
+        except IntegrityError:
+                return json_response(
+                    add_status_=False,
+                    status_=409,
+                    code=10003,
+                    msg="Name already exists"
+                )
 
 
 @app.route('/amenities/<amenity_id>', methods=['GET', 'DELETE'])

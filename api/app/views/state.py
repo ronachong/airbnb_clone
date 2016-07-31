@@ -20,13 +20,14 @@ def states():
             record.save()
             return jsonify(record.to_hash())
 
-        except:
-            return json_response(
-                add_status_=False,
-                status_=409,
-                code=10001,
-                msg="State already exists"
-            )
+        # return 409 state with given name already exists
+        except IntegrityError:
+                return json_response(
+                    add_status_=False,
+                    status_=409,
+                    code=10001,
+                    msg="State already exists"
+                )
 
 @app.route('/states/<state_id>', methods=['GET','DELETE'])
 def state_id(state_id):
