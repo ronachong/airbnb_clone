@@ -5,9 +5,18 @@ from app.models.place_book import PlaceBook
 from app import app
 from peewee import *
 
-@app.route('/places/<place_id>/books', methods=['GET','POST'])
+
+@app.route('/places/<place_id>/books', methods=['GET', 'POST'])
 def books(place_id):
-    ''' books returns a list of all books in the database with the given id in the case of a GET request, and creates a new place in the database in the case of a POST request '''
+    """Handle GET and POST requests to /places/<place_id>/books route.
+
+    Return a list of all cities in state (according to database) in the case of
+    a GET request.
+    Create a new city record in the given state in the database in the case of
+    a POST request.
+    """
+    # handle GET requests:
+    # --------------------------------------------------------------------------
     if request.method == 'GET':
         list = []
         for record in PlaceBook.select().where(PlaceBook.place == place_id):
@@ -15,20 +24,31 @@ def books(place_id):
             list.append(hash)
         return jsonify(list)
 
+    # handle POST requests:
+    # --------------------------------------------------------------------------
     elif request.method == 'POST':
         record = PlaceBook(
             place=request.form['place'],
             user=request.form['user'],
             is_validated=request.form['is_validated'],
-            date_start=datetime.strptime(request.form['date_start'], '%d/%m/%Y %H:%M:%S'),
+            date_start=datetime.strptime(
+                request.form['date_start'],
+                '%d/%m/%Y %H:%M:%S'
+                ),
             number_nights=request.form['number_nights']
         )
         record.save()
         return jsonify(record.to_hash())
 
+
 @app.route('/places/<place_id>/books/<book_id>', methods=['GET', 'PUT', 'DELETE'])
 def book_id(place_id, book_id):
-    '''  '''
+    """Handle GET, PUT & DELETE requests to /places/<place_id>/books/<book_id>.
+
+    Return a hash of the appropriate record in the case of a GET request.
+    Update appropriate hash in database in case of PUT request.
+    Delete appropriate record in case of DELETE request.
+    """
     # check whether resource exists:
     # --------------------------------------------------------------------------
     try:
@@ -44,9 +64,11 @@ def book_id(place_id, book_id):
 
     # if exception does not arise:
     # --------------------------------------------------------------------------
+    # handle GET requests
     if request.method == 'GET':
         return jsonify(record.to_hash())
 
+    # handle PUT requests
     elif request.method == 'PUT':
         # code below can be optimized in future using list comprehensions
         for key in request.values.keys():
@@ -63,6 +85,7 @@ def book_id(place_id, book_id):
             record.save()
         return jsonify(record.to_hash())
 
+    # handle DELETE requests
     elif request.method == "DELETE":
         record.delete_instance()
         record.save()
