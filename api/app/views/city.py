@@ -5,14 +5,15 @@ from peewee import *
 from app.models.city import City
 from app import app
 
-@app.route('/states/<state_id>/cities', methods=['GET','POST'])
+
+@app.route('/states/<state_id>/cities', methods=['GET', 'POST'])
 def city(state_id):
     """Handle GET and POST requests to /states/<state_id>/cities route.
 
     Return a list of all cities in state (according to database) in the case of
     a GET request.
-    Create a new city record in the given state in the database in the case of a
-    POST request.
+    Create a new city record in the given state in the database in the case of
+    a POST request.
     """
     # handle GET requests:
     # --------------------------------------------------------------------------
@@ -40,10 +41,10 @@ def city(state_id):
                     msg="City already exists in this state"
                 )
 
-@app.route('/states/<state_id>/cities/<city_id>', methods=['GET','DELETE'])
+
+@app.route('/states/<state_id>/cities/<city_id>', methods=['GET', 'DELETE'])
 def city_id(state_id, city_id):
-    """Handle GET and DELETE requests to /states/<state_id>/cities/<city_id>
-    route.
+    """Handle GET and DELETE requests to /states/<state_id>/cities/<city_id>.
 
     Return a hash of the appropriate record in the case of a GET request.
     Delete appropriate record in case of DELETE request.
