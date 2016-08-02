@@ -1,15 +1,20 @@
 from flask import jsonify, request
 from flask_json import json_response
-from app.models.place import Place
-from app import app
 from peewee import *
 
-@app.route('/places', methods=['GET','POST'])
+from app.models.place import Place
+from app import app
+
+
+@app.route('/places', methods=['GET', 'POST'])
 def places():
-    '''
-    places returns a list of all cities in the database in the case of a GET
-    request, and creates a new place in the database in the case of a POST request
-    '''
+    """Handle GET and POST requests to /places route.
+
+    Return a list of all places in the database in the case of a GET request.
+    Create a new place record in the database in the case of a POST request.
+    """
+    # handle GET requests:
+    # --------------------------------------------------------------------------
     if request.method == 'GET':
         list = []
         for record in Place.select():
@@ -17,8 +22,9 @@ def places():
             list.append(hash)
         return jsonify(list)
 
+    # handle POST requests:
+    # --------------------------------------------------------------------------
     elif request.method == 'POST':
-
         record = Place( owner=request.form['owner_id'],
                         city=request.form['city_id'],
                         name=request.form['name'],
@@ -32,12 +38,21 @@ def places():
         record.save()
         return jsonify(record.to_hash())
 
+
 @app.route('/places/<place_id>', methods=['GET', 'PUT', 'DELETE'])
 def place_id(place_id):
-    '''  '''
+    """Handle GET, PUT, and DELETE requests to /places/<place_id> route.
+
+    Return a hash of the appropriate record in the case of a GET request.
+    Update appropriate hash in database in case of PUT request.
+    Delete appropriate record in case of DELETE request.
+    """
+    # check whether resource exists:
+    # --------------------------------------------------------------------------
     try:
         record = Place.get(Place.id == place_id)
 
+    # return 404 not found if it does not
     except Place.DoesNotExist:
         return json_response(
             add_status_=False,
@@ -50,6 +65,9 @@ def place_id(place_id):
     if request.method == 'GET':
         return jsonify(record.to_hash())
 
+    # if exception does not arise:
+    # --------------------------------------------------------------------------
+    # handle GET requests
     elif request.method == 'PUT':
         record = Place.get(Place.id == place_id)
         # code below can be optimized in future using list comprehensions
@@ -73,14 +91,24 @@ def place_id(place_id):
             record.save()
         return jsonify(record.to_hash())
 
+    # handle DELETE requests
     elif request.method == "DELETE":
         record.delete_instance()
         record.save()
         return 'deleted city\n'
 
+
 @app.route('/states/<state_id>/cities/<city_id>/places', methods=['GET', 'POST'])
 def city_places(state_id, city_id):
+    """Handle GET & POST requests to /states/<state_id>/cities/<city_id>/places.
 
+    Return a list of all places in the database in given city in the case of a
+    GET request.
+    Create a new place record in the given city in the database in the case of
+    a POST request.
+    """
+    # handle GET requests:
+    # --------------------------------------------------------------------------
     if request.method == 'GET':
         try:
             list = []
@@ -97,7 +125,9 @@ def city_places(state_id, city_id):
                 code=404,
                 msg="not found"
             )
-
+            
+    # handle POST requests:
+    # --------------------------------------------------------------------------
     elif request.method == 'POST':
         record = Place( owner=request.form['owner_id'],
                         city=city_id,
