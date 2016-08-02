@@ -1,12 +1,19 @@
 from flask import jsonify, request
 from flask_json import json_response
+from peewee import *
+
 from app.models.state import State
 from app import app
-from peewee import *
 
 @app.route('/states', methods=['GET','POST'])
 def states():
-    ''' states returns a list of all states in the database in the case of a GET request, and creates a new state in the database in the case of a POST request '''
+    """Handle GET and POST requests to /states route.
+
+     Return a list of all states in the database in the case of a GET request.
+     Create a new state in the database in the case of a POST request
+     """
+    # handle GET requests:
+    # --------------------------------------------------------------------------
     if request.method == 'GET':
         list = []
         for record in State.select():
@@ -14,6 +21,8 @@ def states():
             list.append(hash)
         return jsonify(list)
 
+    # handle POST requests:
+    # --------------------------------------------------------------------------
     elif request.method == 'POST':
         try:
             record = State(name=request.form["name"])
@@ -31,7 +40,12 @@ def states():
 
 @app.route('/states/<state_id>', methods=['GET','DELETE'])
 def state_id(state_id):
-    ''' '''
+    """Handle GET and DELETE requests to /states/<state_id> route.
+
+     Return a hash of the appropriate record in the database in the case of a
+     GET request.
+     Delete the appropriate record in the case of a DELETE request.
+     """
     # check whether resource exists:
     # --------------------------------------------------------------------------
     try:
@@ -48,9 +62,11 @@ def state_id(state_id):
 
     # if exception does not arise:
     # --------------------------------------------------------------------------
+    # handle GET requests
     if request.method == 'GET':
         return jsonify(record.to_hash())
 
+    # handle DELETE requests
     elif request.method == "DELETE":
         record.delete_instance()
         record.save()
