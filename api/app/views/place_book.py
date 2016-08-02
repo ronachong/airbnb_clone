@@ -1,9 +1,11 @@
+from datetime import datetime
+
 from flask import jsonify, request
 from flask_json import json_response
-from datetime import datetime
+from peewee import *
+
 from app.models.place_book import PlaceBook
 from app import app
-from peewee import *
 
 
 @app.route('/places/<place_id>/books', methods=['GET', 'POST'])
