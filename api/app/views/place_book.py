@@ -12,10 +12,8 @@ from app import app
 def books(place_id):
     """Handle GET and POST requests to /places/<place_id>/books route.
 
-    Return a list of all cities in state (according to database) in the case of
-    a GET request.
-    Create a new city record in the given state in the database in the case of
-    a POST request.
+    Return a list of all bookings in database in the case of a GET request.
+    Create a new placebook record in the database in the case of a POST request.
     """
     # handle GET requests:
     # --------------------------------------------------------------------------
