@@ -5,13 +5,14 @@ from peewee import *
 from app.models.state import State
 from app import app
 
-@app.route('/states', methods=['GET','POST'])
+
+@app.route('/states', methods=['GET', 'POST'])
 def states():
     """Handle GET and POST requests to /states route.
 
      Return a list of all states in the database in the case of a GET request.
      Create a new state in the database in the case of a POST request
-     """
+    """
     # handle GET requests:
     # --------------------------------------------------------------------------
     if request.method == 'GET':
@@ -38,7 +39,8 @@ def states():
                     msg="State already exists"
                 )
 
-@app.route('/states/<state_id>', methods=['GET','DELETE'])
+
+@app.route('/states/<state_id>', methods=['GET', 'DELETE'])
 def state_id(state_id):
     """Handle GET and DELETE requests to /states/<state_id> route.
 
