@@ -125,7 +125,7 @@ def city_places(state_id, city_id):
                 code=404,
                 msg="not found"
             )
-            
+
     # handle POST requests:
     # --------------------------------------------------------------------------
     elif request.method == 'POST':
