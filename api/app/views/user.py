@@ -1,12 +1,20 @@
 from flask import jsonify, request
 from flask_json import json_response
-from app.models.user import User
-from app import app
 from peewee import *
 
-@app.route('/users', methods=['GET','POST'])
+from app.models.user import User
+from app import app
+
+
+@app.route('/users', methods=['GET', 'POST'])
 def users():
-    ''' users returns a list of all users in the database in the case of a GET request, and creates a new user in the database in the case of a POST request '''
+    """Handle GET and POST requests to /users route.
+
+    Return a list of all users in the database in the case of a GET request.
+    Create a new user record in the database in the case of a POST request.
+    """
+    # handle GET requests:
+    # --------------------------------------------------------------------------
     if request.method == 'GET':
         list = []
         for record in User.select():
@@ -14,6 +22,8 @@ def users():
             list.append(hash)
         return jsonify(list)
 
+    # handle POST requests:
+    # --------------------------------------------------------------------------
     elif request.method == 'POST':
         try:
             record = User(
@@ -34,9 +44,15 @@ def users():
                 msg="Email already exists"
             )
 
-@app.route('/users/<user_id>', methods=['GET','PUT', 'DELETE'])
+
+@app.route('/users/<user_id>', methods=['GET', 'PUT', 'DELETE'])
 def user_id(user_id):
-    ''' '''
+    """Handle GET, PUT and DELETE requests to /users/<user_id> route.
+
+    Return a hash of the appropriate record in the case of a GET request.
+    Update appropriate hash in database in case of PUT request.
+    Delete appropriate record in case of DELETE request.
+    """
     # check whether resource exists:
     # --------------------------------------------------------------------------
     try:
@@ -53,9 +69,11 @@ def user_id(user_id):
 
     # if exception does not arise:
     # --------------------------------------------------------------------------
+    # handle GET requests
     if request.method == 'GET':
         return jsonify(record.to_hash())
 
+    # handle PUT requests
     elif request.method == 'PUT':
         # code below can be optimized in future using list comprehensions
         for key in request.values.keys():
@@ -72,6 +90,7 @@ def user_id(user_id):
         record.save()
         return jsonify(record.to_hash())
 
+    # handle DELETE requests
     elif request.method == "DELETE":
         record.delete_instance()
         record.save()
