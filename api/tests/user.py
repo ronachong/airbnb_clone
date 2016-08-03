@@ -33,9 +33,9 @@ class userTestCase(unittest.TestCase):
 
     def createUserViaPeewee(self):
         """
-        Create an amenity record using the API's database/Peewee models.
+        Create an user record using the API's database/Peewee models.
 
-        createAmenityViaPeewee returns the Peewee object for the record. This
+        createUserViaPeewee returns the Peewee object for the record. This
         method will not work if the database models are not written correctly.
         """
         record = User(  email='anystring',
@@ -47,9 +47,9 @@ class userTestCase(unittest.TestCase):
 
     def createUserViaAPI(self):
         """
-        Create an amenity record through a POST request to the API.
+        Create a user record through a POST request to the API.
 
-        createAmenityViaAPI returns the Flask response object for the request.
+        createUserViaAPI returns the Flask response object for the request.
         This method will not work if the POST request handler is not written
         properly.
         """
@@ -64,7 +64,7 @@ class userTestCase(unittest.TestCase):
 
     def subtest_createWithAllParams(self):
         """
-        Test proper creation of an amenity record upon POST request to the API
+        Test proper creation of a user record upon POST request to the API
         with all parameters provided.
         """
         POST_request1 = self.createUserViaAPI()
@@ -82,7 +82,7 @@ class userTestCase(unittest.TestCase):
 
     def subtest_createWithoutAllParams(self):
         """
-        Test proper non-creation of an amenity in all cases of a parameter
+        Test proper non-creation of an user in all cases of a parameter
         missing in POST request to the API.
         """
         POST_request2 = self.app.post('/users', data=dict(
@@ -114,7 +114,7 @@ class userTestCase(unittest.TestCase):
 
     def test_create(self):
         """
-        Test proper creation (or non-creation) of amenity records upon POST
+        Test proper creation (or non-creation) of user records upon POST
         requests to API.
         """
         # test creation of user with all parameters provided in POST request
@@ -142,7 +142,7 @@ class userTestCase(unittest.TestCase):
 
     def test_list(self):
         """
-        Test proper representation of all amenity records upon GET requests to
+        Test proper representation of all user records upon GET requests to
         API.
         """
         GET_request1 = self.app.get('/users')
@@ -155,8 +155,8 @@ class userTestCase(unittest.TestCase):
 
     def test_get(self):
         """
-        Test proper representation of an amenity record upon GET requests
-        via amenity ID to API.
+        Test proper representation of an user record upon GET requests
+        via user ID to API.
         """
         # set-up for tests
         # ----------------------------------------------------------------------
@@ -188,7 +188,7 @@ class userTestCase(unittest.TestCase):
 
     def test_delete(self):
         """
-        Test deletion of amenity records upon DELETE requests to API.
+        Test deletion of user records upon DELETE requests to API.
         """
         # test response of DELETE request for user by user id
         self.createUserViaPeewee()
