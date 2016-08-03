@@ -85,7 +85,7 @@ class reviewTestCase(unittest.TestCase):
         record.save()
         return record
 
-    def createReviewViaAPI(self):
+    def createReviewViaAPI_uroute(self):
         """
         Create an review record through a POST request to the API.
 
@@ -101,7 +101,7 @@ class reviewTestCase(unittest.TestCase):
 
         return POST_request
 
-    def subtest_createWithAllParams(self):
+    def subtest_createWithAllParams_uroute(self):
         """
         Test proper creation of an review record upon POST request to the API
         with all parameters provided.
@@ -121,7 +121,7 @@ class reviewTestCase(unittest.TestCase):
         self.assertEqual(Review.get(Review.id == 1).created_at.strftime('%d/%m/%Y %H:%M'), now)
         self.assertEqual(Review.get(Review.id == 1).updated_at.strftime('%d/%m/%Y %H:%M'), now)
 
-    def subtest_createWithoutAllParams(self):
+    def subtest_createWithoutAllParams_uroute(self):
         """
         Test proper non-creation (or creation) of an review in all cases of a
         parameter missing in POST request to the API.
@@ -140,7 +140,7 @@ class reviewTestCase(unittest.TestCase):
         ))
         self.assertEqual(POST_request3.status[:3], '400')
 
-    def test_create(self):
+    def test_create_uroute(self):
         """
         Test proper creation (or non-creation) of review records upon POST
         requests to API.
@@ -156,7 +156,7 @@ class reviewTestCase(unittest.TestCase):
 
         # test creation of review with all parameters provided in POST request
         # ----------------------------------------------------------------------
-        self.subtest_createWithAllParams()
+        self.subtest_createWithAllParams_uroute()
 
         # test that review ID for sole record in database is correct
         # ----------------------------------------------------------------------
@@ -164,9 +164,9 @@ class reviewTestCase(unittest.TestCase):
 
         # test creatxn of review in all cases of parameter missing in POST req.
         # ----------------------------------------------------------------------
-        self.subtest_createWithoutAllParams()
+        self.subtest_createWithoutAllParams_uroute()
 
-    def test_list(self):
+    def test_list_uroute(self):
         """
         Test proper representation of all review records upon GET requests to
         API.
@@ -186,7 +186,7 @@ class reviewTestCase(unittest.TestCase):
         GET_request2 = self.app.get('users/1/reviews')
         self.assertEqual(len(json.loads(GET_request2.data)), 1)
 
-    def test_get(self):
+    def test_get_uroute(self):
         """
         Test proper representation of an review record upon GET requests
         via review ID to API.
@@ -225,7 +225,7 @@ class reviewTestCase(unittest.TestCase):
         GET_request2 = self.app.get('/users/1/1000')
         self.assertEqual(GET_request2.status[:3], '404')
 
-    def test_delete(self):
+    def test_delete_uroute(self):
         """
         Test deletion of review records upon DELETE requests to API.
         """
