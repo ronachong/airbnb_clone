@@ -122,7 +122,7 @@ class reviewTestCase(unittest.TestCase):
         """
         POST_request = self.app.post('/places/1/reviews', data=dict(
             message='foo-message',
-            # user_id omitted since req. handler should get from uri
+            # place_id omitted since req. handler should get from uri
             stars=5
         ))
 
@@ -294,7 +294,7 @@ class reviewTestCase(unittest.TestCase):
         """
         POST_request = self.app.post('/places/1/reviews', data=dict(
             message='foo-message',
-            # user_id omitted since req. handler should get from uri
+            # place_id omitted since req. handler should get from uri
             stars=5
         ))
         self.assertEqual(POST_request1.status[:3], '200')
@@ -335,7 +335,7 @@ class reviewTestCase(unittest.TestCase):
         # ----------------------------------------------------------------------
         xPOST_request = self.app.post('/place/1000/reviews', data=dict(
             message='foo-message',
-            # user_id omitted since req. handler should get from uri
+            # place_id omitted since req. handler should get from uri
             stars=5
         ))
         self.assertEqual(len(json.loads(xPOST_request.data)), 404)
@@ -362,7 +362,7 @@ class reviewTestCase(unittest.TestCase):
         GET_request1 = self.app.get('places/1000/reviews')
         self.assertEqual(len(json.loads(GET_request1.data)), 404)
 
-        # test response to GET request by user ID which exists
+        # test response to GET request by place ID which exists
         # ----------------------------------------------------------------------
         GET_request2 = self.app.get('places/1/reviews')
         self.assertEqual(len(json.loads(GET_request2.data)), 0)
@@ -382,10 +382,10 @@ class reviewTestCase(unittest.TestCase):
         # create review record in review table; should have ID 1
         review_record = self.createPlaceReviewViaPeewee()
 
-        # test handling of GET req. for record by user & review IDs which exist
+        # test handling of GET req. for record by place & review IDs which exist
         # ----------------------------------------------------------------------
         # make GET request for record in table
-        GET_request1 = self.app.get('/user/1/1')
+        GET_request1 = self.app.get('/place/1/1')
         GET_data = json.loads(GET_request1.data)
 
         # test that status of response is 200
@@ -397,18 +397,18 @@ class reviewTestCase(unittest.TestCase):
         self.assertEqual(review_record.updated_at.strftime('%d/%m/%Y %H:%M'), GET_data['updated_at'][:-3])
         self.assertEqual(review_record.message, GET_data['message'])
         self.assertEqual(review_record.stars, GET_data['stars'])
-        self.assertEqual(review_record.user.id, GET_data['user_id'])
+        self.assertEqual(review_record.place.id, GET_data['place_id'])
 
         # test handling of GET req. for review record by review ID which exists
-        # but user ID which does not
+        # but place ID which does not
         # ----------------------------------------------------------------------
-        GET_request2 = self.app.get('/users/1000/1')
+        GET_request2 = self.app.get('/places/1000/1')
         self.assertEqual(GET_request2.status[:3], '404')
 
-        # test handling of GET req. for review record by user ID which exists
+        # test handling of GET req. for review record by place ID which exists
         # but review id which does not
         # ----------------------------------------------------------------------
-        GET_request2 = self.app.get('/users/1/1000')
+        GET_request2 = self.app.get('/places/1/1000')
         self.assertEqual(GET_request2.status[:3], '404')
     #
     # def test_delete_proute(self):
