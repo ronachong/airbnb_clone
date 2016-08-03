@@ -128,7 +128,7 @@ class reviewTestCase(unittest.TestCase):
 
         return POST_request
 
-"""Tests for user reviews."""
+        """Tests for user reviews."""
 
     def subtest_createWithAllParams_uroute(self):
         """
@@ -285,7 +285,7 @@ class reviewTestCase(unittest.TestCase):
         self.assertEqual(DELETE_request2.status[:3], '404')
 
 
-"""Tests for place reviews."""
+        """Tests for place reviews."""
 
     def subtest_createWithAllParams_proute(self):
         """
