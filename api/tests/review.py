@@ -67,15 +67,31 @@ class reviewTestCase(unittest.TestCase):
         State.drop_table
         User.drop_table()
 
-    def createReviewViaPeewee(self):
-        """Create an review record using the API's database/Peewee models.
+    def createUserReviewViaPeewee(self):
+        """Create a user review record using the API's database/Peewee models.
 
-        createReviewViaPeewee returns the Peewee object for the record. This
-        method will not work if the database models are not written correctly.
+        createUserReviewViaPeewee returns the Peewee object for the record.
+        This method will not work if the database models are not written
+        correctly.
         """
-        record = Review(
+        record = ReviewUser(
             message='foo-message',
             user_id=1,
+            stars=5
+        )
+        record.save()
+        return record
+
+    def createPlaceReviewViaPeewee(self):
+        """Create a user review record using the API's database/Peewee models.
+
+        createPlaceReviewViaPeewee returns the Peewee object for the record.
+        This method will not work if the database models are not written
+        correctly.
+        """
+        record = ReviewPlace(
+            message='foo-message',
+            place_id=1,
             stars=5
         )
         record.save()
@@ -194,7 +210,7 @@ class reviewTestCase(unittest.TestCase):
         GET_request2 = self.app.get('users/1/reviews')
         self.assertEqual(len(json.loads(GET_request2.data)), 0)
 
-        self.createReviewViaPeewee()
+        self.createUserReviewViaPeewee()
 
         GET_request3 = self.app.get('users/1/reviews')
         self.assertEqual(len(json.loads(GET_request3.data)), 1)
@@ -207,7 +223,7 @@ class reviewTestCase(unittest.TestCase):
         # set-up for tests
         # ----------------------------------------------------------------------
         # create review record in review table; should have ID 1
-        review_record = self.createReviewViaPeewee()
+        review_record = self.createUserReviewViaPeewee()
 
         # test handling of GET req. for record by user & review IDs which exist
         # ----------------------------------------------------------------------
@@ -244,7 +260,7 @@ class reviewTestCase(unittest.TestCase):
         """
         # test response to DELETE request for review by review id
         # ----------------------------------------------------------------------
-        self.createReviewViaPeewee()
+        self.createUserReviewViaPeewee()
 
         GET_request1 = self.app.get('users/1/reviews')
         DELETE_request1 = self.app.delete('/users/1/1')
@@ -351,49 +367,49 @@ class reviewTestCase(unittest.TestCase):
         GET_request2 = self.app.get('places/1/reviews')
         self.assertEqual(len(json.loads(GET_request2.data)), 0)
 
-        self.createReviewViaPeewee()
+        self.createPlaceReviewViaPeewee()
 
         GET_request3 = self.app.get('places/1/reviews')
         self.assertEqual(len(json.loads(GET_request3.data)), 1)
-    #
-    # def test_get_proute(self):
-    #     """
-    #     Test proper representation of an review record upon GET requests
-    #     via review ID to API.
-    #     """
-    #     # set-up for tests
-    #     # ----------------------------------------------------------------------
-    #     # create review record in review table; should have ID 1
-    #     review_record = self.createReviewViaPeewee()
-    #
-    #     # test handling of GET req. for record by user & review IDs which exist
-    #     # ----------------------------------------------------------------------
-    #     # make GET request for record in table
-    #     GET_request1 = self.app.get('/user/1/1')
-    #     GET_data = json.loads(GET_request1.data)
-    #
-    #     # test that status of response is 200
-    #     self.assertEqual(GET_request1.status[:3], '200')
-    #
-    #     # test that values of response correctly reflect record in database
-    #     self.assertEqual(review_record.id, GET_data['id'])
-    #     self.assertEqual(review_record.created_at.strftime('%d/%m/%Y %H:%M'), GET_data['created_at'][:-3])
-    #     self.assertEqual(review_record.updated_at.strftime('%d/%m/%Y %H:%M'), GET_data['updated_at'][:-3])
-    #     self.assertEqual(review_record.message, GET_data['message'])
-    #     self.assertEqual(review_record.stars, GET_data['stars'])
-    #     self.assertEqual(review_record.user.id, GET_data['user_id'])
-    #
-    #     # test handling of GET req. for review record by review ID which exists
-    #     # but user ID which does not
-    #     # ----------------------------------------------------------------------
-    #     GET_request2 = self.app.get('/users/1000/1')
-    #     self.assertEqual(GET_request2.status[:3], '404')
-    #
-    #     # test handling of GET req. for review record by user ID which exists
-    #     # but review id which does not
-    #     # ----------------------------------------------------------------------
-    #     GET_request2 = self.app.get('/users/1/1000')
-    #     self.assertEqual(GET_request2.status[:3], '404')
+
+    def test_get_proute(self):
+        """
+        Test proper representation of a place review record upon GET requests
+        via review ID to API.
+        """
+        # set-up for tests
+        # ----------------------------------------------------------------------
+        # create review record in review table; should have ID 1
+        review_record = self.createPlaceReviewViaPeewee()
+
+        # test handling of GET req. for record by user & review IDs which exist
+        # ----------------------------------------------------------------------
+        # make GET request for record in table
+        GET_request1 = self.app.get('/user/1/1')
+        GET_data = json.loads(GET_request1.data)
+
+        # test that status of response is 200
+        self.assertEqual(GET_request1.status[:3], '200')
+
+        # test that values of response correctly reflect record in database
+        self.assertEqual(review_record.id, GET_data['id'])
+        self.assertEqual(review_record.created_at.strftime('%d/%m/%Y %H:%M'), GET_data['created_at'][:-3])
+        self.assertEqual(review_record.updated_at.strftime('%d/%m/%Y %H:%M'), GET_data['updated_at'][:-3])
+        self.assertEqual(review_record.message, GET_data['message'])
+        self.assertEqual(review_record.stars, GET_data['stars'])
+        self.assertEqual(review_record.user.id, GET_data['user_id'])
+
+        # test handling of GET req. for review record by review ID which exists
+        # but user ID which does not
+        # ----------------------------------------------------------------------
+        GET_request2 = self.app.get('/users/1000/1')
+        self.assertEqual(GET_request2.status[:3], '404')
+
+        # test handling of GET req. for review record by user ID which exists
+        # but review id which does not
+        # ----------------------------------------------------------------------
+        GET_request2 = self.app.get('/users/1/1000')
+        self.assertEqual(GET_request2.status[:3], '404')
     #
     # def test_delete_proute(self):
     #     """
@@ -401,7 +417,7 @@ class reviewTestCase(unittest.TestCase):
     #     """
     #     # test response to DELETE request for review by review id
     #     # ----------------------------------------------------------------------
-    #     self.createReviewViaPeewee()
+    #     self.createPlaceReviewViaPeewee()
     #
     #     GET_request1 = self.app.get('users/1/reviews')
     #
