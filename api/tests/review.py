@@ -8,6 +8,8 @@ from peewee import Model
 from app import app
 from app.views import review
 from app.models.review import Review
+from app.models.review_user import ReviewUser
+from app.models.review_place import ReviewPlace
 from app.models.user import User
 from app.models.city import City
 from app.models.state import State
@@ -27,7 +29,7 @@ class reviewTestCase(unittest.TestCase):
 
         database.connect()                          # connect to airbnb_test db
         database.create_tables(                     # create tables
-            [User, State, City, Place, Review],
+            [User, State, City, Place, Review, ReviewUser, ReviewPlace],
             safe=True
         )
 
@@ -61,6 +63,8 @@ class reviewTestCase(unittest.TestCase):
 
     def tearDown(self):
         """Remove tables from airbnb_test database upon completion of test."""
+        ReviewUser.drop_table()
+        ReviewPlace.drop_table()
         Review.drop_table()
         Place.drop_table()
         City.drop_table()
@@ -70,7 +74,7 @@ class reviewTestCase(unittest.TestCase):
     def createReviewViaPeewee:
         record = ReviewUser(
             message='foo-message',
-            user_id=1,
+            user=1,
             stars=5
         )
         record.save()
@@ -168,7 +172,7 @@ class reviewTestCase(unittest.TestCase):
         record = Review.get(Review.id == 1)
 
         self.assertEqual(record.message, 'foo-message')
-        self.assertEqual(record.user_id, 1)
+        self.assertEqual(record.user.id, 1)
         self.assertEqual(record.stars, 5)
         self.assertEqual(record.created_at.strftime('%d/%m/%Y %H:%M'), now)
         self.assertEqual(record.updated_at.strftime('%d/%m/%Y %H:%M'), now)
@@ -251,8 +255,9 @@ class reviewTestCase(unittest.TestCase):
         """
         # set-up for tests
         # ----------------------------------------------------------------------
-        # create review record in review table; should have ID 1
-        review_record = self.createUserReviewViaPeewee()
+        # create user review records in review table; should have ID's 1
+        ur_record = self.createUserReviewViaPeewee()
+        r_record = ur_record.review
 
         # test handling of GET req. for record by user & review IDs which exist
         # ----------------------------------------------------------------------
@@ -264,12 +269,14 @@ class reviewTestCase(unittest.TestCase):
         self.assertEqual(GET_request1.status[:3], '200')
 
         # test that values of response correctly reflect record in database
-        self.assertEqual(review_record.id, GET_data['id'])
-        self.assertEqual(review_record.created_at.strftime('%d/%m/%Y %H:%M'), GET_data['created_at'][:-3])
-        self.assertEqual(review_record.updated_at.strftime('%d/%m/%Y %H:%M'), GET_data['updated_at'][:-3])
-        self.assertEqual(review_record.message, GET_data['message'])
-        self.assertEqual(review_record.stars, GET_data['stars'])
-        self.assertEqual(review_record.user.id, GET_data['user_id'])
+        self.assertEqual(r_record.id, GET_data['id'])
+        self.assertEqual(r_record.created_at.strftime('%d/%m/%Y %H:%M'), GET_data['created_at'][:-3])
+        self.assertEqual(r_record.updated_at.strftime('%d/%m/%Y %H:%M'), GET_data['updated_at'][:-3])
+        self.assertEqual(r_record.message, GET_data['message'])
+        self.assertEqual(r_record.stars, GET_data['stars'])
+        self.assertEqual(r_record.user.id, GET_data['from_user_id'])
+        self.assertEqual(ur_record.user.id, GET_data['to_user_id'])
+        self.assertEqual(NULL, GET_data['to_place_id'])
 
         # test handling of GET req. for review record by review ID which exists
         # but user ID which does not
@@ -337,14 +344,14 @@ class reviewTestCase(unittest.TestCase):
         record = Review.get(Review.id == 1)
 
         self.assertEqual(record.message, 'foo-message')
-        self.assertEqual(record.user_id, 1)
+        self.assertEqual(record.user.id, 1)
         self.assertEqual(record.stars, 5)
         self.assertEqual(record.created_at.strftime('%d/%m/%Y %H:%M'), now)
         self.assertEqual(record.updated_at.strftime('%d/%m/%Y %H:%M'), now)
 
         # for review place record
         now = datetime.now().strftime('%d/%m/%Y %H:%M')
-        record = ReviewUser.get(ReviewUser.review == 1)
+        record = ReviewUser.get(ReviewUser.review.id == 1)
 
         self.assertEqual(record.place, 1)
 
@@ -420,8 +427,9 @@ class reviewTestCase(unittest.TestCase):
         """
         # set-up for tests
         # ----------------------------------------------------------------------
-        # create review record in review table; should have ID 1
-        review_record = self.createPlaceReviewViaPeewee()
+        # create place review records in tables; should have ID's of 1
+        pr_record = self.createPlaceReviewViaPeewee()
+        r_record = pr_record.review
 
         # test handling of GET req. for record by place & review IDs which exist
         # ----------------------------------------------------------------------
@@ -432,13 +440,15 @@ class reviewTestCase(unittest.TestCase):
         # test that status of response is 200
         self.assertEqual(GET_request1.status[:3], '200')
 
-        # test that values of response correctly reflect record in database
-        self.assertEqual(review_record.id, GET_data['id'])
-        self.assertEqual(review_record.created_at.strftime('%d/%m/%Y %H:%M'), GET_data['created_at'][:-3])
-        self.assertEqual(review_record.updated_at.strftime('%d/%m/%Y %H:%M'), GET_data['updated_at'][:-3])
-        self.assertEqual(review_record.message, GET_data['message'])
-        self.assertEqual(review_record.stars, GET_data['stars'])
-        self.assertEqual(review_record.place.id, GET_data['place_id'])
+        # test that values of response correctly reflect records in database
+        self.assertEqual(r_record.id, GET_data['id'])
+        self.assertEqual(r_record.created_at.strftime('%d/%m/%Y %H:%M'), GET_data['created_at'][:-3])
+        self.assertEqual(r_record.updated_at.strftime('%d/%m/%Y %H:%M'), GET_data['updated_at'][:-3])
+        self.assertEqual(r_record.message, GET_data['message'])
+        self.assertEqual(r_record.stars, GET_data['stars'])
+        self.assertEqual(r_record.user.id, GET_data['from_user_id'])
+        self.assertEqual(NULL, GET_data['to_user_id'])
+        self.assertEqual(ur_record.place.id, GET_data['to_place_id'])
 
         # test handling of GET req. for review record by review ID which exists
         # but place ID which does not
