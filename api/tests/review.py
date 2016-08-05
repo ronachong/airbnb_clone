@@ -31,7 +31,7 @@ class reviewTestCase(unittest.TestCase):
             safe=True
         )
 
-        # create user record for foreign key association
+        # create user record for routes
         user_record = User(
             email='anystring',
             password='anystring1',
@@ -40,7 +40,7 @@ class reviewTestCase(unittest.TestCase):
         )
         user_record.save()
 
-        # create place records (and dependencies) for foreign key association
+        # create place records (and dependencies) for routes
         state_record = State(name='foo-state')
         state_record.save()
         city_record = City(name='foo-city', state=1)
@@ -67,13 +67,7 @@ class reviewTestCase(unittest.TestCase):
         State.drop_table
         User.drop_table()
 
-    def createUserReviewViaPeewee(self):
-        """Create a user review record using the API's database/Peewee models.
-
-        createUserReviewViaPeewee returns the Peewee object for the record.
-        This method will not work if the database models are not written
-        correctly.
-        """
+    def createReviewViaPeewee:
         record = ReviewUser(
             message='foo-message',
             user_id=1,
@@ -82,20 +76,43 @@ class reviewTestCase(unittest.TestCase):
         record.save()
         return record
 
-    def createPlaceReviewViaPeewee(self):
-        """Create a user review record using the API's database/Peewee models.
+    def createUserReviewViaPeewee(self):
+        """Create a review record linked to a review user record using the
+        API's database/Peewee models.
 
-        createPlaceReviewViaPeewee returns the Peewee object for the record.
-        This method will not work if the database models are not written
-        correctly.
+        createUserReviewViaPeewee returns the Peewee object for the review user
+        record. This method will not work if the database models are not
+        written correctly.
         """
-        record = ReviewPlace(
-            message='foo-message',
-            place_id=1,
-            stars=5
+        # create record in review table
+        review = self.createReviewViaPeewee()
+
+        # create record in review user table
+        u_review = ReviewUser(
+            user=1,   # or review.user_id...?
+            review=review.id
         )
-        record.save()
-        return record
+
+        return u_review
+
+    def createPlaceReviewViaPeewee(self):
+        """Create a review record linked to a review place record using the
+        API's database/Peewee models.
+
+        createPlaceReviewViaPeewee returns the Peewee object for the review
+        place record. This method will not work if the database models are not
+        written correctly.
+        """
+        # create record in review table
+        review = self.createReviewViaPeewee()
+
+        # create record in review place table
+        p_review = ReviewPlace(
+            place=1,
+            review = review.id
+        )
+
+        return p_review
 
     def createReviewViaAPI_uroute(self):
         """Create a user review record through a POST request to the API.
