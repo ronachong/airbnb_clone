@@ -71,7 +71,7 @@ class reviewTestCase(unittest.TestCase):
         State.drop_table
         User.drop_table()
 
-    def createReviewViaPeewee:
+    def createReviewViaPeewee(self):
         record = ReviewUser(
             message='foo-message',
             user=1,
