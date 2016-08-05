@@ -109,7 +109,7 @@ class reviewTestCase(unittest.TestCase):
         # create record in review place table
         p_review = ReviewPlace(
             place=1,
-            review = review.id
+            review=review.id
         )
 
         return p_review
@@ -118,9 +118,8 @@ class reviewTestCase(unittest.TestCase):
         """Create a user review record through a POST request to the API.
 
         createReviewViaAPI_uroute returns the Flask response object for the
-        request.
-        This method will not work if the POST request handler is not written
-        properly.
+        request.  This method will not work if the POST request handler is not
+        written properly.
         """
         POST_request = self.app.post('/users/1/reviews', data=dict(
             message='foo-message',
@@ -139,7 +138,7 @@ class reviewTestCase(unittest.TestCase):
         """
         POST_request = self.app.post('/places/1/reviews', data=dict(
             message='foo-message',
-            # place_id omitted since req. handler should get from uri
+            # user_id omitted since req. handler should get from uri
             stars=5
         ))
 
@@ -149,9 +148,12 @@ class reviewTestCase(unittest.TestCase):
 
     def subtest_createWithAllParams_uroute(self):
         """
-        Test proper creation of a user review record upon POST request to the
+        Test proper creation of user review records upon POST request to the
         API with all parameters provided.
         """
+
+        # create records with POST; check for success
+        # ----------------------------------------------------------------------
         POST_request = self.app.post('/users/1/reviews', data=dict(
             message='foo-message',
             # user_id omitted since req. handler should get from uri
@@ -159,13 +161,23 @@ class reviewTestCase(unittest.TestCase):
         ))
         self.assertEqual(POST_request1.status[:3], '200')
 
+        # validate values stored in db
+        # ----------------------------------------------------------------------
+        # for review record
         now = datetime.now().strftime('%d/%m/%Y %H:%M')
+        record = Review.get(Review.id == 1)
 
-        self.assertEqual(Review.get(Review.id == 1).message, 'foo-message')
-        self.assertEqual(Review.get(Review.id == 1).user.id, 1)
-        self.assertEqual(Review.get(Review.id == 1).stars, 5)
-        self.assertEqual(Review.get(Review.id == 1).created_at.strftime('%d/%m/%Y %H:%M'), now)
-        self.assertEqual(Review.get(Review.id == 1).updated_at.strftime('%d/%m/%Y %H:%M'), now)
+        self.assertEqual(record.message, 'foo-message')
+        self.assertEqual(record.user_id, 1)
+        self.assertEqual(record.stars, 5)
+        self.assertEqual(record.created_at.strftime('%d/%m/%Y %H:%M'), now)
+        self.assertEqual(record.updated_at.strftime('%d/%m/%Y %H:%M'), now)
+
+        # for review user record
+        now = datetime.now().strftime('%d/%m/%Y %H:%M')
+        record = ReviewUser.get(ReviewUser.review == 1)
+
+        self.assertEqual(record.user, 1)
 
     def subtest_createWithoutAllParams_uroute(self):
         """
@@ -309,20 +321,32 @@ class reviewTestCase(unittest.TestCase):
         Test proper creation of a place review record upon POST request to the
         API with all parameters provided.
         """
+        # create records with POST; check for success
+        # ----------------------------------------------------------------------
         POST_request = self.app.post('/places/1/reviews', data=dict(
             message='foo-message',
-            # place_id omitted since req. handler should get from uri
+            # user_id omitted since req. handler should get from uri
             stars=5
         ))
         self.assertEqual(POST_request1.status[:3], '200')
 
+        # validate values stored in db
+        # ----------------------------------------------------------------------
+        # for review record
         now = datetime.now().strftime('%d/%m/%Y %H:%M')
+        record = Review.get(Review.id == 1)
 
-        self.assertEqual(Review.get(Review.id == 1).message, 'foo-message')
-        self.assertEqual(Review.get(Review.id == 1).place.id, 1)
-        self.assertEqual(Review.get(Review.id == 1).stars, 5)
-        self.assertEqual(Review.get(Review.id == 1).created_at.strftime('%d/%m/%Y %H:%M'), now)
-        self.assertEqual(Review.get(Review.id == 1).updated_at.strftime('%d/%m/%Y %H:%M'), now)
+        self.assertEqual(record.message, 'foo-message')
+        self.assertEqual(record.user_id, 1)
+        self.assertEqual(record.stars, 5)
+        self.assertEqual(record.created_at.strftime('%d/%m/%Y %H:%M'), now)
+        self.assertEqual(record.updated_at.strftime('%d/%m/%Y %H:%M'), now)
+
+        # for review place record
+        now = datetime.now().strftime('%d/%m/%Y %H:%M')
+        record = ReviewUser.get(ReviewUser.review == 1)
+
+        self.assertEqual(record.place, 1)
 
     def subtest_createWithoutAllParams_proute(self):
         """
@@ -352,7 +376,7 @@ class reviewTestCase(unittest.TestCase):
         # ----------------------------------------------------------------------
         xPOST_request = self.app.post('/place/1000/reviews', data=dict(
             message='foo-message',
-            # place_id omitted since req. handler should get from uri
+            # user_id omitted since req. handler should get from uri
             stars=5
         ))
         self.assertEqual(len(json.loads(xPOST_request.data)), 404)
