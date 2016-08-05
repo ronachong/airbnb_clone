@@ -179,9 +179,9 @@ class reviewTestCase(unittest.TestCase):
 
         # for review user record
         now = datetime.now().strftime('%d/%m/%Y %H:%M')
-        record = ReviewUser.get(ReviewUser.review == 1)
+        record = ReviewUser.get(ReviewUser.review.id == 1)
 
-        self.assertEqual(record.user, 1)
+        self.assertEqual(record.user.id, 1)
 
     def subtest_createWithoutAllParams_uroute(self):
         """
@@ -353,7 +353,7 @@ class reviewTestCase(unittest.TestCase):
         now = datetime.now().strftime('%d/%m/%Y %H:%M')
         record = ReviewUser.get(ReviewUser.review.id == 1)
 
-        self.assertEqual(record.place, 1)
+        self.assertEqual(record.place.id, 1)
 
     def subtest_createWithoutAllParams_proute(self):
         """
