@@ -444,7 +444,7 @@ class reviewTestCase(unittest.TestCase):
         # test handling of GET req. for record by place & review IDs which exist
         # ----------------------------------------------------------------------
         # make GET request for record in table
-        GET_request1 = self.app.get('/place/1/1')
+        GET_request1 = self.app.get('/places/1/reviews/1')
         GET_data = json.loads(GET_request1.data)
 
         # test that status of response is 200
@@ -463,13 +463,13 @@ class reviewTestCase(unittest.TestCase):
         # test handling of GET req. for review record by review ID which exists
         # but place ID which does not
         # ----------------------------------------------------------------------
-        GET_request2 = self.app.get('/places/1000/1')
+        GET_request2 = self.app.get('/places/1000/reviews/1')
         self.assertEqual(GET_request2.status[:3], '404')
 
         # test handling of GET req. for review record by place ID which exists
         # but review id which does not
         # ----------------------------------------------------------------------
-        GET_request2 = self.app.get('/places/1/1000')
+        GET_request2 = self.app.get('/places/1/reviews/1000')
         self.assertEqual(GET_request2.status[:3], '404')
 
     def test_delete_proute(self):
@@ -481,7 +481,7 @@ class reviewTestCase(unittest.TestCase):
         self.createPlaceReviewViaPeewee()
 
         GET_request1 = self.app.get('places/1/reviews')
-        DELETE_request1 = self.app.delete('/places/1/1')
+        DELETE_request1 = self.app.delete('/places/1/reviews/1')
         GET_request2 = self.app.get('places/1/reviews')
 
         num_records_b4 = len(json.loads(GET_request1.data))
@@ -493,11 +493,11 @@ class reviewTestCase(unittest.TestCase):
         # test handling of DELETE req. for review record by review ID which
         # exists but place ID which does not
         # ----------------------------------------------------------------------
-        DELETE_request2 = self.app.delete('/places/1000/1')
+        DELETE_request2 = self.app.delete('/places/1000/reviews/1')
         self.assertEqual(DELETE_request2.status[:3], '404')
 
         # test handling of DELETE req. for review record by place ID which
         # exists but review ID which does not
         # ----------------------------------------------------------------------
-        DELETE_request2 = self.app.delete('/places/1/1000')
+        DELETE_request2 = self.app.delete('/places/1/reviews/1000')
         self.assertEqual(DELETE_request2.status[:3], '404')
