@@ -96,6 +96,7 @@ class reviewTestCase(unittest.TestCase):
             user=1,   # or review.user_id...?
             review=review.id
         )
+        u_review.save()
 
         return u_review
 
@@ -115,6 +116,7 @@ class reviewTestCase(unittest.TestCase):
             place=1,
             review=review.id
         )
+        p_review.save()
 
         return p_review
 
