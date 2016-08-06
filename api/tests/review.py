@@ -278,7 +278,7 @@ class reviewTestCase(unittest.TestCase):
         self.assertEqual(r_record.stars, GET_data['stars'])
         self.assertEqual(r_record.user.id, GET_data['from_user_id'])
         self.assertEqual(ur_record.user.id, GET_data['to_user_id'])
-        self.assertEqual(NULL, GET_data['to_place_id'])
+        self.assertEqual(None, GET_data['to_place_id'])
 
         # test handling of GET req. for review record by review ID which exists
         # but user ID which does not
@@ -449,7 +449,7 @@ class reviewTestCase(unittest.TestCase):
         self.assertEqual(r_record.message, GET_data['message'])
         self.assertEqual(r_record.stars, GET_data['stars'])
         self.assertEqual(r_record.user.id, GET_data['from_user_id'])
-        self.assertEqual(NULL, GET_data['to_user_id'])
+        self.assertEqual(None, GET_data['to_user_id'])
         self.assertEqual(ur_record.place.id, GET_data['to_place_id'])
 
         # test handling of GET req. for review record by review ID which exists
