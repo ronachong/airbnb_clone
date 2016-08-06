@@ -42,6 +42,14 @@ class reviewTestCase(unittest.TestCase):
         )
         user_record.save()
 
+        user_record2 = User(
+            email='anystring-2',
+            password='anystring1',
+            first_name='anystring2',
+            last_name='anystring3'
+        )
+        user_record2.save()
+
         # create place records (and dependencies) for routes
         state_record = State(name='foo-state')
         state_record.save()
@@ -74,7 +82,7 @@ class reviewTestCase(unittest.TestCase):
     def createReviewViaPeewee(self):
         record = ReviewUser(
             message='foo-message',
-            user=1,
+            user=2,
             stars=5
         )
         record.save()
@@ -129,7 +137,7 @@ class reviewTestCase(unittest.TestCase):
         """
         POST_request = self.app.post('/users/1/reviews', data=dict(
             message='foo-message',
-            # user_id omitted since req. handler should get from uri
+            user_id=2,
             stars=5
         ))
 
@@ -144,7 +152,7 @@ class reviewTestCase(unittest.TestCase):
         """
         POST_request = self.app.post('/places/1/reviews', data=dict(
             message='foo-message',
-            # user_id omitted since req. handler should get from uri
+            user_id=2,
             stars=5
         ))
 
@@ -162,7 +170,7 @@ class reviewTestCase(unittest.TestCase):
         # ----------------------------------------------------------------------
         POST_request = self.app.post('/users/1/reviews', data=dict(
             message='foo-message',
-            # user_id omitted since req. handler should get from uri
+            user_id=2,
             stars=5
         ))
         self.assertEqual(POST_request1.status[:3], '200')
@@ -174,7 +182,7 @@ class reviewTestCase(unittest.TestCase):
         record = Review.get(Review.id == 1)
 
         self.assertEqual(record.message, 'foo-message')
-        self.assertEqual(record.user.id, 1)
+        self.assertEqual(record.user.id, 2)
         self.assertEqual(record.stars, 5)
         self.assertEqual(record.created_at.strftime('%d/%m/%Y %H:%M'), now)
         self.assertEqual(record.updated_at.strftime('%d/%m/%Y %H:%M'), now)
@@ -213,7 +221,7 @@ class reviewTestCase(unittest.TestCase):
         # ----------------------------------------------------------------------
         xPOST_request = self.app.post('/users/1000/reviews', data=dict(
             message='foo-message',
-            # user_id omitted since req. handler should get from uri
+            user_id=2,
             stars=5
         ))
         self.assertEqual(len(json.loads(xPOST_request.data)), 404)
@@ -334,7 +342,7 @@ class reviewTestCase(unittest.TestCase):
         # ----------------------------------------------------------------------
         POST_request = self.app.post('/places/1/reviews', data=dict(
             message='foo-message',
-            # user_id omitted since req. handler should get from uri
+            user_id=2,
             stars=5
         ))
         self.assertEqual(POST_request1.status[:3], '200')
@@ -346,7 +354,7 @@ class reviewTestCase(unittest.TestCase):
         record = Review.get(Review.id == 1)
 
         self.assertEqual(record.message, 'foo-message')
-        self.assertEqual(record.user.id, 1)
+        self.assertEqual(record.user.id, 2)
         self.assertEqual(record.stars, 5)
         self.assertEqual(record.created_at.strftime('%d/%m/%Y %H:%M'), now)
         self.assertEqual(record.updated_at.strftime('%d/%m/%Y %H:%M'), now)
@@ -385,7 +393,7 @@ class reviewTestCase(unittest.TestCase):
         # ----------------------------------------------------------------------
         xPOST_request = self.app.post('/place/1000/reviews', data=dict(
             message='foo-message',
-            # user_id omitted since req. handler should get from uri
+            user_id=2,
             stars=5
         ))
         self.assertEqual(len(json.loads(xPOST_request.data)), 404)
