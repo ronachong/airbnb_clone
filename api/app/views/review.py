@@ -42,3 +42,40 @@ def reviews():
         u_review.save()
 
         return jsonify(record.to_hash())
+
+@app.route('/users/<user_id>/reviews/<review_id>', methods=['GET', 'PUT', 'DELETE'])
+def user_id(user_id):
+    """Handle GET and DELETE requests to /users/<user_id>/reviews/<review_id>
+    route.
+
+    Return a hash representing user review in the case of a GET request.
+    Delete appropriate records for user review in case of DELETE request.
+    """
+    # check whether resource exists:
+    # --------------------------------------------------------------------------
+    try:
+        record = Review.get(Review.id == review_id)
+
+    # return 404 not found if it does not
+    except Review.DoesNotExist:
+        return json_response(
+            add_status_=False,
+            status_=404,
+            code=404,
+            msg="not found"
+        )
+
+    # if exception does not arise:
+    # --------------------------------------------------------------------------
+    # handle GET requests
+    if request.method == 'GET':
+        return jsonify(record.to_hash())
+
+    # handle DELETE requests
+    elif request.method == "DELETE":
+        ur_record = ReviewUser.select().where(ReviewUser.review.id == review_id)
+        ur_record.delete_instance()
+        ur_record.save()
+        record.delete_instance()
+        record.save()
+        return 'deleted review record\ndeleted review user record\n'
