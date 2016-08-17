@@ -21,7 +21,7 @@ def user_reviews(user_id):
     # --------------------------------------------------------------------------
     if request.method == 'GET':
         list = []
-        for record in ReviewUser.select().where(ReviewUser.user.id == user_id):
+        for record in ReviewUser.select().where(ReviewUser.user == user_id):
             hash = record.review.to_hash()
             list.append(hash)
         return jsonify(list)
@@ -74,7 +74,7 @@ def review_user_id(user_id, review_id):
 
     # handle DELETE requests
     elif request.method == "DELETE":
-        ur_record = ReviewUser.select().where(ReviewUser.review.id == review_id)
+        ur_record = ReviewUser.select().where(ReviewUser.review == review_id)
         ur_record.delete_instance()
         ur_record.save()
         record.delete_instance()
@@ -94,7 +94,7 @@ def place_reviews(place_id):
     # --------------------------------------------------------------------------
     if request.method == 'GET':
         list = []
-        for record in ReviewPlace.select().where(ReviewPlace.place.id == place_id):
+        for record in ReviewPlace.select().where(ReviewPlace.place == place_id):
             hash = record.review.to_hash()
             list.append(hash)
         return jsonify(list)
@@ -147,7 +147,7 @@ def review_place_id(place_id, review_id):
 
     # handle DELETE requests
     elif request.method == "DELETE":
-        pr_record = ReviewPlace.select().where(ReviewPlace.review.id == review_id)
+        pr_record = ReviewPlace.select().where(ReviewPlace.review == review_id)
         pr_record.delete_instance()
         pr_record.save()
         record.delete_instance()
