@@ -1,6 +1,5 @@
 from base import *
-from review_user import ReviewUser
-from review_place import ReviewPlace
+from user import User
 
 class Review(BaseModel):
     message = peewee.TextField(null=False)
@@ -8,6 +7,9 @@ class Review(BaseModel):
     user = peewee.ForeignKeyField(User, related_name="reviews", on_delete='cascade')
 
     def to_hash(self):
+        from review_user import ReviewUser
+        from review_place import ReviewPlace
+
         hash = {}
         hash["id"] = self.id
         hash["created_at"] = self.created_at.strftime('%d/%m/%Y %H:%M:%S')
@@ -18,13 +20,13 @@ class Review(BaseModel):
 
         try:
             review_user = ReviewUser.get(ReviewUser.review.id == self.id)
-            hash["to_user_id"] = review_user.user.id
+            hash["to_user_id"] = ReviewUser.user.id
         except:
             hash["to_user_id"] = None
 
         try:
             review_place = ReviewPlace.get(ReviewPlace.review.id == self.id)
-            hash["to_place_id"] = review_place.place.id
+            hash["to_place_id"] = ReviewPlace.place.id
         except:
             hash["to_user_id"] = None
 
