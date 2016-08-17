@@ -67,7 +67,23 @@ def review_user_id(user_id, review_id):
     Return a hash representing user review in the case of a GET request.
     Delete appropriate records for user review in case of DELETE request.
     """
-    # check whether resource exists:
+    # check whether user resource exists:
+    # --------------------------------------------------------------------------
+    try:
+        record = User.get(User.id == user_id)
+
+    # return 404 not found if it does not
+    except User.DoesNotExist:
+        return json_response(
+            add_status_=False,
+            status_=404,
+            code=404,
+            msg="not found"
+        )
+
+    # if exception does not arise:
+
+    # check whether review resource exists:
     # --------------------------------------------------------------------------
     try:
         record = Review.get(Review.id == review_id)
@@ -164,7 +180,23 @@ def review_place_id(place_id, review_id):
     Return a hash representing place review in the case of a GET request.
     Delete appropriate records for place review in case of DELETE request.
     """
-    # check whether resource exists:
+    # check whether place resource exists:
+    # --------------------------------------------------------------------------
+    try:
+        record = Place.get(Place.id == place_id)
+
+    # return 404 not found if it does not
+    except Place.DoesNotExist:
+        return json_response(
+            add_status_=False,
+            status_=404,
+            code=404,
+            msg="not found"
+        )
+
+    # if exception does not arise:
+
+    # check whether review resource exists:
     # --------------------------------------------------------------------------
     try:
         record = Review.get(Review.id == review_id)
