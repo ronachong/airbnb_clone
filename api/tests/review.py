@@ -168,7 +168,6 @@ class reviewTestCase(unittest.TestCase):
 
         # create records with POST; check for success
         # ----------------------------------------------------------------------
-        print "this post req is being run"
         POST_request = self.app.post('/users/1/reviews', data=dict(
             message='foo-message',
             user_id=2,
@@ -236,9 +235,6 @@ class reviewTestCase(unittest.TestCase):
             stars=5
         ))
 
-        print xPOST_request.data
-        print xPOST_request.status[:3]
-
         self.assertEqual(xPOST_request.status[:3], '404')
 
         # test creation of review with all parameters provided in POST request
@@ -261,7 +257,7 @@ class reviewTestCase(unittest.TestCase):
         # test response to GET request by user ID which does not exist
         # ----------------------------------------------------------------------
         GET_request1 = self.app.get('users/1000/reviews')
-        self.assertEqual(len(json.loads(GET_request1.data)), 404)
+        self.assertEqual(GET_request1.status[:3], '404')
 
         # test response to GET request by user ID which exists
         # ----------------------------------------------------------------------
