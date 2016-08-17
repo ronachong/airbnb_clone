@@ -45,11 +45,19 @@ def user_reviews(user_id):
     # --------------------------------------------------------------------------
     elif request.method == 'POST':
 
-        record = Review(
-            message=request.form["message"],
-            user=request.form["user_id"],
-            stars=request.form["stars"]
-        )
+        if "stars" in request.form.keys():
+            record = Review(
+                message=request.form["message"],
+                user=request.form["user_id"],
+                stars=request.form["stars"]
+            )
+
+        else:
+            record = Review(
+                message=request.form["message"],
+                user=request.form["user_id"]
+            )
+
         record.save()
 
         u_review = ReviewUser(
