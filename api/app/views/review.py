@@ -17,6 +17,21 @@ def user_reviews(user_id):
     a GET request.
     Create a new user review in the database in the case of a POST request.
     """
+    # check whether user resource exists:
+    # --------------------------------------------------------------------------
+    try:
+        record = User.get(User.id == user_id)
+
+    # return 404 not found if it does not
+    except User.DoesNotExist:
+        return json_response(
+            add_status_=False,
+            status_=404,
+            code=404,
+            msg="not found"
+        )
+
+    # if exception does not arise:
     # handle GET requests:
     # --------------------------------------------------------------------------
     if request.method == 'GET':
@@ -29,6 +44,7 @@ def user_reviews(user_id):
     # handle POST requests:
     # --------------------------------------------------------------------------
     elif request.method == 'POST':
+
         record = Review(
             message=request.form["message"],
             user=request.form["user_id"],
@@ -43,7 +59,6 @@ def user_reviews(user_id):
         u_review.save()
 
         return jsonify(record.to_hash())
-
 
 @app.route('/users/<user_id>/reviews/<review_id>', methods=['GET', 'PUT', 'DELETE'])
 def review_user_id(user_id, review_id):
@@ -90,6 +105,30 @@ def place_reviews(place_id):
     a GET request.
     Create a new place review in the database in the case of a POST request.
     """
+    # check whether place resource exists:
+    # --------------------------------------------------------------------------
+    try:
+        record = Place.get(Place.id == place_id)
+
+    # return 404 not found if it does not
+    except Place.DoesNotExist:
+        return json_response(
+            add_status_=False,
+            status_=404,
+            code=404,
+            msg="not found"
+        )
+
+    # if exception does not arise:
+    # handle GET requests:
+    # --------------------------------------------------------------------------
+    if request.method == 'GET':
+        list = []
+        for record in ReviewUser.select().where(ReviewUser.user == user_id):
+            hash = record.review.to_hash()
+            list.append(hash)
+        return jsonify(list)
+
     # handle GET requests:
     # --------------------------------------------------------------------------
     if request.method == 'GET':
