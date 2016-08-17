@@ -168,12 +168,13 @@ class reviewTestCase(unittest.TestCase):
 
         # create records with POST; check for success
         # ----------------------------------------------------------------------
+        print "this post req is being run"
         POST_request = self.app.post('/users/1/reviews', data=dict(
             message='foo-message',
             user_id=2,
             stars=5
         ))
-        self.assertEqual(POST_request1.status[:3], '200')
+        self.assertEqual(POST_request.status[:3], '200')
 
         # validate values stored in db
         # ----------------------------------------------------------------------
@@ -189,7 +190,7 @@ class reviewTestCase(unittest.TestCase):
 
         # for review user record
         now = datetime.now().strftime('%d/%m/%Y %H:%M')
-        record = ReviewUser.get(ReviewUser.review.id == 1)
+        record = ReviewUser.get(ReviewUser.review == 1)
 
         self.assertEqual(record.user.id, 1)
 
@@ -201,14 +202,24 @@ class reviewTestCase(unittest.TestCase):
         # test that request missing optional stars param is handled w/ success
         # ----------------------------------------------------------------------
         POST_request2 = self.app.post('/users/1/reviews', data=dict(
-            message='foo-message'
+            message='foo-message',
+            user_id=2
         ))
         self.assertEqual(POST_request2.status[:3], '200')
 
         # test that request missing mandatory message param fails
         # ----------------------------------------------------------------------
         POST_request3 = self.app.post('/users/1/reviews', data=dict(
-            stars=5
+            stars=5,
+            user_id=2
+        ))
+        self.assertEqual(POST_request3.status[:3], '400')
+
+        # test that request missing mandatory user_id param fails
+        # ----------------------------------------------------------------------
+        POST_request3 = self.app.post('/users/1/reviews', data=dict(
+            stars=5,
+            message='foo-message'
         ))
         self.assertEqual(POST_request3.status[:3], '400')
 
@@ -228,7 +239,7 @@ class reviewTestCase(unittest.TestCase):
         print xPOST_request.data
         print xPOST_request.status[:3]
 
-        self.assertEqual(xPOST_request.status[:3], 404)
+        self.assertEqual(xPOST_request.status[:3], '404')
 
         # test creation of review with all parameters provided in POST request
         # ----------------------------------------------------------------------
@@ -365,7 +376,7 @@ class reviewTestCase(unittest.TestCase):
 
         # for review place record
         now = datetime.now().strftime('%d/%m/%Y %H:%M')
-        record = ReviewUser.get(ReviewUser.review.id == 1)
+        record = ReviewUser.get(ReviewUser.review == 1)
 
         self.assertEqual(record.place.id, 1)
 
