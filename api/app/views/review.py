@@ -10,7 +10,7 @@ from app import app
 
 
 @app.route('/users/<user_id>/reviews', methods=['GET', 'POST'])
-def reviews():
+def user_reviews():
     """Handle GET and POST requests to /users/<user_id>/reviews route.
 
     Return a list of all reviews for given user in the database in the case of
@@ -29,7 +29,7 @@ def reviews():
     # handle POST requests:
     # --------------------------------------------------------------------------
     elif request.method == 'POST':
-        record = ReviewUser(
+        record = Review(
             message=request.form["message"],
             user=request.form["user_id"],
             stars=request.form["stars"]
@@ -46,7 +46,7 @@ def reviews():
 
 
 @app.route('/users/<user_id>/reviews/<review_id>', methods=['GET', 'PUT', 'DELETE'])
-def user_id(user_id):
+def review_user_id(user_id):
     """Handle GET and DELETE requests to /users/<user_id>/reviews/<review_id>.
 
     Return a hash representing user review in the case of a GET request.
@@ -83,7 +83,7 @@ def user_id(user_id):
 
 
 @app.route('/places/<place_id>/reviews', methods=['GET', 'POST'])
-def reviews():
+def place_reviews():
     """Handle GET and POST requests to /places/<place_id>/reviews route.
 
     Return a list of all reviews for given place in the database in the case of
@@ -119,7 +119,7 @@ def reviews():
 
 
 @app.route('/places/<place_id>/reviews/<review_id>', methods=['GET', 'PUT', 'DELETE'])
-def user_id(user_id):
+def review_place_id(user_id):
     """Handle GET and DELETE requests to /places/<place_id>/reviews/<review_id>.
 
     Return a hash representing place review in the case of a GET request.
