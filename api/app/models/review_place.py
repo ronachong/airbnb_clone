@@ -1,13 +1,13 @@
 import peewee
 
-from app.models.place import Place
-from app.models.review import Review
-from app.models import base
+from place import Place
+from review import Review
+from base import *
 
 
-class ReviewUser(peewee.Model):
+class ReviewPlace(peewee.Model):
     place = peewee.ForeignKeyField(Place)
     review = peewee.ForeignKeyField(Review)
 
     class Meta:
-        database = base.database
+        database = database

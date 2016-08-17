@@ -1,8 +1,8 @@
 import peewee
 
-from app.models.user import User
-from app.models.review import Review
-from app.models import base
+from user import User
+from review import Review
+from base import *
 
 
 class ReviewUser(peewee.Model):
@@ -10,4 +10,4 @@ class ReviewUser(peewee.Model):
     review = peewee.ForeignKeyField(Review)
 
     class Meta:
-        database = base.database
+        database = database
