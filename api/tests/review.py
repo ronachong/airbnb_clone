@@ -13,7 +13,7 @@ from app.models.review_place import ReviewPlace
 from app.models.user import User
 from app.models.city import City
 from app.models.state import State
-from app.models.Place import Place
+from app.models.place import Place
 from app.models.base import database
 
 
@@ -50,24 +50,24 @@ class reviewTestCase(unittest.TestCase):
         )
         user_record2.save()
 
-        # create place records (and dependencies) for routes
-        state_record = State(name='foo-state')
-        state_record.save()
-        city_record = City(name='foo-city', state=1)
-        city_record.save()
-        place_record = Place(
-            owner_id=1,
-            city_id=1,
-            name="foo",
-            description="foo description",
-            number_rooms=1,
-            number_bathrooms=1,
-            max_guest=1,
-            price_by_night=1,
-            latitude=20.0,
-            longitude=22.0
-        )
-        place_record.save()
+        # # create place records (and dependencies) for routes
+        # state_record = State(name='foo-statee')
+        # state_record.save()
+        # city_record = City(name='foo-city', state=1)
+        # city_record.save()
+        # place_record = Place(
+        #     owner_id=1,
+        #     city_id=1,
+        #     name="foo",
+        #     description="foo description",
+        #     number_rooms=1,
+        #     number_bathrooms=1,
+        #     max_guest=1,
+        #     price_by_night=1,
+        #     latitude=20.0,
+        #     longitude=22.0
+        # )
+        # place_record.save()
 
     def tearDown(self):
         """Remove tables from airbnb_test database upon completion of test."""
@@ -80,7 +80,7 @@ class reviewTestCase(unittest.TestCase):
         User.drop_table()
 
     def createReviewViaPeewee(self):
-        record = ReviewUser(
+        record = Review(
             message='foo-message',
             user=2,
             stars=5
@@ -224,7 +224,11 @@ class reviewTestCase(unittest.TestCase):
             user_id=2,
             stars=5
         ))
-        self.assertEqual(len(json.loads(xPOST_request.data)), 404)
+
+        print xPOST_request.data
+        print xPOST_request.status[:3]
+
+        self.assertEqual(xPOST_request.status[:3], 404)
 
         # test creation of review with all parameters provided in POST request
         # ----------------------------------------------------------------------
