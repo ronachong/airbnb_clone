@@ -113,7 +113,7 @@ def review_user_id(user_id, review_id):
 
     # handle DELETE requests
     elif request.method == "DELETE":
-        ur_record = ReviewUser.select().where(ReviewUser.review == review_id)
+        ur_record = ReviewUser.select().where(ReviewUser.review == review_id).get()
         ur_record.delete_instance()
         ur_record.save()
         record.delete_instance()
