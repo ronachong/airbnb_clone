@@ -384,16 +384,26 @@ class reviewTestCase(unittest.TestCase):
         # test that request missing optional stars param is handled w/ success
         # ----------------------------------------------------------------------
         POST_request2 = self.app.post('/places/1/reviews', data=dict(
-            message='foo-message'
+            message='foo-message',
+            user_id=2
         ))
         self.assertEqual(POST_request2.status[:3], '200')
 
         # test that request missing mandatory message param fails
         # ----------------------------------------------------------------------
         POST_request3 = self.app.post('/place/1/reviews', data=dict(
-            stars=5
+            stars=5,
+            user_id=2
         ))
         self.assertEqual(POST_request3.status[:3], '400')
+
+        # test that request missing mandatory user_id param fails
+        # ----------------------------------------------------------------------
+        POST_request4 = self.app.post('/place/1/reviews', data=dict(
+            stars=5,
+            message='foo-message'
+        ))
+        self.assertEqual(POST_request4.status[:3], '400')
 
     def test_create_proute(self):
         """
@@ -419,7 +429,7 @@ class reviewTestCase(unittest.TestCase):
 
         # test creatxn of review in all cases of parameter missing in POST req.
         # ----------------------------------------------------------------------
-        self.subtest_createWithoutAllParams_uroute()
+        self.subtest_createWithoutAllParams_proute()
 
     # def test_list_proute(self):
     #     """
