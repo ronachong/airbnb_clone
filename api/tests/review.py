@@ -372,7 +372,7 @@ class reviewTestCase(unittest.TestCase):
 
         # for review place record
         now = datetime.now().strftime('%d/%m/%Y %H:%M')
-        record = ReviewUser.get(ReviewUser.review == 1)
+        record = ReviewPlace.get(ReviewPlace.review == 1)
 
         self.assertEqual(record.place.id, 1)
 
