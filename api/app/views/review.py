@@ -6,6 +6,7 @@ from app.models.review import Review
 from app.models.review_user import ReviewUser
 from app.models.review_place import ReviewPlace
 from app.models.user import User
+from app.models.place import Place
 from app import app
 
 
