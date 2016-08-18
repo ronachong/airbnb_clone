@@ -148,15 +148,6 @@ def place_reviews(place_id):
     # --------------------------------------------------------------------------
     if request.method == 'GET':
         list = []
-        for record in ReviewUser.select().where(ReviewUser.user == user_id):
-            hash = record.review.to_hash()
-            list.append(hash)
-        return jsonify(list)
-
-    # handle GET requests:
-    # --------------------------------------------------------------------------
-    if request.method == 'GET':
-        list = []
         for record in ReviewPlace.select().where(ReviewPlace.place == place_id):
             hash = record.review.to_hash()
             list.append(hash)
@@ -165,14 +156,14 @@ def place_reviews(place_id):
     # handle POST requests:
     # --------------------------------------------------------------------------
     elif request.method == 'POST':
-        record = ReviewPlace(
+        record = Review(
             message=request.form["message"],
             user=request.form["user_id"],
             stars=request.form["stars"]
         )
         record.save()
 
-        p_review = ReviewUser(
+        p_review = ReviewPlace(
             place=place_id,
             review=record.id
         )
