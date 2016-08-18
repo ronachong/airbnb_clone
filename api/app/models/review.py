@@ -20,22 +20,14 @@ class Review(BaseModel):
 
         try:
             review_user = ReviewUser.get(ReviewUser.review == self.id)
-            print "the get record worked"
-            #hash["to_user_id"] = review_user.user.id
-            hash["to_user_id"] = 10
-            print "the setting of to_user_id worked"
+            hash["to_user_id"] = review_user.user.id
         except:
-            print "an exception arose, got caught"
             hash["to_user_id"] = None
 
         try:
             review_place = ReviewPlace.get(ReviewPlace.review == self.id)
-            print "the get record worked"
-            #hash["to_place_id"] = review_place.place.id
-            hash["to_place_id"] = 10
-            print "the setting of to_place_id worked"
+            hash["to_place_id"] = review_place.place.id
         except:
-            print "an exception arose, got caught"
             hash["to_place_id"] = None
 
         return hash
