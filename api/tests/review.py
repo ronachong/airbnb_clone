@@ -391,7 +391,7 @@ class reviewTestCase(unittest.TestCase):
 
         # test that request missing mandatory message param fails
         # ----------------------------------------------------------------------
-        POST_request3 = self.app.post('/place/1/reviews', data=dict(
+        POST_request3 = self.app.post('/places/1/reviews', data=dict(
             stars=5,
             user_id=2
         ))
@@ -399,7 +399,7 @@ class reviewTestCase(unittest.TestCase):
 
         # test that request missing mandatory user_id param fails
         # ----------------------------------------------------------------------
-        POST_request4 = self.app.post('/place/1/reviews', data=dict(
+        POST_request4 = self.app.post('/places/1/reviews', data=dict(
             stars=5,
             message='foo-message'
         ))
