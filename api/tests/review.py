@@ -431,26 +431,26 @@ class reviewTestCase(unittest.TestCase):
         # ----------------------------------------------------------------------
         self.subtest_createWithoutAllParams_proute()
 
-    # def test_list_proute(self):
-    #     """
-    #     Test proper representation of all place review records upon GET
-    #     requests to API.
-    #     """
-    #     # test response to GET request by place ID which does not exist
-    #     # ----------------------------------------------------------------------
-    #     GET_request1 = self.app.get('places/1000/reviews')
-    #     self.assertEqual(len(json.loads(GET_request1.data)), 404)
+    def test_list_proute(self):
+        """
+        Test proper representation of all place review records upon GET
+        requests to API.
+        """
+        # test response to GET request by place ID which does not exist
+        # ----------------------------------------------------------------------
+        GET_request1 = self.app.get('places/1000/reviews')
+        self.assertEqual(GET_request1.status[:3], '404')
+
+        # test response to GET request by place ID which exists
+        # ----------------------------------------------------------------------
+        GET_request2 = self.app.get('places/1/reviews')
+        self.assertEqual(len(json.loads(GET_request2.data)), 0)
+
+        self.createPlaceReviewViaPeewee()
+
+        GET_request3 = self.app.get('places/1/reviews')
+        self.assertEqual(len(json.loads(GET_request3.data)), 1)
     #
-    #     # test response to GET request by place ID which exists
-    #     # ----------------------------------------------------------------------
-    #     GET_request2 = self.app.get('places/1/reviews')
-    #     self.assertEqual(len(json.loads(GET_request2.data)), 0)
-    #
-    #     self.createPlaceReviewViaPeewee()
-    #
-    #     GET_request3 = self.app.get('places/1/reviews')
-    #     self.assertEqual(len(json.loads(GET_request3.data)), 1)
-    # #
     # def test_get_proute(self):
     #     """
     #     Test proper representation of a place review record upon GET requests
