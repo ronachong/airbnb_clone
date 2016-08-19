@@ -157,11 +157,20 @@ def place_reviews(place_id):
     # handle POST requests:
     # --------------------------------------------------------------------------
     elif request.method == 'POST':
-        record = Review(
-            message=request.form["message"],
-            user=request.form["user_id"],
-            stars=request.form["stars"]
-        )
+
+        if "stars" in request.form.keys():
+            record = Review(
+                message=request.form["message"],
+                user=request.form["user_id"],
+                stars=request.form["stars"]
+            )
+
+        else:
+            record = Review(
+                message=request.form["message"],
+                user=request.form["user_id"]
+            )
+
         record.save()
 
         p_review = ReviewPlace(
@@ -218,7 +227,7 @@ def review_place_id(place_id, review_id):
 
     # handle DELETE requests
     elif request.method == "DELETE":
-        pr_record = ReviewPlace.select().where(ReviewPlace.review == review_id)
+        pr_record = ReviewPlace.get(ReviewPlace.review == review_id)
         pr_record.delete_instance()
         pr_record.save()
         record.delete_instance()
