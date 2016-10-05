@@ -8,16 +8,17 @@ module.exports = {
 	path: __dirname
     },
     module: {
-	loaders: [
-	    // run babel-loader on all paths matching test regex
-	    // (excluding node_modules file) 
-	    {
-		test: /\.js$/,
-		loader: 'babel-loader',
-		exclude: /node_modules/,
-		query: {
-		    presets: ['es2015', 'react']
-		}
-	]
+    	loaders: [
+  	    // run babel-loader on all paths matching test regex
+  	    // (excluding node_modules file)
+  	    {
+      		test: /\.js$/,
+      		loader: 'babel-loader',
+      		exclude: /node_modules/,
+      		query: {
+      		    presets: ['es2015', 'react']
+          }
+        }
+	   ]
     }
 }
