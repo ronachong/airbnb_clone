@@ -3,7 +3,7 @@ console.log("loading app root")
 import React from 'react';
 import ReactDom from 'react-dom';
 
-import Header from './components/header.js';
+import Header from './components/Header.js';
 
 const styles = {
   header: {
