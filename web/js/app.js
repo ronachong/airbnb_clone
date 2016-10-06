@@ -9,8 +9,14 @@ import Content from './components/Content.js';
 import Footer from './components/Footer.js';
 
 const styles = {
+  sitewhole: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column'
+  },
   sitebody: {
     width: '100%',
+    flexGrow: 1,
     display: 'flex',
     flexDirection: 'row',
     //flexWrap: 'nowrap'
@@ -25,7 +31,7 @@ var Site = React.createClass({
   },
   render: function () {
     return (
-      <div>
+      <div style={styles.sitewhole}>
         <Header />
         <div style={styles.sitebody}>
           <LeftColumn />
