@@ -6,6 +6,7 @@ import ReactDom from 'react-dom';
 import Header from './components/Header.js';
 import LeftColumn from './components/LeftColumn.js';
 import Content from './components/Content.js';
+import Footer from './components/Footer.js';
 
 const styles = {
   sitebody: {
@@ -30,6 +31,7 @@ var Site = React.createClass({
           <LeftColumn />
           <Content />
         </div>
+        <Footer />
       </div>
     )
   }
