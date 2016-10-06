@@ -15,7 +15,7 @@ if env == 'development':
                  'charset': 'utf8',
                  'password': os.environ.get('AIRBNB_DATABASE_PWD_DEV') }
 
-elif env == 'production':
+elif env == 'prod':
     # assign specs for prod env
     # os.environ['AIRBNB_DATABASE_PWD_PROD'] = 'wrprod' | this only sets env var in current shell; currently setting var permanently for admin user via ~/.bash_profile
     DEBUG = False
