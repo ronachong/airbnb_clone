@@ -5,6 +5,7 @@ import ReactDom from 'react-dom';
 
 import Header from './components/Header.js';
 import LeftColumn from './components/LeftColumn.js';
+import Content from './components/Content.js';
 
 const styles = {
   header: {
@@ -27,6 +28,7 @@ var Site = React.createClass({
       <div>
         <Header />
         <LeftColumn />
+        <Content />
       </div>
     )
   }
