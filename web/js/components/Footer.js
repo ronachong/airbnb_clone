@@ -11,10 +11,7 @@ fixed in the bottom
 const styles = {
   footer: {
     height: '40px',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between'
-    //flexWrap: 'nowrap'
+    textAlign: 'center'
   },
   logo: {
     height: '60px'
@@ -25,9 +22,9 @@ const styles = {
 }
 
 const Footer = (props)=> (
-  <header style={styles.footer}>
+  <footer style={styles.footer}>
     <p>Under construction.</p>
-  </header>
+  </footer>
 );
 
 export default Footer;
