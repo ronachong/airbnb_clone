@@ -13,7 +13,8 @@ const styles = {
     height: '60px',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    paddingBottom: '5vh'
     //flexWrap: 'nowrap'
   },
   logo: {
