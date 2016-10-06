@@ -8,11 +8,10 @@ import LeftColumn from './components/LeftColumn.js';
 import Content from './components/Content.js';
 
 const styles = {
-  header: {
-    height: '60px',
+  sitebody: {
+    width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between'
     //flexWrap: 'nowrap'
   }
 }
@@ -27,8 +26,10 @@ var Site = React.createClass({
     return (
       <div>
         <Header />
-        <LeftColumn />
-        <Content />
+        <div style={styles.sitebody}>
+          <LeftColumn />
+          <Content />
+        </div>
       </div>
     )
   }

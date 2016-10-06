@@ -9,6 +9,7 @@ will be the mosaic of all places
 
 const styles = {
   leftcol: {
+    flexGrow: 1,
     borderStyle: 'solid'
   }
 }
