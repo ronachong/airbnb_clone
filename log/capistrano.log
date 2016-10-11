@@ -1224,3 +1224,118 @@ ead8d4b85008c9f072dfc2c731ffe1256a1ea560	refs/heads/unit_tests
  DEBUG [527be205] Command: cd /home/deploy/fairbnb/releases && /usr/bin/env echo "Branch master (at 7dd2dfa248b41c588e6129a15ea3b65f2b765b63) deployed as release 20160817045019 by 20" >> /home/deploy/fairbnb/revisions.log
   INFO [4c825c8f] Finished in 0.145 seconds with exit status 0 (successful).
   INFO [527be205] Finished in 0.152 seconds with exit status 0 (successful).
+  INFO ---------------------------------------------------------------------------
+  INFO START 2016-10-07 17:21:16 -0700 cap deploy_rona deploy
+  INFO ---------------------------------------------------------------------------
+  INFO [8c62c54b] Running /usr/bin/env mkdir -p /home/deploy/tmp as deploy@158.69.79.94
+  INFO [7fe3f70d] Running /usr/bin/env mkdir -p /home/deploy/tmp as deploy@54.208.83.36
+ DEBUG [8c62c54b] Command: /usr/bin/env mkdir -p /home/deploy/tmp
+ DEBUG [7fe3f70d] Command: /usr/bin/env mkdir -p /home/deploy/tmp
+  INFO [8c62c54b] Finished in 7.019 seconds with exit status 0 (successful).
+ DEBUG Uploading /home/deploy/tmp/git-ssh-fairbnb-deploy_rona-rona.sh 0.0%
+  INFO Uploading /home/deploy/tmp/git-ssh-fairbnb-deploy_rona-rona.sh 100.0%
+  INFO [6f0861e2] Running /usr/bin/env chmod 700 /home/deploy/tmp/git-ssh-fairbnb-deploy_rona-rona.sh as deploy@158.69.79.94
+ DEBUG [6f0861e2] Command: /usr/bin/env chmod 700 /home/deploy/tmp/git-ssh-fairbnb-deploy_rona-rona.sh
+  INFO [6f0861e2] Finished in 0.148 seconds with exit status 0 (successful).
+  INFO ---------------------------------------------------------------------------
+  INFO START 2016-10-07 17:27:21 -0700 cap deploy_rona deploy
+  INFO ---------------------------------------------------------------------------
+  INFO [f610eba5] Running /usr/bin/env mkdir -p /home/deploy/tmp as deploy@158.69.79.94
+ DEBUG [f610eba5] Command: /usr/bin/env mkdir -p /home/deploy/tmp
+  INFO [6e688557] Running /usr/bin/env mkdir -p /home/deploy/tmp as deploy@54.208.83.36
+ DEBUG [6e688557] Command: /usr/bin/env mkdir -p /home/deploy/tmp
+  INFO ---------------------------------------------------------------------------
+  INFO START 2016-10-07 17:28:03 -0700 cap deploy_rona deploy
+  INFO ---------------------------------------------------------------------------
+  INFO [5a91c347] Running /usr/bin/env mkdir -p /home/deploy/tmp as deploy@158.69.79.94
+ DEBUG [5a91c347] Command: /usr/bin/env mkdir -p /home/deploy/tmp
+  INFO [27cf9bbc] Running /usr/bin/env mkdir -p /home/deploy/tmp as deploy@54.208.83.36
+ DEBUG [27cf9bbc] Command: /usr/bin/env mkdir -p /home/deploy/tmp
+  INFO [5a91c347] Finished in 4.286 seconds with exit status 0 (successful).
+ DEBUG Uploading /home/deploy/tmp/git-ssh-fairbnb-deploy_rona-rona.sh 0.0%
+  INFO Uploading /home/deploy/tmp/git-ssh-fairbnb-deploy_rona-rona.sh 100.0%
+  INFO [8d3b9826] Running /usr/bin/env chmod 700 /home/deploy/tmp/git-ssh-fairbnb-deploy_rona-rona.sh as deploy@158.69.79.94
+ DEBUG [8d3b9826] Command: /usr/bin/env chmod 700 /home/deploy/tmp/git-ssh-fairbnb-deploy_rona-rona.sh
+  INFO [8d3b9826] Finished in 0.161 seconds with exit status 0 (successful).
+  INFO ---------------------------------------------------------------------------
+  INFO START 2016-10-07 17:29:51 -0700 cap deploy_rona deploy
+  INFO ---------------------------------------------------------------------------
+  INFO [d450885f] Running /usr/bin/env mkdir -p /home/deploy/tmp as deploy@158.69.79.94
+ DEBUG [d450885f] Command: /usr/bin/env mkdir -p /home/deploy/tmp
+  INFO [d450885f] Finished in 3.738 seconds with exit status 0 (successful).
+ DEBUG Uploading /home/deploy/tmp/git-ssh-fairbnb-deploy_rona-rona.sh 0.0%
+  INFO Uploading /home/deploy/tmp/git-ssh-fairbnb-deploy_rona-rona.sh 100.0%
+  INFO [896a1448] Running /usr/bin/env chmod 700 /home/deploy/tmp/git-ssh-fairbnb-deploy_rona-rona.sh as deploy@158.69.79.94
+ DEBUG [896a1448] Command: /usr/bin/env chmod 700 /home/deploy/tmp/git-ssh-fairbnb-deploy_rona-rona.sh
+  INFO [896a1448] Finished in 0.147 seconds with exit status 0 (successful).
+  INFO [41245ef6] Running /usr/bin/env git ls-remote --heads git@github.com:ronachong/airbnb_clone.git as deploy@158.69.79.94
+ DEBUG [41245ef6] Command: ( export GIT_ASKPASS="/bin/echo" GIT_SSH="/home/deploy/tmp/git-ssh-fairbnb-deploy_rona-rona.sh" ; /usr/bin/env git ls-remote --heads git@github.com:ronachong/airbnb_clone.git )
+ DEBUG [41245ef6] 	a3d94ebb2f33c3250e2502074814ff05fbabba14	refs/heads/master
+ead8d4b85008c9f072dfc2c731ffe1256a1ea560	refs/heads/unit_tests
+  INFO [41245ef6] Finished in 0.493 seconds with exit status 0 (successful).
+  INFO [911931b4] Running /usr/bin/env mkdir -p /home/deploy/fairbnb/shared /home/deploy/fairbnb/releases as deploy@158.69.79.94
+ DEBUG [911931b4] Command: /usr/bin/env mkdir -p /home/deploy/fairbnb/shared /home/deploy/fairbnb/releases
+  INFO [911931b4] Finished in 0.148 seconds with exit status 0 (successful).
+ DEBUG [33282991] Running [ -f /home/deploy/fairbnb/current/REVISION ] as deploy@158.69.79.94
+ DEBUG [33282991] Command: [ -f /home/deploy/fairbnb/current/REVISION ]
+ DEBUG [33282991] Finished in 0.153 seconds with exit status 0 (successful).
+ DEBUG [8eae058f] Running /usr/bin/env cat /home/deploy/fairbnb/current/REVISION 2>/dev/null as deploy@158.69.79.94
+ DEBUG [8eae058f] Command: /usr/bin/env cat /home/deploy/fairbnb/current/REVISION 2>/dev/null
+ DEBUG [8eae058f] 	ac400e9068b453c2193a3d9ea5cb1f2f649706d2
+ DEBUG [8eae058f] Finished in 0.220 seconds with exit status 0 (successful).
+ DEBUG [9c2f189c] Running [ -f /home/deploy/fairbnb/repo/HEAD ] as deploy@158.69.79.94
+ DEBUG [9c2f189c] Command: [ -f /home/deploy/fairbnb/repo/HEAD ]
+ DEBUG [9c2f189c] Finished in 0.158 seconds with exit status 0 (successful).
+  INFO The repository mirror is at /home/deploy/fairbnb/repo
+ DEBUG [3d5f6d3f] Running if test ! -d /home/deploy/fairbnb/repo; then echo "Directory does not exist '/home/deploy/fairbnb/repo'" 1>&2; false; fi as deploy@158.69.79.94
+ DEBUG [3d5f6d3f] Command: if test ! -d /home/deploy/fairbnb/repo; then echo "Directory does not exist '/home/deploy/fairbnb/repo'" 1>&2; false; fi
+ DEBUG [3d5f6d3f] Finished in 0.146 seconds with exit status 0 (successful).
+  INFO [ff95a569] Running /usr/bin/env git remote update --prune as deploy@158.69.79.94
+ DEBUG [ff95a569] Command: cd /home/deploy/fairbnb/repo && ( export GIT_ASKPASS="/bin/echo" GIT_SSH="/home/deploy/tmp/git-ssh-fairbnb-deploy_rona-rona.sh" ; /usr/bin/env git remote update --prune )
+ DEBUG [ff95a569] 	Fetching origin
+ DEBUG [ff95a569] 	From github.com:ronachong/airbnb_clone
+ DEBUG [ff95a569] 	   ac400e9..a3d94eb  master     -> master
+  INFO [ff95a569] Finished in 0.700 seconds with exit status 0 (successful).
+ DEBUG [02e8d7b7] Running if test ! -d /home/deploy/fairbnb/repo; then echo "Directory does not exist '/home/deploy/fairbnb/repo'" 1>&2; false; fi as deploy@158.69.79.94
+ DEBUG [02e8d7b7] Command: if test ! -d /home/deploy/fairbnb/repo; then echo "Directory does not exist '/home/deploy/fairbnb/repo'" 1>&2; false; fi
+ DEBUG [02e8d7b7] Finished in 0.149 seconds with exit status 0 (successful).
+  INFO [02ebc2aa] Running /usr/bin/env mkdir -p /home/deploy/fairbnb/releases/20161008002956 as deploy@158.69.79.94
+ DEBUG [02ebc2aa] Command: cd /home/deploy/fairbnb/repo && ( export GIT_ASKPASS="/bin/echo" GIT_SSH="/home/deploy/tmp/git-ssh-fairbnb-deploy_rona-rona.sh" ; /usr/bin/env mkdir -p /home/deploy/fairbnb/releases/20161008002956 )
+  INFO [02ebc2aa] Finished in 0.155 seconds with exit status 0 (successful).
+  INFO [cf24393f] Running /usr/bin/env git archive master | tar -x -f - -C /home/deploy/fairbnb/releases/20161008002956 as deploy@158.69.79.94
+ DEBUG [cf24393f] Command: cd /home/deploy/fairbnb/repo && ( export GIT_ASKPASS="/bin/echo" GIT_SSH="/home/deploy/tmp/git-ssh-fairbnb-deploy_rona-rona.sh" ; /usr/bin/env git archive master | tar -x -f - -C /home/deploy/fairbnb/releases/20161008002956 )
+  INFO [cf24393f] Finished in 0.210 seconds with exit status 0 (successful).
+ DEBUG [bf2540b4] Running if test ! -d /home/deploy/fairbnb/repo; then echo "Directory does not exist '/home/deploy/fairbnb/repo'" 1>&2; false; fi as deploy@158.69.79.94
+ DEBUG [bf2540b4] Command: if test ! -d /home/deploy/fairbnb/repo; then echo "Directory does not exist '/home/deploy/fairbnb/repo'" 1>&2; false; fi
+ DEBUG [bf2540b4] Finished in 0.357 seconds with exit status 0 (successful).
+ DEBUG [f7c0c1bd] Running /usr/bin/env git rev-list --max-count=1 master as deploy@158.69.79.94
+ DEBUG [f7c0c1bd] Command: cd /home/deploy/fairbnb/repo && ( export GIT_ASKPASS="/bin/echo" GIT_SSH="/home/deploy/tmp/git-ssh-fairbnb-deploy_rona-rona.sh" ; /usr/bin/env git rev-list --max-count=1 master )
+ DEBUG [f7c0c1bd] 	a3d94ebb2f33c3250e2502074814ff05fbabba14
+ DEBUG [f7c0c1bd] Finished in 0.161 seconds with exit status 0 (successful).
+ DEBUG [421766b2] Running if test ! -d /home/deploy/fairbnb/releases/20161008002956; then echo "Directory does not exist '/home/deploy/fairbnb/releases/20161008002956'" 1>&2; false; fi as deploy@158.69.79.94
+ DEBUG [421766b2] Command: if test ! -d /home/deploy/fairbnb/releases/20161008002956; then echo "Directory does not exist '/home/deploy/fairbnb/releases/20161008002956'" 1>&2; false; fi
+ DEBUG [421766b2] Finished in 0.169 seconds with exit status 0 (successful).
+  INFO [136ce2d2] Running /usr/bin/env echo "a3d94ebb2f33c3250e2502074814ff05fbabba14" >> REVISION as deploy@158.69.79.94
+ DEBUG [136ce2d2] Command: cd /home/deploy/fairbnb/releases/20161008002956 && /usr/bin/env echo "a3d94ebb2f33c3250e2502074814ff05fbabba14" >> REVISION
+  INFO [136ce2d2] Finished in 0.166 seconds with exit status 0 (successful).
+  INFO [353b9555] Running /usr/bin/env ln -s /home/deploy/fairbnb/releases/20161008002956 /home/deploy/fairbnb/releases/current as deploy@158.69.79.94
+ DEBUG [353b9555] Command: /usr/bin/env ln -s /home/deploy/fairbnb/releases/20161008002956 /home/deploy/fairbnb/releases/current
+  INFO [353b9555] Finished in 0.156 seconds with exit status 0 (successful).
+  INFO [eac287e6] Running /usr/bin/env mv /home/deploy/fairbnb/releases/current /home/deploy/fairbnb as deploy@158.69.79.94
+ DEBUG [eac287e6] Command: /usr/bin/env mv /home/deploy/fairbnb/releases/current /home/deploy/fairbnb
+  INFO [eac287e6] Finished in 0.162 seconds with exit status 0 (successful).
+ DEBUG [60441855] Running /usr/bin/env ls -xtr /home/deploy/fairbnb/releases as deploy@158.69.79.94
+ DEBUG [60441855] Command: /usr/bin/env ls -xtr /home/deploy/fairbnb/releases
+ DEBUG [60441855] 	20160817045019	20160929234130	20160930000114	20160930000932	20160930001131
+20161008002956
+ DEBUG [60441855] Finished in 0.199 seconds with exit status 0 (successful).
+  INFO Keeping 5 of 6 deployed releases on 158.69.79.94
+  INFO [caa174e4] Running /usr/bin/env rm -rf /home/deploy/fairbnb/releases/20160817045019 as deploy@158.69.79.94
+ DEBUG [caa174e4] Command: /usr/bin/env rm -rf /home/deploy/fairbnb/releases/20160817045019
+  INFO [caa174e4] Finished in 0.220 seconds with exit status 0 (successful).
+ DEBUG [bd890ffd] Running if test ! -d /home/deploy/fairbnb/releases; then echo "Directory does not exist '/home/deploy/fairbnb/releases'" 1>&2; false; fi as deploy@158.69.79.94
+ DEBUG [bd890ffd] Command: if test ! -d /home/deploy/fairbnb/releases; then echo "Directory does not exist '/home/deploy/fairbnb/releases'" 1>&2; false; fi
+ DEBUG [bd890ffd] Finished in 0.148 seconds with exit status 0 (successful).
+  INFO [ac44ead0] Running /usr/bin/env echo "Branch master (at a3d94ebb2f33c3250e2502074814ff05fbabba14) deployed as release 20161008002956 by rona" >> /home/deploy/fairbnb/revisions.log as deploy@158.69.79.94
+ DEBUG [ac44ead0] Command: cd /home/deploy/fairbnb/releases && /usr/bin/env echo "Branch master (at a3d94ebb2f33c3250e2502074814ff05fbabba14) deployed as release 20161008002956 by rona" >> /home/deploy/fairbnb/revisions.log
+  INFO [ac44ead0] Finished in 0.187 seconds with exit status 0 (successful).
