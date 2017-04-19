@@ -2,6 +2,19 @@ import os
 
 env = os.environ.get('AIRBNB_ENV')
 
+if env == 'dbx_mbp1':
+    # assign specs for dev env
+    # os.environ['AIRBNB_DATABASE_PWD_DEV'] = 'wrdev' | this only sets env var in current
+    DEBUG = True
+    HOST = 'localhost'
+    PORT = 3333
+    DATABASE = { 'host': 'localhost',
+                 'user': 'airbnb_user_dev',
+                 'database': 'airbnb_dev',
+                 'port': 3306,
+                 'charset': 'utf8',
+                 'password': os.environ.get('AIRBNB_DATABASE_PWD_DEV') }
+
 if env == 'development':
     # assign specs for dev env
     # os.environ['AIRBNB_DATABASE_PWD_DEV'] = 'wrdev' | this only sets env var in current shell; currently setting var permanently for own user via ~/.bash_profile
