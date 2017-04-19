@@ -1,5 +1,6 @@
 import peewee
-from config import *
+# from config import *
+from config import DATABASE
 from datetime import datetime
 
 '''
