@@ -2,6 +2,7 @@ from flask import jsonify, request
 from flask_json import json_response
 from peewee import *
 
+from app.views.return_styles import ListStyle
 from app.models.user import User
 from app import app
 
@@ -16,10 +17,7 @@ def users():
     # handle GET requests:
     # --------------------------------------------------------------------------
     if request.method == 'GET':
-        list = []
-        for record in User.select():
-            hash = record.to_hash()
-            list.append(hash)
+        list = ListStyle.list(User.select(), request)
         return jsonify(list)
 
     # handle POST requests:

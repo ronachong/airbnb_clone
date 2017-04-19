@@ -2,6 +2,7 @@ from flask import jsonify, request
 from flask_json import json_response
 from peewee import *
 
+from app.views.return_styles import ListStyle
 from app.models.city import City
 from app import app
 
@@ -18,10 +19,7 @@ def city(state_id):
     # handle GET requests:
     # --------------------------------------------------------------------------
     if request.method == 'GET':
-        list = []
-        for record in City.select().where(City.state == state_id):
-            hash = record.to_hash()
-            list.append(hash)
+        list = ListStyle.list(City.select().where(City.state == state_id), request)
         return jsonify(list)
 
     # handle POST requests:

@@ -4,6 +4,7 @@ from flask import jsonify, request
 from flask_json import json_response
 from peewee import *
 
+from app.views.return_styles import ListStyle
 from app.models.place_book import PlaceBook
 from app import app
 
@@ -18,10 +19,10 @@ def books(place_id):
     # handle GET requests:
     # --------------------------------------------------------------------------
     if request.method == 'GET':
-        list = []
-        for record in PlaceBook.select().where(PlaceBook.place == place_id):
-            hash = record.to_hash()
-            list.append(hash)
+        list = ListStyle.list(
+            PlaceBook.select().where(PlaceBook.place == place_id),
+            request
+        )
         return jsonify(list)
 
     # handle POST requests:

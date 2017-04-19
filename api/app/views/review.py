@@ -2,6 +2,7 @@ from flask import jsonify, request
 from flask_json import json_response
 from peewee import *
 
+from app.views.return_styles import ListStyle
 from app.models.review import Review
 from app.models.review_user import ReviewUser
 from app.models.review_place import ReviewPlace
@@ -36,10 +37,10 @@ def user_reviews(user_id):
     # handle GET requests:
     # --------------------------------------------------------------------------
     if request.method == 'GET':
-        list = []
-        for record in ReviewUser.select().where(ReviewUser.user == user_id):
-            hash = record.review.to_hash()
-            list.append(hash)
+        list = ListStyle.list(
+            ReviewUser.select().where(ReviewUser.user == user_id),
+            request
+        )
         return jsonify(list)
 
     # handle POST requests:
@@ -148,10 +149,10 @@ def place_reviews(place_id):
     # handle GET requests:
     # --------------------------------------------------------------------------
     if request.method == 'GET':
-        list = []
-        for record in ReviewPlace.select().where(ReviewPlace.place == place_id):
-            hash = record.review.to_hash()
-            list.append(hash)
+        list = ListStyle.list(
+            ReviewPlace.select().where(ReviewPlace.place == place_id),
+            request
+        )
         return jsonify(list)
 
     # handle POST requests:

@@ -2,6 +2,7 @@ from flask import jsonify, request
 from flask_json import json_response
 from peewee import *
 
+from app.views.return_styles import ListStyle
 from app.models.place import Place
 from app import app
 
@@ -16,10 +17,7 @@ def places():
     # handle GET requests:
     # --------------------------------------------------------------------------
     if request.method == 'GET':
-        list = []
-        for record in Place.select():
-            hash = record.to_hash()
-            list.append(hash)
+        list = ListStyle.list(Place.select(), request)
         return jsonify(list)
 
     # handle POST requests:
@@ -111,10 +109,7 @@ def city_places(state_id, city_id):
     # --------------------------------------------------------------------------
     if request.method == 'GET':
         try:
-            list = []
-            for record in Place.select().where(Place.city == city_id):
-                hash = record.to_hash()
-                list.append(hash)
+            list = ListStyle.list(Place.select().where(Place.city == city_id), request)
             return jsonify(list)
 
         # return 404 not found record does not exist
