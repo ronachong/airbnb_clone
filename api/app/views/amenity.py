@@ -2,6 +2,7 @@ from flask import jsonify, request
 from flask_json import json_response
 from peewee import *
 
+from app.views.return_styles import ListStyle
 from app.models.amenity import Amenity
 from app.models.place_amenity import PlaceAmenities
 from app.models.place import Place
@@ -18,10 +19,7 @@ def amenities():
     # handle GET requests:
     # --------------------------------------------------------------------------
     if request.method == 'GET':
-        list = []
-        for record in Amenity.select():
-            hash = record.to_hash()
-            list.append(hash)
+        list = ListStyle.list(Amenity.select(), request)
         return jsonify(list)
 
     # handle POST requests:
@@ -86,7 +84,5 @@ def place_amenities(place_id):
                 .where(Place.id == place_id)
                 .get())
 
-    for record in query:
-        hash = record.to_hash()
-        list.append(hash)
+    list = ListStyle.list(query, request)
     return jsonify(list)
