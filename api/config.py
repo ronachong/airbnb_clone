@@ -14,6 +14,7 @@ if env == 'dbx_mbp1':
                  'port': 3306,
                  'charset': 'utf8',
                  'password': os.environ.get('AIRBNB_DATABASE_PWD_DEV') }
+    ORIGINS = ['*']
 
 if env == 'development':
     # assign specs for dev env
@@ -27,6 +28,7 @@ if env == 'development':
                  'port': 3306,
                  'charset': 'utf8',
                  'password': os.environ.get('AIRBNB_DATABASE_PWD_DEV') }
+    ORIGINS = ['*']
 
 elif env == 'prod':
     # assign specs for prod env
@@ -53,3 +55,4 @@ elif env == 'test':
                 'port': 3306,
                 'charset': 'utf8',
                 'password': os.environ.get('AIRBNB_DATABASE_PWD_TEST') }
+   ORIGINS = ['http://127.0.0.1:*', 'http://rochong.space:*', 'http://158.69.92.248:*']
